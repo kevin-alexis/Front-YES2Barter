@@ -48,12 +48,11 @@ git clone https://github.com/kevin-alexis/Front-YES2Barter.git
 ``` bash
 npm install
 ```
-3. **Configurar Variables de Entorno:**  
-Asegúrate de establecer las variables necesarias para la conexión a servicios externos o bases de datos (según corresponda).
 
-4. **Iniciar el Servidor de Desarrollo:**
+3. **Iniciar el Servidor de Desarrollo:**
 ``` bash
-npm run serve
+npm run dev
 ```
-5. **Verificar:**  
-Abre tu navegador en  el puerto configurado para comprobar que la aplicación funcione correctamente.
+
+4. **Verificar:**  
+Abre tu navegador en el puerto `5173` para comprobar que la aplicación funcione correctamente.
