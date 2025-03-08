@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+@theme {
+    --primary: #A8D08D; 
+    --secondary: #C2B280;
+    --warning: #e0bc2b;
+    --danger: red;
+    --success: #3ebe3e;
+    --primary-gradient: #228B22;
+    /* --primary-gradient: #228B22; */
+    --background: #E8E8F4;
+}
