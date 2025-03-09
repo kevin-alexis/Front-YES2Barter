@@ -27,7 +27,10 @@ const model = defineModel()
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div :class="[
+    'flex ',
+    config.type === 'checkbox' ? '': 'flex-col'
+  ]">
     <label class="m-1"
       >{{ config.label }}<span v-if="config.isRequired" class="text-red-600">*</span></label
     >

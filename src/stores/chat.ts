@@ -1,18 +1,27 @@
-import type { IMensaje } from './../interfaces/mensaje/IMensaje'
+import type { IChat } from './../interfaces/chat/IChat'
 import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
 import Swal from 'sweetalert2'
 import router from '@/router'
-import { MensajeService } from '@/services/mensaje/MensajeService'
+import { ChatService } from '@/services/chat/ChatService'
 
-export const useMensajeStore = defineStore('mensaje', () => {
-  const service = new MensajeService()
-  const list: Ref<IMensaje[]> = ref([])
+export const useChatStore = defineStore('chat', () => {
+  const service = new ChatService()
+  const list: Ref<IChat[]> = ref([])
 
   async function getAll() {
     try {
       const response = await service.getAll()
       list.value = await response
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async function getAllByIdUsuario(id: string) {
+    try {
+      const response = await service.getAllByIdUsuario(id)
+      list.value = await response.data
     } catch (error) {
       console.error(error)
     }
@@ -27,36 +36,17 @@ export const useMensajeStore = defineStore('mensaje', () => {
     }
   }
 
-  async function getAllByIdChat(idChat: number) {
-    try {
-      const response = await service.getAllByIdChat(idChat)
-      if (
-        !response.success &&
-        [
-          'El usuario no tiene permisos para acceder a este chat.',
-          'Chat no encontrado',
-          'Usuario no autenticado',
-        ].includes(response.message)
-      ) {
-        router.replace({ name: 'chat' })
-      }
-      list.value = await response.data
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   async function create(item: any) {
     try {
       const response = await service.create(item).then(() => {
         Swal.fire({
           title: '¡Éxito!',
-          text: 'El mensaje ha sido añadida exitosamente a la lista.',
+          text: 'El chat ha sido añadida exitosamente a la lista.',
           icon: 'success',
           confirmButtonText: 'Ok',
           confirmButtonColor: '#6C6DE7',
         }).then(() => {
-          router.replace({ name: 'administrar mensajes' })
+          router.replace({ name: 'administrar chats' })
         })
       })
       return await response
@@ -70,12 +60,12 @@ export const useMensajeStore = defineStore('mensaje', () => {
       const response = await service.update(id, item).then(() => {
         Swal.fire({
           title: '¡Éxito!',
-          text: 'El mensaje ha sido editado exitosamente.',
+          text: 'El chat ha sido editado exitosamente.',
           icon: 'success',
           confirmButtonText: 'Ok',
           confirmButtonColor: '#6C6DE7',
         }).then(() => {
-          router.replace({ name: 'administrar mensajes' })
+          router.replace({ name: 'administrar chats' })
         })
       })
       return await response
@@ -121,5 +111,13 @@ export const useMensajeStore = defineStore('mensaje', () => {
     }
   }
 
-  return { list, getAll, getById, getAllByIdChat, deleteItem, create, update }
+  async function closeChat(isSuccess: boolean, idChat: number) {
+    try {
+      service.closeChat(isSuccess, idChat)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  return { list, getAll, getAllByIdUsuario, getById, deleteItem, create, update, closeChat }
 })

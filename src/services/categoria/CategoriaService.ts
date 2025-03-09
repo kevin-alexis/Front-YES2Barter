@@ -8,3 +8,4 @@ export class CategoriaService extends BaseService<ICategoria> {
     super(CategoriaService.nameController)
   }
 }
+

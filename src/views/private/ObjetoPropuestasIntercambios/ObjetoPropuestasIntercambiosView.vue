@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCapituloStore } from '@/stores/propuestaIntercambio'
+import { usePropuestaIntercambioStore } from '@/stores/propuestaIntercambio'
 import { useObjetoStore } from '@/stores/objeto'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -8,7 +8,7 @@ import BaseTable from '@/components/BaseTable.vue'
 import BaseModal from '@/components/BaseModal.vue'
 import BreadcrumbComponent from '@/components/BreadcrumbComponent.vue'
 
-const capituloStore = useCapituloStore()
+const propuestaIntercambioStore = usePropuestaIntercambioStore()
 const objetoStore = useObjetoStore()
 
 const isOpen = ref(false)
@@ -56,7 +56,7 @@ function download(src: string) {
 
 onMounted(async () => {
   const idObjeto = route.params.id as string
-  await capituloStore.getAllByIdObjeto(idObjeto)
+  await propuestaIntercambioStore.getAllByIdObjeto(idObjeto)
   objeto.value = await objetoStore.getById(idObjeto)
 })
 </script>
@@ -66,15 +66,15 @@ onMounted(async () => {
     <BreadcrumbComponent :items="breadcrumbItems" />
     <BaseTable
       :config="{
-        title: `Capitulos del objeto: ${objeto?.titulo ?? ''}`,
-        agregar: { name: 'crear capitulo', paramKey: 'id' },
+        title: `Propuestas de intercambio del objeto: ${objeto?.titulo ?? ''}`,
+        agregar: { name: 'crear propuesta de intercambio', paramKey: 'id' },
         columns: [
           {
             name: 'Capítulo',
             nameData: 'numeroCapitulo',
           },
         ],
-        data: capituloStore.list,
+        data: propuestaIntercambioStore.list,
         buttons: [
           {
             title: '',
