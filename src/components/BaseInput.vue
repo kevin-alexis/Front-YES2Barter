@@ -27,7 +27,10 @@ const model = defineModel()
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div :class="[
+    'flex ',
+    config.type === 'checkbox' ? '': 'flex-col'
+  ]">
     <label class="m-1"
       >{{ config.label }}<span v-if="config.isRequired" class="text-red-600">*</span></label
     >
@@ -46,6 +49,16 @@ const model = defineModel()
         {{ option[config.select.paramKey] }}
       </option>
     </select>
+
+    <div v-else-if="config.type === 'checkbox'" class="flex items-center gap-2">
+      <input
+        type="checkbox"
+        :checked="model"
+        @change="model = $event.target.checked"
+        :disabled="config.isDisabled"
+        class="h-4 w-4"
+      />
+    </div>
 
     <div v-else class="flex w-full relative">
       <Field

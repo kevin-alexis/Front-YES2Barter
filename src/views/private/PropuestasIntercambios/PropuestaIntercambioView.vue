@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import BaseTable from '@/components/BaseTable.vue'
-import { useCapituloStore } from '@/stores/propuestaIntercambio'
+import { usePropuestaIntercambioStore } from '@/stores/propuestaIntercambio'
 import { useObjetoStore } from '@/stores/objeto'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import BaseModal from '@/components/BaseModal.vue'
 import BreadcrumbComponent from '@/components/BreadcrumbComponent.vue'
 
-const capituloStore = useCapituloStore()
+const propuestaIntercambioStore = usePropuestaIntercambioStore()
 const objetoStore = useObjetoStore()
 const route = useRoute()
 const isOpen = ref(false)
@@ -23,7 +23,7 @@ const breadcrumbItems = [
 
 onMounted(async () => {
   const idObjeto = route.params.id as string
-  await capituloStore.getAllByIdObjeto(idObjeto)
+  await propuestaIntercambioStore.getAllByIdObjeto(idObjeto)
   objeto.value = await objetoStore.getById(idObjeto)
 })
 
@@ -38,15 +38,15 @@ function openModal(src: string) {
     <BreadcrumbComponent :items="breadcrumbItems" />
     <BaseTable
       :config="{
-        title: `Capitulos del objeto: ${objeto?.titulo ?? ''}`,
-        agregar: { name: 'crear capitulo', paramKey: 'id' },
+        title: `Propuestas Intercambios del objeto: ${objeto?.titulo ?? ''}`,
+        agregar: { name: 'crear propuestas intercambios', paramKey: 'id' },
         columns: [
           {
             name: 'Capítulo',
             nameData: 'numeroCapitulo',
           },
         ],
-        data: capituloStore.list,
+        data: propuestaIntercambioStore.list,
         buttons: [
           {
             title: '',
@@ -59,14 +59,14 @@ function openModal(src: string) {
             title: '',
             icon: 'pi-pen-to-square',
             type: 'router',
-            route: { name: 'editar capitulo', paramKey: 'id' },
+            route: { name: 'editar propuesta intercambio', paramKey: 'id' },
             styleType: 'warning',
           },
           {
             title: '',
             icon: 'pi-trash',
             type: 'action',
-            action: (row) => capituloStore.deleteItem(row.id),
+            action: (row) => propuestaIntercambioStore.deleteItem(row.id),
             styleType: 'danger',
           },
         ],
