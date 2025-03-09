@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import BaseForm from '@/components/BaseForm.vue'
-import { useCapituloStore } from '@/stores/propuestaIntercambio'
+import { usePropuestaIntercambioStore } from '@/stores/propuestaIntercambio'
 import { useObjetoStore } from '@/stores/objeto'
 import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
 
-const capituloStore = useCapituloStore()
+const propuestaIntercambioStore = usePropuestaIntercambioStore()
 const objetoStore = useObjetoStore()
 const isEdit = ref(false)
 const id = ref('')
@@ -72,9 +72,9 @@ const dataForm = reactive({
 const handleSubmitForm = handleSubmit((values: FormValues) => {
   //validaciones
   if (!isEdit.value) {
-    capituloStore.create(values)
+    propuestaIntercambioStore.create(values)
   } else {
-    capituloStore.update(id.value, values)
+    propuestaIntercambioStore.update(id.value, values)
   }
 })
 
@@ -83,7 +83,7 @@ onMounted(async () => {
   isEdit.value = route.fullPath.includes('editar')
   id.value = route.params.id as string
   if (isEdit.value) {
-    await capituloStore.getById(id.value).then((response) => {
+    await propuestaIntercambioStore.getById(id.value).then((response) => {
       Object.assign(dataForm, {
         ...response,
       })
