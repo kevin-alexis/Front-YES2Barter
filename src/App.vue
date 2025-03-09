@@ -4,11 +4,12 @@ import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
 import 'primeicons/primeicons.css'
 </script>
-
 <template>
-  <HeaderComponent></HeaderComponent>
-  <RouterView class="bg-[#E8E8F4] min-h-screen" />
-  <FooterComponent></FooterComponent>
+  <div class="flex flex-col h-screen overflow-hidden">
+    <HeaderComponent />
+    <RouterView class="bg-[#E8E8F4] flex-1 overflow-auto" />
+    <FooterComponent />
+  </div>
 </template>
 
 <style scoped>

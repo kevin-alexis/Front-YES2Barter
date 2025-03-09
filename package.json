@@ -15,10 +15,11 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@microsoft/signalr": "^8.0.7",
     "@primeuix/themes": "^1.0.0",
     "@tailwindcss/vite": "^4.0.11",
     "@vueuse/core": "^12.8.2",
-    "axios": "^1.8.1",
+    "axios": "^1.8.2",
     "bcryptjs": "^3.0.2",
     "emailjs-com": "^3.2.0",
     "jwt-decode": "^4.0.0",
