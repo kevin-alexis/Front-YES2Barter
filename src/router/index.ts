@@ -71,7 +71,7 @@ const router = createRouter({
         icon: 'pi-comments',
         roles: ['Intercambiador'],
       },
-      children:[
+      children: [
         {
           path: ':id',
           name: 'chat detalles',
@@ -85,7 +85,7 @@ const router = createRouter({
             roles: ['Intercambiador'],
           },
         },
-      ]
+      ],
     },
 
     {
@@ -138,7 +138,7 @@ const router = createRouter({
         isShared: false,
         icon: 'pi-book',
         roles: ['Intercambiador'],
-      }
+      },
     },
     {
       path: '/objeto/:id',
@@ -276,7 +276,7 @@ const router = createRouter({
     {
       path: '/logs',
       name: 'administrar logs',
-      component: () => import('../views/private/Logs/LogView.vue'),
+      component: () => import('../views/private/Log/LogView.vue'),
       meta: {
         menu: true,
         title: 'Administrar Logs',
