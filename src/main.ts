@@ -2,7 +2,7 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import PrimeVue from 'primevue/config';
-
+import 'primeicons/primeicons.css';
 import { createPinia } from 'pinia'
 
 import App from './App.vue'

@@ -2,13 +2,15 @@
 import BaseForm from '@/components/BaseForm.vue'
 import { RouterLink } from 'vue-router'
 import { useAccountStore } from '@/stores/account'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
 import type { IUser } from '@/interfaces/account/IAccount'
+import Checkbox from 'primevue/checkbox';
 
 const accountStore = useAccountStore()
 
+// Validaciones con VeeValidate
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
     email: yup.string().email('Correo incorrecto').required('El correo es requerido'),
@@ -16,9 +18,11 @@ const { errors, defineField, handleSubmit } = useForm({
       .string()
       .min(6, 'La contraseña debe tener al menos 6 caracteres')
       .required('La contraseña es requerida'),
+    rememberMe: yup.boolean().optional(),
   }),
 })
 
+// Definir campos del formulario
 const [email] = defineField('email', {
   validateOnModelUpdate: true,
 })
@@ -27,14 +31,19 @@ const [password] = defineField('password', {
   validateOnModelUpdate: true,
 })
 
+const [rememberMe] = defineField('rememberMe', {
+  validateOnModelUpdate: true,
+})
+
 const user: IUser = reactive({
   email: email,
   password: password,
+  rememberMe: rememberMe,
 })
 
+// Función para manejar el formulario
 const handleSubmitForm = handleSubmit((values: FormValues) => {
-  //validaciones
-  accountStore.login({ email: values.email, password: values.password })
+  accountStore.login({ email: values.email, password: values.password }, values.rememberMe)
 })
 </script>
 
@@ -65,6 +74,12 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
               isRequired: true,
               model: 'password',
             },
+            {
+              label: 'Recordar',
+              type: 'checkbox',
+              model: 'rememberMe',
+              isRequired: false,
+            }
           ],
           titleButton: 'Iniciar Sesión',
         }"
@@ -72,15 +87,15 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
         <template #headerForm>
           <h1 class="text-4xl font-bold text-left">Inicio de Sesión</h1>
         </template>
-        <!-- <template #linkTop><a> ¿Olvidaste tu contraseña? </a></template> -->
-        <template #linkBottom
-          ><p>
+        <!-- Link para registro -->
+        <template #linkBottom>
+          <p>
             ¿Aún no tienes cuenta?
             <RouterLink class="font-semibold text-[var(--primary)] cursor-pointer" to="/sign-in">
               Regístrate gratis
             </RouterLink>
-          </p></template
-        >
+          </p>
+        </template>
       </BaseForm>
     </div>
   </div>

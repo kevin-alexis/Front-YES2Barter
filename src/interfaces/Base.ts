@@ -6,7 +6,7 @@ export interface IBaseObject {
 export interface IBaseInput {
   label: string
   placeholder?: string
-  type: 'email' | 'text' | 'number' | 'password' | 'textarea' | 'select' | 'file' | 'date'
+  type: 'email' | 'text' | 'number' | 'password' | 'textarea' | 'select' | 'file' | 'date' | 'checkbox'
   isRequired: boolean,
   model: string
   select?: {
