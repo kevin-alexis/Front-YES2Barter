@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
   },
 });
 
-export const genericRequest = async (url, method, body) => {
+export const genericRequest = async (url, method, body, rememberMe?) => {
   try {
     const response = await axiosInstance({
       url,

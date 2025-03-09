@@ -19,6 +19,22 @@ export const useAccountStore = defineStore('account', () => {
     }
     return token.value !== '' && token.value !== undefined
   })
+  function isTokenExpired(): boolean {
+    if (!token.value) {
+      return true
+    }
+    try {
+      const decodedToken: any = jwtDecode(token.value)
+      const exp = decodedToken?.exp
+      if (!exp) {
+        return true
+      }
+      return Date.now() >= exp * 1000
+    } catch (error) {
+      console.error('Invalid token:', error)
+      return true
+    }
+  }
   async function getAll() {
     try {
       const response = await service.getAll()
@@ -28,8 +44,8 @@ export const useAccountStore = defineStore('account', () => {
     }
   }
 
-  async function login(userData: IUser) {
-    await service.login(userData).then((response) => {
+  async function login(userData: IUser, rememberMe: boolean) {
+    await service.login(userData, rememberMe).then((response) => {
       if (response.success) {
         token.value = response.token
         getUser()
@@ -86,12 +102,17 @@ export const useAccountStore = defineStore('account', () => {
   function getUser() {
     if (token.value) {
       try {
+        if (isTokenExpired()) {
+          logOut()
+          return
+        }
         user.value = jwtDecode(token.value)
         console.error(user.value)
       } catch (error) {
         console.error('Invalid token:', error)
         token.value = ''
-        return false
+        logOut()
+        // return false
       }
     }
   }

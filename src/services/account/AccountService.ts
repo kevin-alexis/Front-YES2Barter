@@ -9,9 +9,10 @@ export class AccountService extends BaseService<IAccount> {
     super(AccountService.nameController)
   }
 
-  public login = async (user: IUser) => {
+  public login = async (user: IUser, rememberMe: boolean) => {
     try {
-      const response = await genericRequest('/Account/login', 'POST', user)
+      const userData = {...user, rememberMe}
+      const response = await genericRequest('/Account/login', 'POST', userData)
       return response
     } catch (error) {
       console.error(error)
