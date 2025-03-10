@@ -4,9 +4,11 @@ import { ref, type Ref } from 'vue'
 import Swal from 'sweetalert2'
 import router from '@/router'
 import { MensajeService } from '@/services/mensaje/MensajeService'
+import { LogService } from '@/services/log/LogService'
 
 export const useMensajeStore = defineStore('mensaje', () => {
   const service = new MensajeService()
+  const logService = new LogService()
   const list: Ref<IMensaje[]> = ref([])
 
   async function getAll() {

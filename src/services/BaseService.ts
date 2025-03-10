@@ -1,13 +1,16 @@
 import axios from 'axios'
+import { LogService } from './log/LogService'
 
 export class BaseService<T> {
   private baseUrl = import.meta.env.VITE_APP_URL_API
   private nameController: string
   private token: string | null
+  protected logService: LogService
 
   constructor(nameController: string) {
     this.nameController = nameController
     this.token = localStorage.getItem('token') || ''
+    this.logService = new LogService()
   }
 
   private getHeaders() {
@@ -24,6 +27,11 @@ export class BaseService<T> {
       })
       return response.data
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAll: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -35,6 +43,11 @@ export class BaseService<T> {
       })
       return response.data
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getById: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -46,6 +59,11 @@ export class BaseService<T> {
       })
       return response.data
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método create: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -57,6 +75,11 @@ export class BaseService<T> {
       })
       return response
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método update: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -68,6 +91,11 @@ export class BaseService<T> {
       })
       return response
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método delete: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }

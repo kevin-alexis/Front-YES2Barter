@@ -5,9 +5,11 @@ import { ref, type Ref } from 'vue'
 import Swal from 'sweetalert2'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import { LogService } from '@/services/log/LogService'
 
 export const useObjetoStore = defineStore('objeto', () => {
   const service = new ObjetoService()
+  const logService = new LogService()
   const list: Ref<IObjeto[]> = ref([])
   const route = useRoute()
 

@@ -5,9 +5,11 @@ import { ref, type Ref } from 'vue'
 import Swal from 'sweetalert2'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import { LogService } from '@/services/log/LogService'
 
 export const usePropuestaIntercambioStore = defineStore('propuesta intercambio', () => {
   const service = new PropuestaIntercambioService()
+  const logService = new LogService()
   const list: Ref<IPropuestaIntercambio[]> = ref([])
   const route = useRoute()
 
