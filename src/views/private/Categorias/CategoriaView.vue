@@ -108,7 +108,7 @@ const getMessages = (status: boolean) => {
                 </div>
       </template>
       <template #empty>Sin categorías encontradas</template>
-      <template #loading>Cargando categorías</template>
+      <template #loading><i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i></template>
       <Column field="id" header="No.">
         <template #body="{ data }">
                     {{ data.id }}
@@ -122,31 +122,34 @@ const getMessages = (status: boolean) => {
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Buscar por nombre" />
                 </template>
       </Column>
-      <Column field="esBorrado" header="Estado">
+      <!-- <Column field="esBorrado" header="Estado">
           <template #body="{ data }">
                     <Tag :value="getMessages(data.esBorrado)" :severity="getSeverity(data.esBorrado)" />
           </template>
-      </Column>
+      </Column> -->
   <Column field="actions" header="Acciones" style="width: 10rem; text-align: center;">
     <template #body="{ data }">
       <div class="flex gap-2 justify-center">
-      <Button 
+      <Button
         icon="pi pi-list"
         outlined rounded
         severity="info"
-        @click="$router.push({ name: 'administrar objetos', params: { id: data.id } })" 
+        v-tooltip.top="{ value: 'Administrar', showDelay: 100, hideDelay: 300, }"
+        @click="$router.push({ name: 'administrar objetos', params: { id: data.id } })"
       />
-      <Button 
+      <Button
         icon="pi pi-pen-to-square"
         outlined rounded
         severity="success"
-        @click="$router.push({ name: 'editar categoria', params: { id: data.id } })" 
+        v-tooltip.top="{ value: 'Editar', showDelay: 100, hideDelay: 300, }"
+        @click="$router.push({ name: 'editar categoria', params: { id: data.id } })"
       />
-      <Button 
+      <Button
         icon="pi pi-trash"
         outlined rounded
         severity="danger"
-        @click="() => categoriaStore.deleteItem(data.id)" 
+        v-tooltip.top="{ value: 'Eliminar', showDelay: 100, hideDelay: 300, }"
+        @click="() => categoriaStore.deleteItem(data.id)"
       />
     </div>
     </template>
