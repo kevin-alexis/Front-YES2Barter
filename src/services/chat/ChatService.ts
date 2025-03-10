@@ -15,6 +15,11 @@ export class ChatService extends BaseService<IChat> {
       const response = await genericRequestAuthenticated(`/Chat/GetAllByIdUsuario/${id}`, 'GET')
       return response
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdUsuario: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -29,6 +34,11 @@ export class ChatService extends BaseService<IChat> {
       })
       return response
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método closeChat: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }

@@ -1,10 +1,44 @@
-import type { ILog } from '@/interfaces/log/ILog'
-import { BaseService } from '../BaseService'
-
-export class LogService extends BaseService<ILog> {
+import { genericRequestAuthenticated } from '@/utils/genericRequest'
+export class LogService {
   private static nameController = 'Log'
+  private baseUrl = import.meta.env.VITE_APP_URL_API
 
-  constructor() {
-    super(LogService.nameController)
+  constructor() {}
+
+  public getAll = async () => {
+    try {
+      const response = await genericRequestAuthenticated(
+        `${this.baseUrl}/${LogService.nameController}/`,
+        'GET',
+      )
+      return response
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  public getById = async (id: string) => {
+    try {
+      const response = await genericRequestAuthenticated(
+        `${this.baseUrl}/${LogService.nameController}/${id}`,
+        'GET',
+      )
+      return response
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  public create = async <ILog>(body: ILog) => {
+    try {
+      const response = await genericRequestAuthenticated(
+        `${this.baseUrl}/${LogService.nameController}`,
+        'POST',
+        body,
+      )
+      return response
+    } catch (error) {
+      console.error(error)
+    }
   }
 }

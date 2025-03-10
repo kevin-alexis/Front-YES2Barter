@@ -11,9 +11,17 @@ export class PropuestaIntercambioService extends BaseService<IPropuestaIntercamb
 
   public GetAllByIdObjeto = async (id: string) => {
     try {
-      const response = await genericRequestAuthenticated(`/PropuestaIntercambio/GetAllByIdObjeto/${id}`, 'GET')
+      const response = await genericRequestAuthenticated(
+        `/PropuestaIntercambio/GetAllByIdObjeto/${id}`,
+        'GET',
+      )
       return response
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método GetAllByIdObjeto: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -35,6 +43,11 @@ export class PropuestaIntercambioService extends BaseService<IPropuestaIntercamb
       )
       return response
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método updatePropuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error('Error al actualizar el capítulo:', error)
     }
   }
@@ -49,9 +62,18 @@ export class PropuestaIntercambioService extends BaseService<IPropuestaIntercamb
         }
       }
 
-      const response = await genericRequestFormData(`/PropuestaIntercambio/create-propuesta-intercambio/`, 'POST', formData)
+      const response = await genericRequestFormData(
+        `/PropuestaIntercambio/create-propuesta-intercambio/`,
+        'POST',
+        formData,
+      )
       return response
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método createPropuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error('Error al crear el capítulo:', error)
     }
   }
