@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
   },
 });
 
-export const genericRequest = async (url, method, body) => {
+export const genericRequest = async (url, method, body, rememberMe?) => {
   try {
     const response = await axiosInstance({
       url,
@@ -39,7 +39,7 @@ export const genericRequestFormData = async (url, method, formData) => {
   }
 };
 
-export const genericRequestAuthenticated = async (url, method, body) => {
+export const genericRequestAuthenticated = async (url, method, body?) => {
   try {
     const accountStore = useAccountStore();
     const response = await axiosInstance({

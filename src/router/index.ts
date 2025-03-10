@@ -10,6 +10,11 @@ const router = createRouter({
       name: 'inicio',
       component: HomeView,
       meta: { menu: true, title: 'Inicio', isPrivate: false, isShared: true, icon: 'pi-home' },
+      // menu: para que aparezca en el header
+      // tiitle: el nombre de la opcion en el header
+      // isPrivate: es privada la ruta - cuando necesita iniciar sesión
+      // isShared: la vista se va a compartir tanto privada como publica
+      // icon: aparezca un icono
     },
     {
       path: '/perfil',
@@ -73,7 +78,23 @@ const router = createRouter({
         icon: 'pi-comments',
         roles: ['Intercambiador'],
       },
+      children: [
+        {
+          path: ':id',
+          name: 'chat detalles',
+          component: () => import('../views/private/Mensajes/MensajeDetalle.vue'),
+          meta: {
+            menu: false,
+            title: 'Chat',
+            isPrivate: true,
+            isShared: false,
+            icon: 'pi-comments',
+            roles: ['Intercambiador'],
+          },
+        },
+      ],
     },
+
     {
       path: '/categoria',
       name: 'administrar categorias',
@@ -123,8 +144,8 @@ const router = createRouter({
         isPrivate: true,
         isShared: false,
         icon: 'pi-book',
-        roles: ['Administrador', 'Intercambiador'],
-      }
+        roles: ['Intercambiador'],
+      },
     },
     {
       path: '/objeto/:id',
@@ -256,6 +277,19 @@ const router = createRouter({
         isPrivate: true,
         isShared: false,
         icon: 'pi-book',
+        roles: ['Administrador'],
+      },
+    },
+    {
+      path: '/logs',
+      name: 'administrar logs',
+      component: () => import('../views/private/Log/LogView.vue'),
+      meta: {
+        menu: true,
+        title: 'Administrar Logs',
+        isPrivate: true,
+        isShared: false,
+        icon: 'pi-file',
         roles: ['Administrador'],
       },
     },

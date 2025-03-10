@@ -9,11 +9,17 @@ export class AccountService extends BaseService<IAccount> {
     super(AccountService.nameController)
   }
 
-  public login = async (user: IUser) => {
+  public login = async (user: IUser, rememberMe: boolean) => {
     try {
-      const response = await genericRequest('/Account/login', 'POST', user)
+      const userData = { ...user, rememberMe }
+      const response = await genericRequest('/Account/login', 'POST', userData)
       return response
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método login: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -23,6 +29,11 @@ export class AccountService extends BaseService<IAccount> {
       const response = await genericRequestAuthenticated('/Account/GetAllAccounts', 'GET')
       return response
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAll: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -32,6 +43,11 @@ export class AccountService extends BaseService<IAccount> {
       const response = await genericRequestAuthenticated('/Account/getAllRoles', 'GET')
       return response
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllRoles: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }

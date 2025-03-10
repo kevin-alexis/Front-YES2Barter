@@ -6,11 +6,13 @@ import Swal from 'sweetalert2'
 import { computed, ref } from 'vue'
 import { jwtDecode } from 'jwt-decode'
 import router from '@/router'
+import { LogService } from '@/services/log/LogService'
 
 export const useAccountStore = defineStore('account', () => {
   const user = ref(null)
   const token = useStorage('token', '')
   const service = new AccountService()
+  const logService = new LogService()
   const list = ref([])
   const listRoles = ref([])
   const isLoggedIn = computed(() => {
@@ -19,29 +21,65 @@ export const useAccountStore = defineStore('account', () => {
     }
     return token.value !== '' && token.value !== undefined
   })
+
+  function isTokenExpired(): boolean {
+    if (!token.value) {
+      return true
+    }
+    try {
+      const decodedToken: any = jwtDecode(token.value)
+      const exp = decodedToken?.exp
+      if (!exp) {
+        return true
+      }
+      return Date.now() >= exp * 1000
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método isTokenExpired del store account: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error('Invalid token:', error)
+      return true
+    }
+  }
+
   async function getAll() {
     try {
       const response = await service.getAll()
       list.value = await response.data
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAll del store account: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
 
-  async function login(userData: IUser) {
-    await service.login(userData).then((response) => {
-      if (response.success) {
-        token.value = response.token
-        getUser()
-        router.replace({ name: 'inicio' })
-      } else {
-        Swal.fire({
-          title: 'Error',
-          text: response.message,
-          icon: 'error',
-        })
-      }
-    })
+  async function login(userData: IUser, rememberMe: boolean) {
+    try {
+      await service.login(userData, rememberMe).then((response) => {
+        if (response.success) {
+          token.value = response.token
+          getUser()
+          router.replace({ name: 'inicio' })
+        } else {
+          Swal.fire({
+            title: 'Error',
+            text: response.message,
+            icon: 'error',
+          })
+        }
+      })
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método login del store account: ${error.message}`,
+        excepcion: error.toString(),
+      })
+    }
   }
 
   function signIn(userData: IUser) {
@@ -74,24 +112,47 @@ export const useAccountStore = defineStore('account', () => {
         }
       })
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método signIn del store account: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
 
   function logOut() {
-    token.value = ''
-    router.replace({ name: 'login' })
+    try {
+      token.value = ''
+      router.replace({ name: 'login' })
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método logOut del store account: ${error.message}`,
+        excepcion: error.toString(),
+      })
+    }
   }
 
   function getUser() {
     if (token.value) {
       try {
+        if (isTokenExpired()) {
+          logOut()
+          return
+        }
         user.value = jwtDecode(token.value)
         console.error(user.value)
       } catch (error) {
+        logService.create({
+          nivel: 'Error',
+          mensaje: `Error en el método getUser del store account: ${error.message}`,
+          excepcion: error.toString(),
+        })
         console.error('Invalid token:', error)
         token.value = ''
-        return false
+        logOut()
+        // return false
       }
     }
   }
@@ -131,6 +192,11 @@ export const useAccountStore = defineStore('account', () => {
         }
       })
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método deleteItem del store account: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -159,6 +225,11 @@ export const useAccountStore = defineStore('account', () => {
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método update del store account: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -168,6 +239,11 @@ export const useAccountStore = defineStore('account', () => {
       const response = await service.getAllRoles()
       listRoles.value = await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllRoles del store account: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
