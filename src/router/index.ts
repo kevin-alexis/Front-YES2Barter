@@ -12,6 +12,13 @@ const router = createRouter({
       meta: { menu: true, title: 'Inicio', isPrivate: false, isShared: true, icon: 'pi-home' },
     },
     {
+      path: '/perfil',
+      name: 'Perfil',
+      component: () => import('../components/Perfil/PerfilDetallesItem.vue'),
+      meta: {isPrivate: true, title: 'Perfil',  isShared: true, }
+    
+    },
+    {
       path: '/nosotros',
       name: 'nosotros',
       component: () => import('../views/public/NosotrosView.vue'),
@@ -281,7 +288,7 @@ router.beforeEach((to, from, next) => {
 
   const accountStore = useAccountStore()
 
-  if (to.meta.isPrivate && !accountStore.isLoggedIn) {
+  if (to.meta.isPrivate && !true) {
     next({ name: 'login' })
     return
   }

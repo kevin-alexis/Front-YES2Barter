@@ -21,6 +21,7 @@ const currentSchema = computed(() => {
 })
 
 const handleSubmit = async () => {
+  
   if (search.value == '') {
     await objetoStore.getAll()
   } else {
@@ -61,7 +62,7 @@ onMounted(async () => {
         />
 
         <div>
-          <BaseButton styleType="primary" class="w-full sm:w-auto">
+          <BaseButton type="submit" styleType="primary" class="w-full sm:w-auto">
             <div class="px-2">
               <i class="pi pi-search"></i>
             </div>

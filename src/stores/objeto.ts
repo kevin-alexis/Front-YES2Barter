@@ -14,7 +14,7 @@ export const useObjetoStore = defineStore('objeto', () => {
   async function getAll() {
     try {
       const response = await service.getAll()
-      list.value = await response
+      list.value = await response.data
     } catch (error) {
       console.error(error)
     }
@@ -23,8 +23,16 @@ export const useObjetoStore = defineStore('objeto', () => {
   async function getByName(name: string) {
     try {
       const response = await service.GetByName(name)
-      console.error(response)
-      list.value = await response.data
+      if (response.success) {
+        list.value = response.data 
+      } else{
+        list.value=[]
+        Swal.fire({
+          title: 'No se encontraron objetos',
+          text: response.message || 'No se encontraron objetos con ese nombre.',
+          icon: 'warning',
+        })
+      }
     } catch (error) {
       console.error(error)
     }
