@@ -14,6 +14,11 @@ export class MensajeService extends BaseService<IMensaje> {
         const response = await genericRequestAuthenticated(`/${MensajeService.nameController}/GetAllByIdChat/${idChat}`, 'GET')
         return response
       } catch (error) {
+        this.logService.create({
+          nivel: 'Error',
+          mensaje: `Error en el método getAllByIdChat: ${error.message}`,
+          excepcion: error.toString(),
+        })
         console.error(error)
       }
     }

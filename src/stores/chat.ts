@@ -4,9 +4,11 @@ import { ref, type Ref } from 'vue'
 import Swal from 'sweetalert2'
 import router from '@/router'
 import { ChatService } from '@/services/chat/ChatService'
+import { LogService } from '@/services/log/LogService'
 
 export const useChatStore = defineStore('chat', () => {
   const service = new ChatService()
+  const logService = new LogService()
   const list: Ref<IChat[]> = ref([])
 
   async function getAll() {
@@ -23,6 +25,11 @@ export const useChatStore = defineStore('chat', () => {
       const response = await service.getAllByIdUsuario(id)
       list.value = await response.data
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdUsuario del store chat: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -32,6 +39,11 @@ export const useChatStore = defineStore('chat', () => {
       const response = await service.getById(id)
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getById del store chat: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -51,6 +63,11 @@ export const useChatStore = defineStore('chat', () => {
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método create del store chat: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -70,6 +87,11 @@ export const useChatStore = defineStore('chat', () => {
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método update del store chat: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -107,6 +129,11 @@ export const useChatStore = defineStore('chat', () => {
         }
       })
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método deleteItem del store chat: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -115,6 +142,11 @@ export const useChatStore = defineStore('chat', () => {
     try {
       service.closeChat(isSuccess, idChat)
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método closeChat del store chat: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.log(error)
     }
   }
