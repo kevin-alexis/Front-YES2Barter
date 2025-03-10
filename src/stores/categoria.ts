@@ -4,9 +4,11 @@ import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
 import Swal from 'sweetalert2'
 import router from '@/router'
+import { LogService } from '@/services/log/LogService'
 
 export const useCategoriaStore = defineStore('categoria', () => {
   const service = new CategoriaService()
+  const logService = new LogService()
   const list: Ref<ICategoria[]> = ref([])
 
   async function getAll() {
@@ -23,6 +25,11 @@ export const useCategoriaStore = defineStore('categoria', () => {
       const response = await service.getById(id)
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getById del store categoria: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -42,6 +49,11 @@ export const useCategoriaStore = defineStore('categoria', () => {
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método create del store categoria: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -61,6 +73,11 @@ export const useCategoriaStore = defineStore('categoria', () => {
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método update del store categoria: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -98,6 +115,11 @@ export const useCategoriaStore = defineStore('categoria', () => {
         }
       })
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método deleteItem del store categoria: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
