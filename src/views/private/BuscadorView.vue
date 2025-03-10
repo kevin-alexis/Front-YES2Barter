@@ -74,7 +74,12 @@ onMounted(async () => {
       class="flex flex-col justify-center items-center gap-5 bg-white h-105 m-10 p-8 md:p-10 rounded-2xl"
     >
       <div class="w-full max-h-[450px] overflow-y-auto">
-        <ObjetoList v-model:objetos="objetoStore.list"></ObjetoList>
+        <ObjetoList
+          v-model:objetos="objetoStore.list"
+          :config="{
+            showButtons: false,
+          }"
+        ></ObjetoList>
       </div>
     </div>
   </div>

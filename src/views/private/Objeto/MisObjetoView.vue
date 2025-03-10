@@ -1,22 +1,38 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import ObjetoList from '@/components/Objeto/ObjetoList.vue'
 import { useObjetoStore } from '@/stores/objeto'
+import { useAccountStore } from '@/stores/account'
 
 const objetoStore = useObjetoStore()
+const accountStore = useAccountStore()
 
-onMounted(async () => {
-  await objetoStore.getAll()
+const isLoading = ref(true)
+
+onBeforeMount(async () => {
+  await accountStore.getUser()
+  await objetoStore.getAllByIdUsuario(
+    accountStore.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'],
+  )
+  isLoading.value = false
 })
 </script>
+
 <template>
   <div>
-    <!-- MIS OBJETOS MANDO A LLAMAR UN COMPONENTE DE OBJECT LIST -->
-     <strong>ESTOS SON LOS OBJETOS DEL USUARIO</strong>
-     <p>     PARA EDITAR ELIMINAR Y ASI SE REUTILIZARA LA VISTA DE CREATEEDITOBJECT DEL ADMIN</p>
-
-     <div class="w-full max-h-[450px] overflow-y-auto">
-        <ObjetoList v-model:objetos="objetoStore.list"></ObjetoList>
+    <div v-if="isLoading" class="loading-message max-h-screen flex justify-center items-center">
+      <div>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-light text-center">Cargando objetos...</h1>
       </div>
+    </div>
+
+    <div v-else class="w-full max-h-screen overflow-y-auto p-2">
+      <ObjetoList
+        v-model:objetos="objetoStore.list"
+        :config="{
+          showButtons: true,
+        }"
+      ></ObjetoList>
+    </div>
   </div>
 </template>

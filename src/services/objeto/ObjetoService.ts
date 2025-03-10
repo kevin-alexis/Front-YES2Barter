@@ -23,6 +23,20 @@ export class ObjetoService extends BaseService<IObjeto> {
     }
   }
 
+  public GetAllByIdUsuario = async (id: string) => {
+    try {
+      const response = await genericRequestAuthenticated(`/Objeto/GetAllByIdUsuario/${id}`, 'GET')
+      return response
+    } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método GetAllByIdUsuario: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
   public GetAllByIdCategoria = async (id: string) => {
     try {
       const response = await genericRequestAuthenticated(`/Objeto/GetAllByIdCategoria/${id}`, 'GET')
