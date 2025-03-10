@@ -17,15 +17,15 @@ const id = ref('')
 
 const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] }
 
-function isValidFileType(fileName, fileType) {
-  return fileName && validFileExtensions[fileType].indexOf(fileName.split('.').pop()) > -1
+function isValidFileType(fileName: string, fileType: string) {
+  return fileName && validFileExtensions[fileType].includes(fileName.split('.').pop()?.toLowerCase() || '')
 }
 
-const { errors, defineField, handleSubmit } = useForm({
+const { errors, defineField, handleSubmit, setValues } = useForm({
   validationSchema: yup.object({
-    titulo: yup.string().required('El nombre es obligatorio'),
+    nombre: yup.string().required('El nombre es obligatorio'),
     descripcion: yup.string().required('La descripción es obligatoria'),
-    idCategoria: yup.string().required('La categoría es obligatorio'),
+    idCategoria: yup.string().required('La categoría es obligatoria'),
     fechaPublicacion: yup
       .date()
       .required('La fecha de publicación es obligatoria')
@@ -38,16 +38,17 @@ const { errors, defineField, handleSubmit } = useForm({
         }
         return true
       })
-      .test('is-valid-type', 'El formato de la imagen no es valido', (value) => {
+      .test('is-valid-type', 'El formato de la imagen no es válido', (value) => {
         if (!isEdit.value && value) {
-          return isValidFileType(value && value.name.toLowerCase(), 'image')
+          return isValidFileType(value.name, 'image')
         }
         return true
       }),
+    estado: yup.string().required('El estado es obligatorio'),
   }),
 })
 
-const [titulo] = defineField('titulo', {
+const [nombre] = defineField('nombre', {
   validateOnModelUpdate: true,
 })
 
@@ -66,13 +67,16 @@ const [fechaPublicacion] = defineField('fechaPublicacion', {
 const [rutaImagen] = defineField('rutaImagen', {
   validateOnModelUpdate: true,
 })
+const [estado] = defineField('estado', { validateOnModelUpdate: true })
+
 
 const contactForm = reactive({
-  titulo: titulo,
+  nombre: nombre,
   descripcion: descripcion,
   idCategoria: idCategoria,
   fechaPublicacion: fechaPublicacion,
   rutaImagen: rutaImagen,
+  estado: estado,
 })
 
 const handleSubmitForm = handleSubmit((values: FormValues) => {
@@ -100,6 +104,8 @@ onMounted(async () => {
     })
   }
 })
+
+onMounted(async () => {})
 </script>
 
 <template>
@@ -112,22 +118,22 @@ onMounted(async () => {
       :config="{
         inputs: [
           {
-            label: 'Titulo',
-            placeholder: 'Título',
+            label: 'Nombre',
+            placeholder: 'Nombre',
             type: 'text',
             isRequired: true,
-            model: 'titulo',
+            model: 'nombre',
           },
           {
-            label: 'Descripcion',
+            label: 'Descripción',
             placeholder: 'Descripción',
             type: 'textarea',
             isRequired: true,
             model: 'descripcion',
           },
           {
-            label: 'Categoria',
-            placeholder: 'Categoria',
+            label: 'Categoría',
+            placeholder: 'Categoría',
             type: 'select',
             select: {
               data: categoriaStore.list,
@@ -135,12 +141,12 @@ onMounted(async () => {
               valueKey: 'id',
             },
             isRequired: true,
-            isDisabled: true, // esto segun sea creación o edición
+            isDisabled: isEdit,
             model: 'idCategoria',
           },
           {
-            label: 'Fecha Publicación',
-            placeholder: 'Fecha publicación',
+            label: 'Fecha de Publicación',
+            placeholder: 'Fecha de Publicación',
             type: 'date',
             isRequired: true,
             model: 'fechaPublicacion',
@@ -149,8 +155,23 @@ onMounted(async () => {
             label: 'Imagen',
             placeholder: 'Imagen',
             type: 'file',
-            isRequired: true,
+            isRequired: !isEdit,
             model: 'rutaImagen',
+          },
+          {
+            label: 'Estado',
+            placeholder: 'Estado',
+            type: 'select',
+            select: {
+              data: [
+                { nombre: 'Nuevo', id: '0' },
+                { nombre: 'Usado', id: '1' },
+              ],
+              paramKey: 'nombre',
+              valueKey: 'id',
+            },
+            isRequired: true,
+            model: 'estado',
           },
         ],
         titleButton: isEdit ? 'Editar' : 'Crear',

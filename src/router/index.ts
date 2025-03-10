@@ -130,14 +130,14 @@ const router = createRouter({
     {
       path: '/objeto/',
       name: 'mis objetos',
-      component: () => import('../views/private/Objeto/MisObjetoView.vue'),
+      component: () => import('../views/private/Objeto/ObjetoView.vue'),
       meta: {
         menu: true,
         title: 'Mis Objetos',
         isPrivate: true,
         isShared: false,
         icon: 'pi-book',
-        roles: ['Intercambiador'],
+        roles: ['Intercambiador', 'Administrador'],
       },
     },
     {
@@ -154,7 +154,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/objeto/crear/:id',
+      path: '/objeto/crear',
       name: 'crear objeto',
       component: () => import('../views/private/Objeto/CreateEditObjetoView.vue'),
       meta: {

@@ -100,6 +100,7 @@ export const useObjetoStore = defineStore('objeto', () => {
                 text: 'El registro fue eliminado.',
                 icon: 'success',
               })
+              await getAll()
               const idCategoria = route.params.id as string
               getAllByIdCategoria(idCategoria)
             })
