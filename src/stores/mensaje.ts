@@ -16,6 +16,11 @@ export const useMensajeStore = defineStore('mensaje', () => {
       const response = await service.getAll()
       list.value = await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAll del store mensaje: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -25,6 +30,11 @@ export const useMensajeStore = defineStore('mensaje', () => {
       const response = await service.getById(id)
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getById del store mensaje: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -44,6 +54,11 @@ export const useMensajeStore = defineStore('mensaje', () => {
       }
       list.value = await response.data
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdChat del store mensaje: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -63,6 +78,11 @@ export const useMensajeStore = defineStore('mensaje', () => {
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método create del store mensaje: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -82,6 +102,11 @@ export const useMensajeStore = defineStore('mensaje', () => {
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método update del store mensaje: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -119,6 +144,11 @@ export const useMensajeStore = defineStore('mensaje', () => {
         }
       })
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método deleteItem del store mensaje: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }

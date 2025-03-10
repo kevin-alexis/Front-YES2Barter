@@ -18,6 +18,11 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
       const response = await service.getAll()
       list.value = await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAll del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -27,6 +32,11 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
       const response = await service.GetAllByIdObjeto(id)
       list.value = await response.data
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdObjeto del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -46,6 +56,11 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método create del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -65,6 +80,11 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método update del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -103,6 +123,11 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
         }
       })
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método deleteItem del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -112,6 +137,11 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
       const response = await service.getById(id)
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getById del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }

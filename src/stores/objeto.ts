@@ -18,6 +18,11 @@ export const useObjetoStore = defineStore('objeto', () => {
       const response = await service.getAll()
       list.value = await response.data
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAll del store objeto: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -36,6 +41,25 @@ export const useObjetoStore = defineStore('objeto', () => {
         })
       }
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getByName del store objeto: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
+  async function getAllByIdUsuario(id: string) {
+    try {
+      const response = await service.GetAllByIdUsuario(id)
+      list.value = await response.data
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdUsuario del store objeto: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -45,6 +69,11 @@ export const useObjetoStore = defineStore('objeto', () => {
       const response = await service.GetAllByIdCategoria(id)
       list.value = await response.data
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdCategoria del store objeto: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -64,6 +93,11 @@ export const useObjetoStore = defineStore('objeto', () => {
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método create del store objeto: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -83,6 +117,11 @@ export const useObjetoStore = defineStore('objeto', () => {
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método update del store objeto: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -122,6 +161,11 @@ export const useObjetoStore = defineStore('objeto', () => {
         }
       })
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método deleteItem del store objeto: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -131,9 +175,14 @@ export const useObjetoStore = defineStore('objeto', () => {
       const response = await service.getById(id)
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getById del store objeto: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
 
-  return { list, getAll, getById, getByName, getAllByIdCategoria, deleteItem, create, update }
+  return { list, getAll, getById, getByName, getAllByIdUsuario, getAllByIdCategoria, deleteItem, create, update }
 })
