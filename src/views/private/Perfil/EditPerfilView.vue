@@ -2,18 +2,12 @@
 import BaseForm from '@/components/BaseForm.vue'
 import { useObjetoStore } from '@/stores/objeto'
 import { useCategoriaStore } from '@/stores/categoria'
-import { usePersonaStore } from '@/stores/persona'
 import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
-import { EstatusObjeto } from '@/common/enums/enums'
-import {enumFormat, formatDateToForm} from '@/utils/helper'
-
 const objetoStore = useObjetoStore()
 const categoriaStore = useCategoriaStore()
-const personaStore = usePersonaStore()
-const tipoEstadoList = Object.values(EstatusObjeto);
 
 const route = useRoute()
 const isEdit = ref(false)
@@ -27,13 +21,15 @@ function isValidFileType(fileName: string, fileType: string) {
   return fileName && validFileExtensions[fileType].includes(fileName.split('.').pop()?.toLowerCase() || '')
 }
 
-const { errors, defineField, handleSubmit } = useForm({
+const { errors, defineField, handleSubmit, setValues } = useForm({
   validationSchema: yup.object({
     nombre: yup.string().required('El nombre es obligatorio'),
     descripcion: yup.string().required('La descripción es obligatoria'),
     idCategoria: yup.string().required('La categoría es obligatoria'),
-    fechaPublicacion:  yup.date().required('La fecha de publicación es obligatoria')
-    .max(new Date().toISOString().split('T')[0], 'La fecha no puede ser posterior a hoy'),
+    fechaPublicacion: yup
+      .date()
+      .required('La fecha de publicación es obligatoria')
+      .max(new Date().toISOString().split('T')[0], 'La fecha no puede ser posterior a hoy'),
     rutaImagen: yup
       .mixed()
       .test('required-if-not-edit', 'La imagen es obligatoria', function (value) {
@@ -49,8 +45,6 @@ const { errors, defineField, handleSubmit } = useForm({
         return true
       }),
     estado: yup.string().required('El estado es obligatorio'),
-    idUsuario: yup.string().required('El usaurio es obligatorio'),
-
   }),
 })
 
@@ -73,10 +67,7 @@ const [fechaPublicacion] = defineField('fechaPublicacion', {
 const [rutaImagen] = defineField('rutaImagen', {
   validateOnModelUpdate: true,
 })
-
 const [estado] = defineField('estado', { validateOnModelUpdate: true })
-
-const [idUsuario] = defineField('idUsuario', { validateOnModelUpdate: true })
 
 
 const contactForm = reactive({
@@ -86,11 +77,9 @@ const contactForm = reactive({
   fechaPublicacion: fechaPublicacion,
   rutaImagen: rutaImagen,
   estado: estado,
-  idUsuario: idUsuario,
 })
 
 const handleSubmitForm = handleSubmit((values: FormValues) => {
-  console.log(values)
   //validaciones
   if (!isEdit.value) {
     objetoStore.create(values)
@@ -101,15 +90,12 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
 
 onMounted(async () => {
   await categoriaStore.getAll()
-  await personaStore.getAllPersonasIntercambiadores()
   isEdit.value = route.fullPath.includes('editar')
   id.value = route.params.id as string
   if (isEdit.value) {
     await objetoStore.getById(id.value).then((response) => {
-      console.log(response)
       Object.assign(contactForm, {
         ...response,
-        fechaPublicacion: formatDateToForm(response.fechaPublicacion)
       })
     })
   } else {
@@ -119,6 +105,7 @@ onMounted(async () => {
   }
 })
 
+onMounted(async () => {})
 </script>
 
 <template>
@@ -138,61 +125,24 @@ onMounted(async () => {
             model: 'nombre',
           },
           {
-            label: 'Descripción',
-            placeholder: 'Descripción',
+            label: 'Biografía',
+            placeholder: 'Biografia',
             type: 'textarea',
+            isRequired: true,
+            model: 'nombre',
+          },
+          {
+            label: 'Número de Teléfono',
+            type: 'number',
             isRequired: true,
             model: 'descripcion',
           },
           {
-            label: 'Categoría',
-            placeholder: 'Categoría',
-            type: 'select',
-            select: {
-              data: categoriaStore.list,
-              paramKey: 'nombre',
-              valueKey: 'id',
-            },
-            isRequired: true,
-            model: 'idCategoria',
-          },
-          {
-            label: 'Fecha de Publicación',
-            placeholder: 'Fecha de Publicación',
-            type: 'date',
-            isRequired: true,
-            model: 'fechaPublicacion',
-          },
-          {
-            label: 'Imagen',
+            label: 'Foto de Perfil',
             placeholder: 'Imagen',
             type: 'file',
             isRequired: !isEdit,
             model: 'rutaImagen',
-          },
-          {
-            label: 'Estado',
-            placeholder: 'Estado',
-            type: 'select',
-            select: {
-              data:enumFormat(tipoEstadoList),
-              paramKey: 'name',
-              valueKey: 'id',
-            },
-            isRequired: true,
-            model: 'estado',
-          },
-          {
-            label: 'Dueño',
-            placeholder: 'Usuario Dueño',
-            type: 'select',
-            select: {
-              data: personaStore.list,
-              paramKey: 'nombre',
-              valueKey: 'idUsuario',
-            },
-            isRequired: true,
-            model: 'idUsuario',
           },
         ],
         titleButton: isEdit ? 'Editar' : 'Crear',
@@ -201,7 +151,7 @@ onMounted(async () => {
     >
       <template #headerForm>
         <h1 class="text-[var(--primary)] text-3xl sm:text-4xl md:text-5xl font-bold text-center">
-          {{ isEdit ? 'Editar' : 'Crear' }} Objeto
+          Editar Perfil
         </h1>
       </template>
     </BaseForm>

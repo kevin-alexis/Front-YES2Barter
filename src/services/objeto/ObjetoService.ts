@@ -1,6 +1,6 @@
 import type { IObjeto } from '@/interfaces/objeto/IObjeto'
 import { BaseService } from '../BaseService'
-import { genericRequestAuthenticated, genericRequestFormData } from '@/utils/genericRequest'
+import { genericRequestAuthenticated, genericRequestFormDataAuthenticated } from '@/utils/genericRequest'
 
 export class ObjetoService extends BaseService<IObjeto> {
   private static nameController = 'Objeto'
@@ -61,7 +61,7 @@ export class ObjetoService extends BaseService<IObjeto> {
         }
       }
 
-      const response = await genericRequestFormData(`/Objeto/update-objeto/${id}`, 'PUT', formData)
+      const response = await genericRequestFormDataAuthenticated(`/Objeto/update-objeto/${id}`, 'PUT', formData)
       return response
     } catch (error) {
       this.logService.create({
@@ -83,7 +83,7 @@ export class ObjetoService extends BaseService<IObjeto> {
         }
       }
 
-      const response = await genericRequestFormData(`/Objeto/create-objeto/`, 'POST', formData)
+      const response = await genericRequestFormDataAuthenticated(`/Objeto/create-objeto/`, 'POST', formData)
       return response
     } catch (error) {
       this.logService.create({

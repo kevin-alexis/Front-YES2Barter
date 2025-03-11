@@ -10,23 +10,28 @@ import InputText from 'primevue/inputtext';
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import { useCategoriaStore } from '@/stores/categoria'
+import { EstatusObjeto } from '@/common/enums/enums'
+import { formatDateToView } from '@/utils/helper'
+import BaseModal from '@/components/BaseModal.vue'
 
 const loading = ref(true)
 const objetoStore = useObjetoStore()
 const categoriaStore = useCategoriaStore()
+const baseUrl = import.meta.env.VITE_APP_URL_API_SOURCE
+const tipoEstadoList = Object.values(EstatusObjeto);
+const srcImage = ref('')
+const isOpen = ref(false)
 
 onMounted(async () => {
   await categoriaStore.getAll()
   await objetoStore.getAll()
-
   objetoStore.list.forEach((obj) => {
     const categoria = categoriaStore.list.find((cat) => cat.id === obj.idCategoria)
     obj.categoria = categoria ? categoria.nombre : 'Sin categoría'
   })
-
   loading.value = false
-})
 
+})
 
 const filters = ref({
   nombre: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -37,22 +42,23 @@ const getSeverity = (status: boolean) => {
   return status ? 'danger' : 'success'
 }
 
-const getMessages = (status: boolean) => {
-  return status ? 'Usado' : 'Nuevo'
+function openModal(src: string) {
+  srcImage.value = baseUrl + src.replace('\\', '/')
+  isOpen.value = true
 }
 </script>
 
 <template>
+
   <div class="p-4">
     <div class="flex justify-end my-3">
       <RouterLink :to="{ name: 'crear objeto' }">
         <Button class="p-button-general" label="Agregar" icon="pi pi-plus" />
       </RouterLink>
     </div>
-
     <DataTable v-model:filters="filters" :value="objetoStore.list" paginator :rows="10" dataKey="id" :rowsPerPageOptions="[5,10,15]"
       :globalFilter="filters.nombre.value" :global-filter-fields="['nombre']"  paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-      currentPageReportTemplate="Mostrando de {first} a {last} de {totalRecords} categorías" :loading="loading">
+      currentPageReportTemplate="Mostrando de {first} a {last} de {totalRecords} objetos" :loading="loading">
       <template #header>
         <div class="flex justify-end">
                     <IconField>
@@ -81,7 +87,7 @@ const getMessages = (status: boolean) => {
       </Column>
 
       <Column field="fechaPublicacion" header="Fecha de Publicación">
-        <template #body="{ data }"> {{ new Date(data.fechaPublicacion).toLocaleDateString() }} </template>
+        <template #body="{ data }"> {{ formatDateToView(data.fechaPublicacion) }} </template>
       </Column>
 
 
@@ -93,27 +99,23 @@ const getMessages = (status: boolean) => {
 
       <Column field="rutaImagen" header="Imagen">
         <template #body="{ data }">
-          <img :src="data.rutaImagen || 'ruta_predeterminada_a_imagen'" alt="Imagen del objeto" class="w-16 h-16 object-cover rounded-md border" />
+          <img
+          @click="openModal(data.rutaImagen)"
+          :src="baseUrl + data.rutaImagen || 'ruta_predeterminada_a_imagen'"
+          :alt="data.nombre"
+          class="w-16 h-16 object-cover rounded-md border cursor-pointer" />
         </template>
       </Column>
 
       <Column field="estado" header="Estado">
         <template #body="{ data }">
-          <Tag :value="getMessages(data.estado)" :severity="getSeverity(data.estado)" />
+          <Tag :value="tipoEstadoList[data.estado]" :severity="getSeverity(data.estado)" />
         </template>
       </Column>
 
       <Column field="actions" header="Acciones" style="width: 10rem; text-align: center;">
         <template #body="{ data }">
           <div class="flex gap-2 justify-center">
-            <Button
-              icon="pi pi-list"
-              outlined
-              rounded
-              severity="info"
-              v-if="data.id"
-              @click="$router.push({ name: 'administrar objetos', params: { id: data.id } })"
-            />
             <Button
               icon="pi pi-pen-to-square"
               outlined
@@ -132,6 +134,10 @@ const getMessages = (status: boolean) => {
         </template>
       </Column>
     </DataTable>
+
+    <BaseModal v-model:open="isOpen" :isPDF="false">
+      <img :src="srcImage" class="h-full w-auto object-cover" />
+    </BaseModal>
   </div>
 </template>
 

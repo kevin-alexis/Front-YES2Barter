@@ -16,7 +16,7 @@ export const useObjetoStore = defineStore('objeto', () => {
   async function getAll() {
     try {
       const response = await service.getAll()
-      list.value = await response.data
+      list.value = await response
     } catch (error) {
       logService.create({
         nivel: 'Error',
@@ -31,7 +31,7 @@ export const useObjetoStore = defineStore('objeto', () => {
     try {
       const response = await service.GetByName(name)
       if (response.success) {
-        list.value = response.data 
+        list.value = response.data
       } else{
         list.value=[]
         Swal.fire({

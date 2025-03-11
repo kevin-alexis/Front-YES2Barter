@@ -1,12 +1,29 @@
 import { BaseService } from '../BaseService'
 import type { IPropuestaIntercambio } from '@/interfaces/propuestaIntercambio/IPropuestaIntercambio'
-import { genericRequestAuthenticated, genericRequestFormData } from '@/utils/genericRequest'
+import { genericRequestAuthenticated, genericRequestFormDataAuthenticated } from '@/utils/genericRequest'
 
 export class PropuestaIntercambioService extends BaseService<IPropuestaIntercambio> {
   private static nameController = 'PropuestaIntercambio'
 
   constructor() {
     super(PropuestaIntercambioService.nameController)
+  }
+
+  public getAllPropuestas = async () => {
+    try {
+      const response = await genericRequestAuthenticated(
+        `/PropuestaIntercambio/GetAllPropuestas/`,
+        'GET',
+      )
+      return response
+    } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método GetAllPropuestas: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
   }
 
   public GetAllByIdObjeto = async (id: string) => {
@@ -36,7 +53,7 @@ export class PropuestaIntercambioService extends BaseService<IPropuestaIntercamb
         }
       }
 
-      const response = await genericRequestFormData(
+      const response = await genericRequestFormDataAuthenticated(
         `/PropuestaIntercambio/update-propuesta-intercambio/${id}`,
         'PUT',
         formData,
@@ -62,7 +79,7 @@ export class PropuestaIntercambioService extends BaseService<IPropuestaIntercamb
         }
       }
 
-      const response = await genericRequestFormData(
+      const response = await genericRequestFormDataAuthenticated(
         `/PropuestaIntercambio/create-propuesta-intercambio/`,
         'POST',
         formData,
