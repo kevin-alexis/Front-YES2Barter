@@ -1,142 +1,113 @@
-<script setup>
-  import { ref, computed } from 'vue';
-  import Card from 'primevue/card';
-  import Button from 'primevue/button';
-  import Avatar from 'primevue/avatar';
-  import Rating from 'primevue/rating';
-  import Dropdown from 'primevue/dropdown';
-  
-  // Datos de ejemplo
-  const producto = ref({
-    nombre: 'Bicicleta de Montaña Trek',
-    foto: '/api/placeholder/600/400',
-    descripcion: 'Bicicleta de montaña semi-nueva en excelente estado. Incluye suspensión delantera, cambios Shimano de 21 velocidades y frenos de disco. Ideal para rutas de montaña y senderos.',
-    fecha: new Date(2024, 2, 5),
-    precio: 350,
-    vendedor: {
-      nombre: 'Carlos Ramírez',
-      avatar: '/api/placeholder/100/100',
-      biografia: 'Ciclista aficionado y entusiasta del deporte al aire libre. Vendo artículos deportivos en excelente estado y a precios accesibles.',
-      calificacion: 4
-    },
-    opciones: [
-      { nombre: 'Talla M - Color Rojo', valor: 'M-rojo', precio: 350 },
-      { nombre: 'Talla L - Color Negro', valor: 'L-negro', precio: 380 },
-      { nombre: 'Talla XL - Color Azul', valor: 'XL-azul', precio: 400 }
-    ]
-  });
-  
-  const opcionSeleccionada = ref(null);
-  
-  // Precio actualizado según la opción seleccionada
-  const precioActual = computed(() => {
-    return opcionSeleccionada.value ? opcionSeleccionada.value.precio : producto.value.precio;
-  });
-  
-  // Funciones de formato
-  const formatearFecha = (fecha) => {
-    return new Intl.DateTimeFormat('es-ES', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    }).format(fecha);
-  };
-  
-  const formatearPrecio = (precio) => {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(precio);
-  };
-  </script>
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import type { IObjeto } from '@/interfaces/objeto/IObjeto'
+import type { IUsuario } from '@/interfaces/usuario/IUsuario'
+
+const URL_API_SOURCE = import.meta.env.VITE_APP_URL_API_SOURCE
+
+// Props for the component
+const props = defineProps<{
+  objeto: IObjeto
+  vendedor: IUsuario
+}>()
+
+// For handling bid submission
+const ofertaActual = ref('')
+const isSubmitting = ref(false)
+
+// Function to submit a bid
+const enviarOferta = async () => {
+  if (!ofertaActual.value) return
+
+  isSubmitting.value = true
+  try {
+    // API call to submit bid would go here
+    console.log('Enviando oferta:', ofertaActual.value)
+    // Reset after submission
+    ofertaActual.value = ''
+  } catch (error) {
+    console.error('Error al enviar oferta:', error)
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+// Format date for display
+const fechaFormateada = computed(() => {
+  if (!props.objeto.fechaPublicacion) return ''
+
+  const fecha = new Date(props.objeto.fechaPublicacion)
+  return fecha.toLocaleDateString('es-ES')
+})
+</script>
+
 <template>
-    <div class="card">
-      <div class="grid">
-        <!-- Panel izquierdo -->
-        <div class="col-12 md:col-6 p-3">
-          <Card class="h-full">
-            <template #title>
-              <div class="text-2xl font-bold mb-3">{{ producto.nombre }}</div>
-            </template>
-            <template #content>
-              <div class="product-details">
-                <div class="mb-4">
-                  <img :src="producto.foto" :alt="producto.nombre" class="w-full rounded-md shadow-md" />
-                </div>
-                <div class="mb-4">
-                  <div class="font-bold mb-2">Descripción</div>
-                  <p>{{ producto.descripcion }}</p>
-                </div>
-                <div>
-                  <div class="font-bold mb-1">Fecha de publicación</div>
-                  <p>{{ formatearFecha(producto.fecha) }}</p>
-                </div>
-              </div>
-            </template>
-          </Card>
+  <div class="container mx-auto p-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Left column - Item details -->
+      <div class="flex flex-col">
+        <h1 class="text-2xl font-bold mb-4">{{ objeto.titulo }}</h1>
+
+        <div class="mb-6">
+          <img
+            :src="URL_API_SOURCE + objeto.rutaImagen"
+            :alt="objeto.titulo"
+            class="w-full h-80 object-cover rounded-lg shadow-md"
+          />
         </div>
-  
-        <!-- Panel derecho -->
-        <div class="col-12 md:col-6 p-3">
-          <Card class="h-full">
-            <template #content>
-              <div class="seller-info mb-4">
-                <div class="flex align-items-center mb-3">
-                  <Avatar :image="producto.vendedor.avatar" class="mr-3" size="large" shape="circle" />
-                  <div>
-                    <div class="text-xl font-bold">{{ producto.vendedor.nombre }}</div>
-                    <Rating v-model="producto.vendedor.calificacion" :cancel="false" readonly />
-                  </div>
-                </div>
-                <div class="biografía mb-4">
-                  <div class="font-bold mb-2">Biografía</div>
-                  <p>{{ producto.vendedor.biografia }}</p>
-                </div>
-              </div>
-  
-              <div class="options mb-4">
-                <div class="font-bold mb-2">Seleccione una opción</div>
-                <Dropdown
-                  v-model="opcionSeleccionada"
-                  :options="producto.opciones"
-                  optionLabel="nombre"
-                  placeholder="Seleccione variante"
-                  class="w-full"
-                />
-              </div>
-  
-              <div class="pricing mb-4">
-                <div class="flex justify-content-between align-items-center">
-                  <div class="font-bold text-lg">Precio:</div>
-                  <div class="text-2xl font-bold text-primary">{{ formatearPrecio(precioActual) }}</div>
-                </div>
-              </div>
-  
-              <div class="action-buttons">
-                <Button label="Hacer oferta" icon="pi pi-shopping-cart" class="w-full mb-2" />
-                <Button label="Añadir a favoritos" icon="pi pi-heart" class="w-full p-button-outlined" />
-              </div>
-            </template>
-          </Card>
+
+        <div class="mb-4">
+          <h2 class="text-xl font-semibold mb-2">Descripción</h2>
+          <p class="text-gray-700">{{ objeto.descripcion }}</p>
+        </div>
+
+        <div>
+          <h2 class="text-lg font-semibold mb-1">Fecha de publicación</h2>
+          <p class="text-gray-600">{{ fechaFormateada }}</p>
+        </div>
+      </div>
+
+      <!-- Right column - Seller info and bid form -->
+      <div class="flex flex-col">
+        <div class="bg-gray-50 p-4 rounded-lg mb-6">
+          <h2 class="text-xl font-semibold mb-3">Información del vendedor</h2>
+          <p class="font-bold mb-1">{{ vendedor.nombre }}</p>
+          <p class="text-gray-700 mb-4">{{ vendedor.biografia || 'Sin biografía' }}</p>
+
+          <div v-if="vendedor.otrosObjetos && vendedor.otrosObjetos.length > 0">
+            <h3 class="text-lg font-semibold mb-2">Otros objetos del vendedor</h3>
+            <select class="w-full p-2 border rounded-md">
+              <option disabled selected>Seleccionar objeto</option>
+              <option v-for="item in vendedor.otrosObjetos" :key="item.id" :value="item.id">
+                {{ item.titulo }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h2 class="text-xl font-semibold mb-3">Hacer oferta</h2>
+          <p class="mb-3">
+            Precio actual: <span class="font-bold">{{ objeto.precioActual || 'Sin ofertas' }}</span>
+          </p>
+
+          <div class="flex flex-col">
+            <input
+              v-model="ofertaActual"
+              type="number"
+              placeholder="Ingrese su oferta"
+              class="p-2 border rounded-md mb-3"
+            />
+            <button
+              @click="enviarOferta"
+              :disabled="isSubmitting || !ofertaActual"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md disabled:bg-gray-400"
+            >
+              {{ isSubmitting ? 'Enviando...' : 'Hacer oferta' }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </template>
-  
-  
-  
-  <style scoped>
-  .product-details p {
-    line-height: 1.5;
-    color: #495057;
-  }
-  
-  .biografía p {
-    font-size: 0.9rem;
-    color: #6c757d;
-  }
-  
-  .text-primary {
-    color: #3B82F6;
-  }
-  </style>
+  </div>
+</template>
