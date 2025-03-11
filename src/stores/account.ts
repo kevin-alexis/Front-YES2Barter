@@ -47,7 +47,9 @@ export const useAccountStore = defineStore('account', () => {
   async function getAll() {
     try {
       const response = await service.getAll()
+      console.log(response.data)
       list.value = await response.data
+      console.log(list.value)
     } catch (error) {
       logService.create({
         nivel: 'Error',
@@ -63,6 +65,7 @@ export const useAccountStore = defineStore('account', () => {
       await service.login(userData, rememberMe).then((response) => {
         if (response.success) {
           token.value = response.token
+          console.log(response)
           getUser()
           router.replace({ name: 'inicio' })
         } else {
@@ -81,6 +84,33 @@ export const useAccountStore = defineStore('account', () => {
       })
     }
   }
+
+  async function refreshToken() {
+    try {
+        const response = await service.refreshToken();
+
+        if (response?.token) {
+            token.value = response.token;
+            console.log('Token renovado:', response.token);
+
+            await getUser();
+            return response.token;
+        } else {
+            console.warn('No se pudo renovar el token.');
+            return null;
+        }
+    } catch (error) {
+        logService.create({
+            nivel: 'Error',
+            mensaje: `Error en el método refreshToken del store account: ${error.message}`,
+            excepcion: error.toString(),
+        });
+
+        console.error('Error al renovar el token:', error);
+        logOut();
+        return null;
+    }
+}
 
   function signIn(userData: IUser) {
     try {
@@ -134,30 +164,32 @@ export const useAccountStore = defineStore('account', () => {
     }
   }
 
-  function getUser() {
+  async function getUser() {
     if (token.value) {
-      try {
-        if (isTokenExpired()) {
-          logOut()
-          return
+        try {
+            if (isTokenExpired()) {
+                const refreshed = await refreshToken();
+                if (!refreshed) {
+                    logOut();
+                    return;
+                }
+            }
+            user.value = jwtDecode(token.value);
+            console.error(user.value);
+        } catch (error) {
+            logService.create({
+                nivel: 'Error',
+                mensaje: `Error en el método getUser del store account: ${error.message}`,
+                excepcion: error.toString(),
+            });
+            console.error('Invalid token:', error);
+            logOut();
         }
-        user.value = jwtDecode(token.value)
-        console.error(user.value)
-      } catch (error) {
-        logService.create({
-          nivel: 'Error',
-          mensaje: `Error en el método getUser del store account: ${error.message}`,
-          excepcion: error.toString(),
-        })
-        console.error('Invalid token:', error)
-        token.value = ''
-        logOut()
-        // return false
-      }
     }
-  }
+}
 
-  // Todo: esto es para el crud de usaurios
+
+  // Todo: esto es para el crud de usaurios 
 
   async function deleteItem(id: number) {
     try {
@@ -265,5 +297,6 @@ export const useAccountStore = defineStore('account', () => {
     getAllRoles,
     listRoles,
     update,
+    refreshToken,
   }
 })
