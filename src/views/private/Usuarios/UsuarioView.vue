@@ -106,22 +106,16 @@ const filters = ref({
     <template #body="{ data }">
       <div class="flex gap-2 justify-center">
       <Button
-        icon="pi pi-list"
-        outlined rounded
-        severity="info"
-        @click="$router.push({ name: 'Administrar Usuario', params: { id: data.id } })"
-      />
-      <Button
         icon="pi pi-pen-to-square"
         outlined rounded
         severity="success"
-        @click="$router.push({ name: 'editar usuario', params: { id: data.id } })"
+        @click="$router.push({ name: 'editar usuario', params: { idPersona: data.idPersona } })"
       />
       <Button
         icon="pi pi-trash"
         outlined rounded
         severity="danger"
-        @click="() => accountStore.deleteItem(data.id)"
+        @click="() => accountStore.deleteItem(data.idPersona)"
       />
     </div>
     </template>
