@@ -7,9 +7,11 @@ import { FilterMatchMode } from '@primevue/core/api'
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
+import Image from 'primevue/image'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import { useCategoriaStore } from '@/stores/categoria'
+const URL_API_SOURCE = import.meta.env.VITE_APP_URL_API_SOURCE
 
 const loading = ref(true)
 const objetoStore = useObjetoStore()
@@ -93,7 +95,8 @@ const getMessages = (status: boolean) => {
 
       <Column field="rutaImagen" header="Imagen">
         <template #body="{ data }">
-          <img :src="data.rutaImagen || 'ruta_predeterminada_a_imagen'" alt="Imagen del objeto" class="w-16 h-16 object-cover rounded-md border" />
+          {{ console.log(data.rutaImagen) }}
+          <Image :src="URL_API_SOURCE + data.rutaImagen || 'ruta_predeterminada_a_imagen'" alt="Image" width="40"  preview />
         </template>
       </Column>
 
