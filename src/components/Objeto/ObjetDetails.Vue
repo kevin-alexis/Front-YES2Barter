@@ -1,15 +1,34 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, withDefaults } from 'vue'
 import type { IObjeto } from '@/interfaces/objeto/IObjeto'
-import type { IUsuario } from '@/interfaces/usuario/IUsuario'
+import type { IUsuario } from '@/interfaces/usuario/IUsuario.'
 
 const URL_API_SOURCE = import.meta.env.VITE_APP_URL_API_SOURCE
 
 // Props for the component
-const props = defineProps<{
-  objeto: IObjeto
-  vendedor: IUsuario
-}>()
+const props = withDefaults(
+  defineProps<{
+    objeto: IObjeto
+    vendedor: IUsuario
+  }>(),
+  {
+    objeto: () => ({
+      nombre: 'Objeto de prueba',
+      descripcion: 'Esta es una descripción de prueba para que se use algo.',
+      fechaPublicacion: '2023-10-01',
+      rutaImagen: 'https://www.centroeleia.edu.mx/blog/wp-content/uploads/2017/10/objeto-transicional.jpg',
+      precio: 100,
+    }),
+    vendedor: () => ({
+      nombre: 'Vendedor de prueba',
+      biografia: 'Esta es una biografía de prueba.',
+      otrosObjetos: [
+        { id: 1, nombre: 'Objeto 1' },
+        { id: 2, nombre: 'Objeto 2' },
+      ],
+    }),
+  },
+)
 
 // For handling bid submission
 const ofertaActual = ref('')
@@ -46,12 +65,12 @@ const fechaFormateada = computed(() => {
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <!-- Left column - Item details -->
       <div class="flex flex-col">
-        <h1 class="text-2xl font-bold mb-4">{{ objeto.titulo }}</h1>
+        <h1 class="text-2xl font-bold mb-4">{{ objeto.nombre }}</h1>
 
         <div class="mb-6">
           <img
             :src="URL_API_SOURCE + objeto.rutaImagen"
-            :alt="objeto.titulo"
+            :alt="objeto.nombre"
             class="w-full h-80 object-cover rounded-lg shadow-md"
           />
         </div>
@@ -79,7 +98,7 @@ const fechaFormateada = computed(() => {
             <select class="w-full p-2 border rounded-md">
               <option disabled selected>Seleccionar objeto</option>
               <option v-for="item in vendedor.otrosObjetos" :key="item.id" :value="item.id">
-                {{ item.titulo }}
+                {{ item.nombre }}
               </option>
             </select>
           </div>
@@ -88,7 +107,7 @@ const fechaFormateada = computed(() => {
         <div class="bg-gray-50 p-4 rounded-lg">
           <h2 class="text-xl font-semibold mb-3">Hacer oferta</h2>
           <p class="mb-3">
-            Precio actual: <span class="font-bold">{{ objeto.precioActual || 'Sin ofertas' }}</span>
+            Precio actual: <span class="font-bold">{{ objeto.precio || 'Sin ofertas' }}</span>
           </p>
 
           <div class="flex flex-col">
