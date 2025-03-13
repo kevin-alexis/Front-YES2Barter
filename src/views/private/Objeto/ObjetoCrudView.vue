@@ -12,8 +12,7 @@ import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import { useCategoriaStore } from '@/stores/categoria'
 import { EstatusObjeto } from '@/common/enums/enums'
-// import { formatDateToView } from '@/utils/helper'
-// import BaseModal from '@/components/BaseModal.vue'
+import { formatDateToView } from '@/utils/helper'
 const URL_API_SOURCE = import.meta.env.VITE_APP_URL_API_SOURCE
 
 const loading = ref(true)
@@ -51,7 +50,6 @@ function openModal(src: string) {
 </script>
 
 <template>
-
   <div class="p-4">
     <div class="flex justify-end my-3">
       <RouterLink :to="{ name: 'crear objeto' }">
@@ -101,13 +99,10 @@ function openModal(src: string) {
 
       <Column field="rutaImagen" header="Imagen">
         <template #body="{ data }">
-          <!-- <img
-          @click="openModal(data.rutaImagen)"
-          :src="baseUrl + data.rutaImagen || 'ruta_predeterminada_a_imagen'"
-          :alt="data.nombre"
-          class="w-16 h-16 object-cover rounded-md cursor-pointer" /> -->
-          {{ console.log(data.rutaImagen) }}
-          <Image :src="URL_API_SOURCE + data.rutaImagen || 'ruta_predeterminada_a_imagen'" alt="Image" width="40"  preview />
+          <Image :src="URL_API_SOURCE + data.rutaImagen || 'ruta_predeterminada_a_imagen'"
+          alt="Image"
+          width="80"
+          preview />
         </template>
       </Column>
 
@@ -138,10 +133,5 @@ function openModal(src: string) {
         </template>
       </Column>
     </DataTable>
-
-    <BaseModal v-model:open="isOpen" :isPDF="false">
-      <img :src="srcImage" class="h-full w-auto object-cover" />
-    </BaseModal>
   </div>
 </template>
-
