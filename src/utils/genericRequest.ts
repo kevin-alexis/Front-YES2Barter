@@ -3,41 +3,56 @@ import { useAccountStore } from '@/stores/account';
 
 const baseUrl = import.meta.env.VITE_APP_URL_API;
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
   baseURL: baseUrl,
-  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
-axiosInstance.interceptors.request.use((config) => {
-  const accountStore = useAccountStore();
-  if (accountStore.token) {
-      config.headers.Authorization = `Bearer ${accountStore.token}`;
-  }
-  return config;
-});
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
 
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-      const accountStore = useAccountStore();
+    const originalRequest = error.config;
+    const accountStore = useAccountStore();
 
-      if (error.response?.status === 401) {
-          console.warn('Token expirado, intentando renovar...');
-
-          const newToken = await accountStore.refreshToken();
-
-          if (newToken) {
-              error.config.headers.Authorization = `Bearer ${newToken}`;
-              return axiosInstance(error.config);
-          } else {
-              accountStore.logOut();
-          }
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (originalRequest.url.includes('/Account/refreshToken')) {
+        return Promise.reject(error);
+      }
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          refreshSubscribers.push((token: string) => {
+            originalRequest.headers['Authorization'] = `Bearer ${token}`;
+            resolve(axiosInstance(originalRequest));
+          });
+        });
       }
 
-      return Promise.reject(error);
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const newToken = await accountStore.refreshToken();
+        refreshSubscribers.forEach((callback) => callback(newToken));
+        refreshSubscribers = [];
+        isRefreshing = false;
+        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        isRefreshing = false;
+        refreshSubscribers = [];
+        if (refreshError.response?.status === 403) {
+          accountStore.logOut();
+        }
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
   }
 );
 
@@ -71,23 +86,21 @@ export const genericRequestFormData = async (url, method, formData) => {
 };
 
 export const genericRequestAuthenticated = async (url, method, body?) => {
+
   try {
-      const accountStore = useAccountStore();
+    const response = await axiosInstance({
+      url,
+      method: method.toUpperCase(),
+      data: method.toLowerCase() !== 'get' ? body : undefined,
+      withCredentials: true,
+    });
 
-      const response = await axiosInstance({
-          url,
-          method: method.toUpperCase(),
-          data: method.toLowerCase() !== 'get' ? body : undefined,
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-              Authorization: `Bearer ${accountStore.token}`,
-          }
-      });
-
-      return response.data;
+    return response.data;
   } catch (error) {
-      throw new Error(`Error en la solicitud: ${error.response?.data || error.message}`);
+    if (error.response?.status === 401) {
+      console.warn('Sesión expirada. Redirigiendo a login...');
+    }
+    console.error(`Error en la solicitud a ${url}:`, error.response?.data || error.message);
+    throw new Error(error.response?.data || error.message);
   }
 };
-

@@ -2,7 +2,6 @@ import type { IAccount, IUser } from '@/interfaces/account/IAccount'
 import { BaseService } from '../BaseService'
 import { genericRequest, genericRequestAuthenticated } from '@/utils/genericRequest'
 import { useAccountStore } from '@/stores/account'
-import { LogService } from '../log/LogService'
 
 export class AccountService extends BaseService<IAccount> {
   private static nameController = 'Account'
@@ -30,28 +29,17 @@ export class AccountService extends BaseService<IAccount> {
 
   public async refreshToken() {
     try {
-        const response = await genericRequestAuthenticated('/Account/refreshToken', 'POST');
+      console.log('Solicitando refreshToken...');
 
-        if (response?.token) {
-            const accountStore = useAccountStore();
-            accountStore.token = response.token;
-            console.log('Token renovado:', response.token);
-            return response.token;
-        } else {
-            console.warn('No se pudo renovar el token.');
-            return null;
-        }
+      await genericRequestAuthenticated('/Account/refreshToken', 'POST', {});
+      // console.log('Token renovado correctamente.');
+      return true;
     } catch (error) {
-        const logService = new LogService();
-        logService.create({
-            nivel: 'Error',
-            mensaje: `Error en el método refreshToken del store account: ${error.message}`,
-            excepcion: error.toString(),
-        });
-        console.error('Error al renovar el token:', error);
-        return null;
+      console.error(`Error en refreshToken: ${error.message}`);
+      return false;
     }
-}
+  }
+
 
   public getAll = async () => {
     try {
@@ -82,4 +70,30 @@ export class AccountService extends BaseService<IAccount> {
       console.error(error)
     }
   }
+
+  public async getCurrentUser() {
+    try {
+      const response = await genericRequestAuthenticated('/Account/currentUser', 'GET');
+
+      if (response?.success && response.data) {
+        return response.data;
+      }
+      return null;
+
+    } catch (error: any) {
+      console.error('Error obteniendo usuario:', error?.message ?? error);
+      return null;
+    }
+  }
+
+
+  public async logout() {
+    try {
+      return await genericRequest('/Account/logout', 'POST');
+    } catch (error) {
+      console.error('Error en logout:', error.message);
+      throw error;
+    }
+  }
+
 }
