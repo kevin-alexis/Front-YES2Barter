@@ -7,12 +7,14 @@ import { FilterMatchMode } from '@primevue/core/api'
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
+import Image from 'primevue/image'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import { useCategoriaStore } from '@/stores/categoria'
 import { EstatusObjeto } from '@/common/enums/enums'
-import { formatDateToView } from '@/utils/helper'
-import BaseModal from '@/components/BaseModal.vue'
+// import { formatDateToView } from '@/utils/helper'
+// import BaseModal from '@/components/BaseModal.vue'
+const URL_API_SOURCE = import.meta.env.VITE_APP_URL_API_SOURCE
 
 const loading = ref(true)
 const objetoStore = useObjetoStore()
@@ -99,11 +101,13 @@ function openModal(src: string) {
 
       <Column field="rutaImagen" header="Imagen">
         <template #body="{ data }">
-          <img
+          <!-- <img
           @click="openModal(data.rutaImagen)"
           :src="baseUrl + data.rutaImagen || 'ruta_predeterminada_a_imagen'"
           :alt="data.nombre"
-          class="w-16 h-16 object-cover rounded-md cursor-pointer" />
+          class="w-16 h-16 object-cover rounded-md cursor-pointer" /> -->
+          {{ console.log(data.rutaImagen) }}
+          <Image :src="URL_API_SOURCE + data.rutaImagen || 'ruta_predeterminada_a_imagen'" alt="Image" width="40"  preview />
         </template>
       </Column>
 
