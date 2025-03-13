@@ -103,7 +103,7 @@ function openModal(src: string) {
           @click="openModal(data.rutaImagen)"
           :src="baseUrl + data.rutaImagen || 'ruta_predeterminada_a_imagen'"
           :alt="data.nombre"
-          class="w-16 h-16 object-cover rounded-md border cursor-pointer" />
+          class="w-16 h-16 object-cover rounded-md cursor-pointer" />
         </template>
       </Column>
 

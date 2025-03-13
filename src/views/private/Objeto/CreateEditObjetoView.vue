@@ -114,7 +114,6 @@ onMounted(async () => {
     })
   } else {
     Object.assign(contactForm, {
-      idCategoria: id.value,
     })
   }
 })

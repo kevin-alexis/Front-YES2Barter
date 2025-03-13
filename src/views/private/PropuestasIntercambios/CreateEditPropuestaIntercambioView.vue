@@ -2,15 +2,33 @@
 import BaseForm from '@/components/BaseForm.vue'
 import { usePropuestaIntercambioStore } from '@/stores/propuestaIntercambio'
 import { useObjetoStore } from '@/stores/objeto'
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
+import { EstatusPropuestaIntercambio } from '@/common/enums/enums'
+import { enumFormat } from '@/utils/helper'
 
 const propuestaIntercambioStore = usePropuestaIntercambioStore()
 const objetoStore = useObjetoStore()
 const isEdit = ref(false)
 const id = ref('')
+const tipoEstadoList = Object.values(EstatusPropuestaIntercambio);
+const objetoSolicitado = computed(() => {
+  const objetoOfertado = objetoStore.list.find(item =>{
+    return item.id == idObjetoOfertado.value
+  });
+
+  const idUsuarioOfertado = objetoOfertado ? objetoOfertado.idUsuario : null;
+
+  if(objetoOfertado && !isEdit){
+    idObjetoSolicitado.value = null;
+  }
+
+  return objetoStore.list.filter(item => item.idUsuario !== idUsuarioOfertado);
+});
+
+
 
 const route = useRoute()
 
@@ -21,8 +39,7 @@ const { errors, defineField, handleSubmit } = useForm({
     .string()
     .notOneOf([yup.ref('idObjetoOfertado')], 'Los objetos no pueden ser los mismo')
     .required('El objeto solicitado es obligatorio'),
-    confirmarPassword: yup
-      .string()
+    estado: yup.string().required('El estado es obligatorio'),
   }),
 })
 
@@ -34,9 +51,12 @@ const [idObjetoSolicitado] = defineField('idObjetoSolicitado', {
   validateOnModelUpdate: true,
 })
 
+const [estado] = defineField('estado', { validateOnModelUpdate: true })
+
 const dataForm = reactive({
   idObjetoOfertado: idObjetoOfertado,
   idObjetoSolicitado: idObjetoSolicitado,
+  estado: estado
 })
 
 const handleSubmitForm = handleSubmit((values: FormValues) => {
@@ -63,6 +83,7 @@ onMounted(async () => {
       idObjeto: id.value,
     })
   }
+
 })
 </script>
 
@@ -92,12 +113,24 @@ onMounted(async () => {
             placeholder: 'Objeto',
             type: 'select',
             select: {
-              data: objetoStore.list,
+              data: objetoSolicitado,
               paramKey: 'nombre',
               valueKey: 'id',
             },
             isRequired: isEdit,
             model: 'idObjetoSolicitado',
+          },
+          {
+            label: 'Estatus',
+            placeholder: 'Estatus de la propuesta',
+            type: 'select',
+            select: {
+              data: enumFormat(tipoEstadoList),
+              paramKey: 'name',
+              valueKey: 'id',
+            },
+            isRequired: isEdit,
+            model: 'estado',
           },
         ],
         titleButton: isEdit ? 'Editar' : 'Crear',

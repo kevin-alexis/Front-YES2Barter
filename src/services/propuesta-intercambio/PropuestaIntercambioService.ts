@@ -43,46 +43,12 @@ export class PropuestaIntercambioService extends BaseService<IPropuestaIntercamb
     }
   }
 
-  public updatePropuestaIntercambio = async (id: string, body: any) => {
-    try {
-      const formData = new FormData()
-
-      for (const key in body) {
-        if (body.hasOwnProperty(key)) {
-          formData.append(key, body[key])
-        }
-      }
-
-      const response = await genericRequestFormDataAuthenticated(
-        `/PropuestaIntercambio/update-propuesta-intercambio/${id}`,
-        'PUT',
-        formData,
-      )
-      return response
-    } catch (error) {
-      this.logService.create({
-        nivel: 'Error',
-        mensaje: `Error en el método updatePropuestaIntercambio: ${error.message}`,
-        excepcion: error.toString(),
-      })
-      console.error('Error al actualizar el capítulo:', error)
-    }
-  }
-
   public createPropuestaIntercambio = async (body: any) => {
     try {
-      const formData = new FormData()
-
-      for (const key in body) {
-        if (body.hasOwnProperty(key)) {
-          formData.append(key, body[key])
-        }
-      }
-
-      const response = await genericRequestFormDataAuthenticated(
-        `/PropuestaIntercambio/create-propuesta-intercambio/`,
+      const response = await genericRequestAuthenticated(
+        `/PropuestaIntercambio/CreatePropuestaIntercambio/`,
         'POST',
-        formData,
+        body
       )
       return response
     } catch (error) {
@@ -91,7 +57,44 @@ export class PropuestaIntercambioService extends BaseService<IPropuestaIntercamb
         mensaje: `Error en el método createPropuestaIntercambio: ${error.message}`,
         excepcion: error.toString(),
       })
-      console.error('Error al crear el capítulo:', error)
+      console.error(error)
     }
   }
+
+
+  public updatePropuestaIntercambio = async (id: number, body: any) => {
+    try {
+      const response = await genericRequestAuthenticated(
+        `/PropuestaIntercambio/UpdatePropuestaIntercambio/${id}`,
+        'PUT',
+        body
+      )
+      return response
+    } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método updatePropuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
+  public deletePropuestaIntercambio = async (id: number) => {
+    try {
+      const response = await genericRequestAuthenticated(
+        `/PropuestaIntercambio/DeletePropuestaIntercambio/${id}`,
+        'DELETE'
+      )
+      return response
+    } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método deletePropuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
 }

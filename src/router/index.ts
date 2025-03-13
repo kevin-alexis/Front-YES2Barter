@@ -60,35 +60,6 @@ const router = createRouter({
       },
     },
     {
-      path: '/chat',
-      name: 'chat',
-      component: () => import('../views/private/Mensajes/MensajeView.vue'),
-      meta: {
-        menu: true,
-        title: 'Chat',
-        isPrivate: true,
-        isShared: false,
-        icon: 'pi-comments',
-        roles: ['Intercambiador'],
-      },
-      children: [
-        {
-          path: ':id',
-          name: 'chat detalles',
-          component: () => import('../views/private/Mensajes/MensajeDetalle.vue'),
-          meta: {
-            menu: false,
-            title: 'Chat',
-            isPrivate: true,
-            isShared: false,
-            icon: 'pi-comments',
-            roles: ['Intercambiador'],
-          },
-        },
-      ],
-    },
-
-    {
       path: '/categoria',
       name: 'administrar categorias',
       component: () => import('../views/private/Categorias/CategoriaView.vue'),
@@ -193,6 +164,34 @@ const router = createRouter({
       },
     },
     {
+      path: '/chat',
+      name: 'chat',
+      component: () => import('../views/private/Mensajes/MensajeView.vue'),
+      meta: {
+        menu: true,
+        title: 'Chat',
+        isPrivate: true,
+        isShared: false,
+        icon: 'pi-comments',
+        roles: ['Intercambiador'],
+      },
+      children: [
+        {
+          path: ':id',
+          name: 'chat detalles',
+          component: () => import('../views/private/Mensajes/MensajeDetalle.vue'),
+          meta: {
+            menu: false,
+            title: 'Chat',
+            isPrivate: true,
+            isShared: false,
+            icon: 'pi-comments',
+            roles: ['Intercambiador'],
+          },
+        },
+      ],
+    },
+    {
       path: '/propuesta-intercambio/',
       name: 'administrar propuestas intercambios',
       component: () =>
@@ -203,7 +202,7 @@ const router = createRouter({
         isPrivate: true,
         isShared: false,
         icon: 'pi-book',
-        roles: ['Administrador', 'Intercambiador'],
+        roles: ['Administrador'],
       },
     },
     {

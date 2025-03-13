@@ -58,15 +58,26 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
   async function create(item: any) {
     try {
       const response = await service.createPropuestaIntercambio(item).then((response) => {
-        Swal.fire({
-          title: '¡Éxito!',
-          text: 'La propuesta de intercambio ha sido añadida exitosamente a la lista.',
-          icon: 'success',
-          confirmButtonText: 'Ok',
-          confirmButtonColor: '#6C6DE7',
-        }).then(() => {
-          router.back()
-        })
+        if(response.success){
+            Swal.fire({
+              title: '¡Éxito!',
+              text: response.message,
+              icon: 'success',
+              confirmButtonText: 'Ok',
+              confirmButtonColor: '#6C6DE7',
+            }).then(() => {
+              router.back()
+          })
+        }else{
+          Swal.fire({
+            title: 'Error!',
+            text: response.message,
+            icon: 'error',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#6C6DE7',
+          })
+        }
+
       })
       return await response
     } catch (error) {
@@ -79,18 +90,29 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
     }
   }
 
-  async function update(id: string, item: any) {
+  async function update(id: number, item: any) {
     try {
-      const response = await service.updatePropuestaIntercambio(id, item).then(() => {
-        Swal.fire({
-          title: '¡Éxito!',
-          text: 'La propuesta de intercambio ha sido editada exitosamente.',
-          icon: 'success',
-          confirmButtonText: 'Ok',
-          confirmButtonColor: '#6C6DE7',
-        }).then(() => {
-          router.back()
-        })
+      const response = await service.updatePropuestaIntercambio(id, item).then((response) => {
+        if(response.success){
+          Swal.fire({
+            title: '¡Éxito!',
+            text: response.message,
+            icon: 'success',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#6C6DE7',
+          }).then(() => {
+            router.back()
+          })
+        }else{
+          Swal.fire({
+            title: 'Error',
+            text: response.message,
+            icon: 'error',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#6C6DE7',
+          })
+        }
+
       })
       return await response
     } catch (error) {
@@ -117,15 +139,14 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
       }).then(async (result) => {
         if (result.isConfirmed) {
           await service
-            .delete(id)
+            .deletePropuestaIntercambio(id)
             .then(async () => {
               Swal.fire({
                 title: 'Eliminar!',
                 text: 'El registro fue eliminado.',
                 icon: 'success',
               })
-              const idObjeto = route.params.id as string
-              await getAllByIdObjeto(idObjeto)
+              await getAllPropuestas()
             })
             .catch((error) => {
               Swal.fire({
