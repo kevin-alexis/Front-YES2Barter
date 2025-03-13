@@ -90,10 +90,13 @@ const getMessages = (status: boolean) => {
       }"
     /> -->
     <div class="flex justify-end my-3">
-      <Button class="p-button-general" label="Agregar" icon="pi pi-plus"/>
+      <RouterLink :to="{ name: 'crear categoria' }">
+        <Button class="p-button-general" label="Agregar" icon="pi pi-plus" />
+      </RouterLink>
     </div>
     <DataTable v-model:filters="filters" :value="categoriaStore.list" paginator :rows="10" dataKey="id" :rowsPerPageOptions="[5,10,15]"
-      :globalFilter="filters.nombre.value" :global-filter-fields="['nombre']">
+      :globalFilter="filters.nombre.value" :global-filter-fields="['nombre']"  paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+      currentPageReportTemplate="Mostrando de {first} a {last} de {totalRecords} categorías" :loading="loading">
       <template #header>
         <div class="flex justify-end">
                     <IconField>
@@ -105,8 +108,8 @@ const getMessages = (status: boolean) => {
                 </div>
       </template>
       <template #empty>Sin categorías encontradas</template>
-      <template #loading>Cargando categorías</template>
-      <Column field="id" header="ID">
+      <template #loading><i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i></template>
+      <Column field="id" header="No.">
         <template #body="{ data }">
                     {{ data.id }}
                 </template>
@@ -119,11 +122,39 @@ const getMessages = (status: boolean) => {
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Buscar por nombre" />
                 </template>
       </Column>
-      <Column field="esBorrado" header="Estado">
-        <template #body="{ data }">
+      <!-- <Column field="esBorrado" header="Estado">
+          <template #body="{ data }">
                     <Tag :value="getMessages(data.esBorrado)" :severity="getSeverity(data.esBorrado)" />
-                </template>
-      </Column>
+          </template>
+      </Column> -->
+  <Column field="actions" header="Acciones" style="width: 10rem; text-align: center;">
+    <template #body="{ data }">
+      <div class="flex gap-2 justify-center">
+      <Button
+        icon="pi pi-list"
+        outlined rounded
+        severity="info"
+        v-tooltip.top="{ value: 'Administrar', showDelay: 100, hideDelay: 300, }"
+        @click="$router.push({ name: 'administrar objetos', params: { id: data.id } })"
+      />
+      <Button
+        icon="pi pi-pen-to-square"
+        outlined rounded
+        severity="success"
+        v-tooltip.top="{ value: 'Editar', showDelay: 100, hideDelay: 300, }"
+        @click="$router.push({ name: 'editar categoria', params: { id: data.id } })"
+      />
+      <Button
+        icon="pi pi-trash"
+        outlined rounded
+        severity="danger"
+        v-tooltip.top="{ value: 'Eliminar', showDelay: 100, hideDelay: 300, }"
+        @click="() => categoriaStore.deleteItem(data.id)"
+      />
+    </div>
+    </template>
+</Column>
+
     </DataTable>
   </div>
 </template>

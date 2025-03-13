@@ -12,7 +12,9 @@ export class AccountService extends BaseService<IAccount> {
   public login = async (user: IUser, rememberMe: boolean) => {
     try {
       const userData = { ...user, rememberMe }
-      const response = await genericRequest('/Account/login', 'POST', userData)
+      const response = await genericRequest('/Account/login', 'POST', userData, {
+        withCredentials: true,
+      })
       return response
     } catch (error) {
       this.logService.create({
@@ -26,7 +28,9 @@ export class AccountService extends BaseService<IAccount> {
 
   public getAll = async () => {
     try {
-      const response = await genericRequestAuthenticated('/Account/GetAllAccounts', 'GET')
+      const response = await genericRequestAuthenticated('/Account/GetAllAccounts', 'GET', {
+        withCredentials: true,
+      })
       return response
     } catch (error) {
       this.logService.create({

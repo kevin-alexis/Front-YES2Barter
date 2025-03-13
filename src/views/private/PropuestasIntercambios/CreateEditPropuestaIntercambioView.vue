@@ -2,71 +2,61 @@
 import BaseForm from '@/components/BaseForm.vue'
 import { usePropuestaIntercambioStore } from '@/stores/propuestaIntercambio'
 import { useObjetoStore } from '@/stores/objeto'
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
+import { EstatusPropuestaIntercambio } from '@/common/enums/enums'
+import { enumFormat } from '@/utils/helper'
 
 const propuestaIntercambioStore = usePropuestaIntercambioStore()
 const objetoStore = useObjetoStore()
 const isEdit = ref(false)
 const id = ref('')
+const tipoEstadoList = Object.values(EstatusPropuestaIntercambio);
+const objetoSolicitado = computed(() => {
+  const objetoOfertado = objetoStore.list.find(item =>{
+    return item.id == idObjetoOfertado.value
+  });
+
+  const idUsuarioOfertado = objetoOfertado ? objetoOfertado.idUsuario : null;
+
+  if(objetoOfertado && !isEdit){
+    idObjetoSolicitado.value = null;
+  }
+
+  return objetoStore.list.filter(item => item.idUsuario !== idUsuarioOfertado);
+});
+
+
 
 const route = useRoute()
 
-const validFileExtensions = { document: ['pdf'] }
-
-function isValidFileType(fileName, fileType) {
-  return fileName && validFileExtensions[fileType].indexOf(fileName.split('.').pop()) > -1
-}
-
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
-    numeroCapitulo: yup
-      .number()
-      .typeError('El número del capítulo debe ser válido')
-      .required('El número de capítulo es obligatorio'),
-    rutaPDF: yup
-      .mixed()
-      .required('El documento es obligatorio')
-      .test('required-if-not-edit', 'El documento es obligatorio', function (value) {
-        if (!isEdit.value && !value) {
-          return this.createError({ message: 'El documento es obligatorio' })
-        }
-        return true
-      })
-      .test('is-valid-type', 'No es un tipo de archivo válido', (value) => {
-        if (!isEdit.value && value) {
-          return isValidFileType(value && value.name.toLowerCase(), 'document')
-        }
-        return true
-      }),
-    // .test('is-valid-size', 'El tamaño máximo permitido es 100KB', (value) => {
-    //   if (!isEdit.value && value) {
-    //     return value.size <= 102400;
-    //   }
-    //   return true;
-    // }),
-    idObjeto: yup.string(),
+    idObjetoOfertado: yup.string().required('El objeto ofertado es obligatorio'),
+    idObjetoSolicitado: yup
+    .string()
+    .notOneOf([yup.ref('idObjetoOfertado')], 'Los objetos no pueden ser los mismo')
+    .required('El objeto solicitado es obligatorio'),
+    estado: yup.string().required('El estado es obligatorio'),
   }),
 })
 
-const [numeroCapitulo] = defineField('numeroCapitulo', {
+const [idObjetoOfertado] = defineField('idObjetoOfertado', {
   validateOnModelUpdate: true,
 })
 
-const [rutaPDF] = defineField('rutaPDF', {
+const [idObjetoSolicitado] = defineField('idObjetoSolicitado', {
   validateOnModelUpdate: true,
 })
 
-const [idObjeto] = defineField('idObjeto', {
-  validateOnModelUpdate: true,
-})
+const [estado] = defineField('estado', { validateOnModelUpdate: true })
 
 const dataForm = reactive({
-  numeroCapitulo: numeroCapitulo,
-  rutaPDF: rutaPDF,
-  idObjeto: idObjeto,
+  idObjetoOfertado: idObjetoOfertado,
+  idObjetoSolicitado: idObjetoSolicitado,
+  estado: estado
 })
 
 const handleSubmitForm = handleSubmit((values: FormValues) => {
@@ -93,6 +83,7 @@ onMounted(async () => {
       idObjeto: id.value,
     })
   }
+
 })
 </script>
 
@@ -106,31 +97,40 @@ onMounted(async () => {
       :config="{
         inputs: [
           {
-            label: 'Capítulo',
-            placeholder: 'Número de capítulo',
-            type: 'number',
-            isRequired: true,
-            model: 'numeroCapitulo',
-          },
-          {
-            label: 'PDF',
-            placeholder: 'PDF',
-            type: 'file',
-            isRequired: true,
-            model: 'rutaPDF',
-          },
-          {
-            label: 'Objeto',
+            label: 'Objeto Ofertado',
             placeholder: 'Objeto',
             type: 'select',
             select: {
               data: objetoStore.list,
-              paramKey: 'titulo',
+              paramKey: 'nombre',
               valueKey: 'id',
             },
             isRequired: isEdit,
-            model: 'idObjeto',
-            isDisabled: true,
+            model: 'idObjetoOfertado',
+          },
+          {
+            label: 'Objeto Solicitado',
+            placeholder: 'Objeto',
+            type: 'select',
+            select: {
+              data: objetoSolicitado,
+              paramKey: 'nombre',
+              valueKey: 'id',
+            },
+            isRequired: isEdit,
+            model: 'idObjetoSolicitado',
+          },
+          {
+            label: 'Estatus',
+            placeholder: 'Estatus de la propuesta',
+            type: 'select',
+            select: {
+              data: enumFormat(tipoEstadoList),
+              paramKey: 'name',
+              valueKey: 'id',
+            },
+            isRequired: isEdit,
+            model: 'estado',
           },
         ],
         titleButton: isEdit ? 'Editar' : 'Crear',
@@ -139,7 +139,7 @@ onMounted(async () => {
     >
       <template #headerForm>
         <h1 class="text-[var(--primary)] text-3xl sm:text-4xl md:text-5xl font-bold text-center">
-          {{ isEdit ? 'Editar' : 'Crear' }} Capítulo
+          {{ isEdit ? 'Editar' : 'Crear' }} Propuesta de Intercambio
         </h1>
       </template>
     </BaseForm>

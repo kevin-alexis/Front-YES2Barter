@@ -1,6 +1,6 @@
 import type { IObjeto } from '@/interfaces/objeto/IObjeto'
 import { BaseService } from '../BaseService'
-import { genericRequestAuthenticated, genericRequestFormData } from '@/utils/genericRequest'
+import { genericRequestAuthenticated, genericRequestFormDataAuthenticated } from '@/utils/genericRequest'
 
 export class ObjetoService extends BaseService<IObjeto> {
   private static nameController = 'Objeto'
@@ -17,6 +17,20 @@ export class ObjetoService extends BaseService<IObjeto> {
       this.logService.create({
         nivel: 'Error',
         mensaje: `Error en el método GetByName: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
+  public GetAllByIdUsuario = async (id: string) => {
+    try {
+      const response = await genericRequestAuthenticated(`/Objeto/GetAllByIdUsuario/${id}`, 'GET')
+      return response
+    } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método GetAllByIdUsuario: ${error.message}`,
         excepcion: error.toString(),
       })
       console.error(error)
@@ -47,7 +61,7 @@ export class ObjetoService extends BaseService<IObjeto> {
         }
       }
 
-      const response = await genericRequestFormData(`/Objeto/update-objeto/${id}`, 'PUT', formData)
+      const response = await genericRequestFormDataAuthenticated(`/Objeto/update-objeto/${id}`, 'PUT', formData)
       return response
     } catch (error) {
       this.logService.create({
@@ -69,7 +83,7 @@ export class ObjetoService extends BaseService<IObjeto> {
         }
       }
 
-      const response = await genericRequestFormData(`/Objeto/create-objeto/`, 'POST', formData)
+      const response = await genericRequestFormDataAuthenticated(`/Objeto/create-objeto/`, 'POST', formData)
       return response
     } catch (error) {
       this.logService.create({

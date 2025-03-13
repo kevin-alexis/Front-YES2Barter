@@ -29,7 +29,11 @@ onMounted(async () => {
         Recientes
       </h2>
       <div class="bg-white p-8 rounded-2xl shadow-lg">
-        <ObjetoList v-model:objetos="objetoStore.list" />
+        <ObjetoList v-model:objetos="objetoStore.list"
+        :config="{
+          showButtons: false
+        }"
+        />
       </div>
     </div>
   </div>
