@@ -131,13 +131,6 @@ const getMessages = (status: boolean) => {
     <template #body="{ data }">
       <div class="flex gap-2 justify-center">
       <Button
-        icon="pi pi-list"
-        outlined rounded
-        severity="info"
-        v-tooltip.top="{ value: 'Administrar', showDelay: 100, hideDelay: 300, }"
-        @click="$router.push({ name: 'administrar objetos', params: { id: data.id } })"
-      />
-      <Button
         icon="pi pi-pen-to-square"
         outlined rounded
         severity="success"

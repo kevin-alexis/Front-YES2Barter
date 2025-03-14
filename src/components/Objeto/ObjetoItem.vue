@@ -2,7 +2,9 @@
 import type { IObjeto } from '@/interfaces/objeto/IObjeto'
 import BaseButton from '@/components/BaseButton.vue'
 import { useObjetoStore } from '@/stores/objeto'
+import { formatDateToView } from '@/utils/helper'
 const objetoStore = useObjetoStore()
+const baseUrl = import.meta.env.VITE_APP_URL_API_SOURCE
 
 defineProps<{
   config: {
@@ -24,13 +26,13 @@ function eliminar(id: number) {
     >
       <img
         alt="Imagen del objeto"
-        :src="config.objeto.rutaImagen"
+        :src="baseUrl + config.objeto.rutaImagen"
         class="w-full h-40 object-cover rounded-t-md"
       />
       <div class="p-4">
         <h2 class="text-xl font-semibold text-gray-800">{{ config.objeto.nombre }}</h2>
-        <p class="text-sm text-gray-500">{{ config.objeto.fechaPublicacion }}</p>
         <p class="text-sm text-gray-700 truncate mt-2">{{ config.objeto.descripcion }}</p>
+        <p class="text-xs text-gray-500"><strong>Fecha de publicación: </strong>{{ formatDateToView(config.objeto.fechaPublicacion) }}</p>
       </div>
     </RouterLink>
 

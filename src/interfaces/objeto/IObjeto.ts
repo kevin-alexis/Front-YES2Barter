@@ -7,3 +7,11 @@ export interface IObjeto extends IBaseObject {
   fechaPublicacion: Date
   rutaImagen: string
 }
+
+export interface IObjetoDetalles extends IObjeto {
+  nombre: string
+  descripcion: string
+  idCategoria: number
+  fechaPublicacion: Date
+  rutaImagen: string
+}

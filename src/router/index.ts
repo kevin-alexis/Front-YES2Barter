@@ -112,19 +112,6 @@ const router = createRouter({
       },
     },
     {
-      path: '/objeto/:id',
-      name: 'administrar objetos',
-      component: () => import('../views/private/Objeto/ObjetoView.vue'),
-      meta: {
-        menu: false, // despues pasarlo a true y mandar el id del usuario logeado
-        title: 'Administrar Objetos',
-        isPrivate: true,
-        isShared: false,
-        icon: 'pi-book',
-        roles: ['Administrador', 'Intercambiador'],
-      },
-    },
-    {
       path: '/objeto/crear',
       name: 'crear objeto',
       component: () => import('../views/private/Objeto/CreateEditObjetoView.vue'),
@@ -288,7 +275,7 @@ const router = createRouter({
     {
       path: '/perfil',
       name: 'perfil',
-      component: () => import('../components/Perfil/PerfilDetallesItem.vue'),
+      component: () => import('../views/private/Perfil/PerfilView.vue'),
       meta: {
         menu: true,
         title: 'Perfil',
