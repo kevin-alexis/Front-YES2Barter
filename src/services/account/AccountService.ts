@@ -34,6 +34,11 @@ export class AccountService extends BaseService<IAccount> {
       // console.log('Token renovado correctamente.');
       return response;
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método refreshToken: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(`Error en refreshToken: ${error.message}`);
       return false;
     }
@@ -80,6 +85,11 @@ export class AccountService extends BaseService<IAccount> {
       return null;
 
     } catch (error: any) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getCurrentUser: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error('Error obteniendo usuario:', error?.message ?? error);
       return null;
     }
@@ -90,6 +100,11 @@ export class AccountService extends BaseService<IAccount> {
     try {
       return await genericRequest('/Account/logout', 'POST');
     } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método logout: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error('Error en logout:', error.message);
       throw error;
     }

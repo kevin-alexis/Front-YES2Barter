@@ -12,7 +12,7 @@ const isLoading = ref(true)
 onBeforeMount(async () => {
   await accountStore.getUser()
   await objetoStore.getAllByIdUsuario(
-    accountStore.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'],
+    accountStore.user.idUsuario,
   )
   isLoading.value = false
 })

@@ -19,12 +19,12 @@ onMounted(()=>{
   <main>
     <ObjetoCrudView
       class="p-5"
-      v-if="accountStore.isLoggedIn && accountStore.user && accountStore.user['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] === 'Administrador'">
+      v-if="accountStore.isLoggedIn && accountStore.user && accountStore.user.rol === 'Administrador'">
   </ObjetoCrudView>
 
     <MisObjetoView
       class="p-5"
-      v-else-if="accountStore.isLoggedIn && accountStore.user && accountStore.user['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] !== 'Administrador'">
+      v-else-if="accountStore.isLoggedIn && accountStore.user && accountStore.user.rol !== 'Administrador'">
     </MisObjetoView>
 
   </main>

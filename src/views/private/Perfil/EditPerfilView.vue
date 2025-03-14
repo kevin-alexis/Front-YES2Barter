@@ -68,7 +68,7 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
 
 onMounted(async () => {
   await accountStore.getUser()
-  await personaStore.getPersonaByIdUsuario(accountStore.user.uid).then(()=>{
+  await personaStore.getPersonaByIdUsuario(accountStore.user.idUsuario).then(()=>{
     Object.assign(contactForm, {
         ...personaStore.persona,
       })

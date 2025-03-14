@@ -18,12 +18,12 @@ onMounted(()=>{
   <main>
     <DashboardAdmin
       class="p-5"
-      v-if="accountStore.isLoggedIn && accountStore.user && accountStore.user['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] === 'Administrador'">
+      v-if="accountStore.isLoggedIn && accountStore.user && accountStore.user.idRol === 'Administrador'">
     </DashboardAdmin>
 
     <InicioLogeado
       class="p-5"
-      v-else-if="accountStore.isLoggedIn && accountStore.user && accountStore.user['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] !== 'Administrador'">
+      v-else-if="accountStore.isLoggedIn && accountStore.user && accountStore.user.idRol !== 'Administrador'">
     </InicioLogeado>
 
     <InicioNoLogeado v-else></InicioNoLogeado>

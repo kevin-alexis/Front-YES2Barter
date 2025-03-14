@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { LogService } from './log/LogService'
+import { genericRequestAuthenticated } from '@/utils/genericRequest'
 
 export class BaseService<T> {
   private baseUrl = import.meta.env.VITE_APP_URL_API
@@ -22,11 +23,8 @@ export class BaseService<T> {
 
   public getAll = async () => {
     try {
-      const response = await axios.get(`${this.baseUrl}/${this.nameController}/`, {
-        headers: this.getHeaders(),
-        withCredentials: true,
-      })
-      return response.data
+      const response = await genericRequestAuthenticated(`${this.baseUrl}/${this.nameController}/`, 'GET')
+      return response
     } catch (error) {
       this.logService.create({
         nivel: 'Error',
@@ -39,10 +37,8 @@ export class BaseService<T> {
 
   public getById = async (id: string) => {
     try {
-      const response = await axios.get(`${this.baseUrl}/${this.nameController}/${id}`, {
-        headers: this.getHeaders(),
-      })
-      return response.data
+      const response = await genericRequestAuthenticated(`${this.baseUrl}/${this.nameController}/${id}`, 'GET')
+      return response
     } catch (error) {
       this.logService.create({
         nivel: 'Error',
@@ -55,9 +51,7 @@ export class BaseService<T> {
 
   public create = async (body: T) => {
     try {
-      const response = await axios.post(`${this.baseUrl}/${this.nameController}`, body, {
-        headers: this.getHeaders(),
-      })
+      const response = await genericRequestAuthenticated(`${this.baseUrl}/${this.nameController}`, 'POST', body)
       return response.data
     } catch (error) {
       this.logService.create({
@@ -71,9 +65,7 @@ export class BaseService<T> {
 
   public update = async (id: string, body: T) => {
     try {
-      const response = await axios.put(`${this.baseUrl}/${this.nameController}/${id}`, body, {
-        headers: this.getHeaders(),
-      })
+      const response = await genericRequestAuthenticated(`${this.baseUrl}/${this.nameController}/${id}`, 'PUT', body)
       return response
     } catch (error) {
       this.logService.create({
@@ -87,9 +79,7 @@ export class BaseService<T> {
 
   public delete = async (id: string) => {
     try {
-      const response = await axios.delete(`${this.baseUrl}/${this.nameController}/${id}`, {
-        headers: this.getHeaders(),
-      })
+      const response = await genericRequestAuthenticated(`${this.baseUrl}/${this.nameController}/${id}`, 'DELETE')
       return response
     } catch (error) {
       this.logService.create({

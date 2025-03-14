@@ -101,8 +101,6 @@ export const useAccountStore = defineStore('account', () => {
         console.log('Nuevo token recibido:', response.token);
 
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
-
-        // token.value = response.token;
         getUser();
         return response.token;
       } else {
@@ -164,8 +162,9 @@ export const useAccountStore = defineStore('account', () => {
 
   async function logOut() {
     try {
-      await service.logout();
-      router.replace({ name: "login" });
+      await service.logout().then(()=>{{
+        router.replace({ name: "login" });
+      }})
     } catch (error) {
       logService.create({
         nivel: "Error",
@@ -180,6 +179,7 @@ export const useAccountStore = defineStore('account', () => {
     try {
       const response = await service.getCurrentUser();
       if (response && response.idPersona) {
+        console.log("getUser", response)
         user.value = response;
       } else {
         user.value = null;

@@ -24,7 +24,7 @@ onBeforeMount(async () => {
   await accountStore.getUser();
   await personaStore.getPersonaByIdUsuario(response.idUsuario);
   Object.assign(objeto, response);
-  if(objeto?.idUsuario == accountStore?.user?.uid){
+  if(objeto?.idUsuario == accountStore?.user?.idUsuario){
     propuestaIntercambioStore.getAllByIdObjeto(objeto.id)
   }
 })
@@ -37,8 +37,7 @@ onBeforeMount(async () => {
     </div>
 
     <div class="w-full md:w-1/2">
-      <!-- ! LO DESACTIVE PORQUE CAUSA ERRORES CON LAS RUTAS -->
-      <PropuestaIntercambioList v-if="objeto?.idUsuario == accountStore?.user?.uid"
+      <PropuestaIntercambioList v-if="objeto?.idUsuario == accountStore?.user?.idUsuario"
       :propuestasIntercambios="propuestaIntercambioStore.list"
       ></PropuestaIntercambioList>
       <PerfilDetallesItem
@@ -49,7 +48,7 @@ onBeforeMount(async () => {
         }"
       ></PerfilDetallesItem>
 
-      <div class="p-5" v-if="objeto?.idUsuario != accountStore?.user?.uid">
+      <div class="p-5" v-if="objeto?.idUsuario != accountStore?.user?.idUsuario">
         <RouterLink :to="{name: 'crear propuesta intercambio'}">
           <BaseButton style-type="primary">Hacer una propuesta</BaseButton>
         </RouterLink>
