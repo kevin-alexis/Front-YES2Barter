@@ -106,8 +106,7 @@ export const useAccountStore = defineStore('account', () => {
         getUser();
         return response.token;
       } else {
-        // ! GENERA EL ERROR DE BORRAR LAS COOKIES
-        // logOut();
+        logOut();
         return false;
       }
     } catch (error) {
