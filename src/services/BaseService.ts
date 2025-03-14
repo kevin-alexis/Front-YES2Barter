@@ -4,19 +4,19 @@ import { LogService } from './log/LogService'
 export class BaseService<T> {
   private baseUrl = import.meta.env.VITE_APP_URL_API
   private nameController: string
-  private token: string | null
+  // private token: string | null
   protected logService: LogService
 
   constructor(nameController: string) {
     this.nameController = nameController
-    this.token = localStorage.getItem('token') || ''
+    // this.token = localStorage.getItem('token') || ''
     this.logService = new LogService()
   }
 
   private getHeaders() {
     return {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.token}`,
+      // Authorization: `Bearer ${this.token}`,
     }
   }
 
@@ -24,6 +24,7 @@ export class BaseService<T> {
     try {
       const response = await axios.get(`${this.baseUrl}/${this.nameController}/`, {
         headers: this.getHeaders(),
+        withCredentials: true,
       })
       return response.data
     } catch (error) {
