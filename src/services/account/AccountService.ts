@@ -1,6 +1,7 @@
 import type { IAccount, IUser } from '@/interfaces/account/IAccount'
 import { BaseService } from '../BaseService'
 import { genericRequest, genericRequestAuthenticated } from '@/utils/genericRequest'
+import { useAccountStore } from '@/stores/account'
 
 export class AccountService extends BaseService<IAccount> {
   private static nameController = 'Account'
@@ -25,6 +26,20 @@ export class AccountService extends BaseService<IAccount> {
       console.error(error)
     }
   }
+
+  public async refreshToken() {
+    try {
+      console.log('Solicitando refreshToken...');
+
+      await genericRequestAuthenticated('/Account/refreshToken', 'POST', {});
+      // console.log('Token renovado correctamente.');
+      return true;
+    } catch (error) {
+      console.error(`Error en refreshToken: ${error.message}`);
+      return false;
+    }
+  }
+
 
   public getAll = async () => {
     try {
@@ -55,4 +70,30 @@ export class AccountService extends BaseService<IAccount> {
       console.error(error)
     }
   }
+
+  public async getCurrentUser() {
+    try {
+      const response = await genericRequestAuthenticated('/Account/currentUser', 'GET');
+
+      if (response?.success && response.data) {
+        return response.data;
+      }
+      return null;
+
+    } catch (error: any) {
+      console.error('Error obteniendo usuario:', error?.message ?? error);
+      return null;
+    }
+  }
+
+
+  public async logout() {
+    try {
+      return await genericRequest('/Account/logout', 'POST');
+    } catch (error) {
+      console.error('Error en logout:', error.message);
+      throw error;
+    }
+  }
+
 }
