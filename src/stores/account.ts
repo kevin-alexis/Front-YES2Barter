@@ -7,20 +7,24 @@ import { computed, ref } from 'vue'
 import { jwtDecode } from 'jwt-decode'
 import router from '@/router'
 import { LogService } from '@/services/log/LogService'
+import { axiosInstance } from '@/utils/genericRequest'
 
 export const useAccountStore = defineStore('account', () => {
   const user = ref(null)
-  const token = useStorage('token', '')
+  // const token = useStorage('token', '')
   const service = new AccountService()
   const logService = new LogService()
   const list = ref([])
   const listRoles = ref([])
+  // const isLoggedIn = computed(() => {
+  //   if (token.value && !user.value) {
+  //     getUser()
+  //   }
+  //   return token.value !== '' && token.value !== undefined
+  // })
   const isLoggedIn = computed(() => {
-    if (token.value && !user.value) {
-      getUser()
-    }
-    return token.value !== '' && token.value !== undefined
-  })
+    return !!user.value
+  });
 
   function isTokenExpired(): boolean {
     if (!token.value) {
@@ -47,7 +51,9 @@ export const useAccountStore = defineStore('account', () => {
   async function getAll() {
     try {
       const response = await service.getAll()
+      // console.log(response.data)
       list.value = await response.data
+      // console.log(list.value)
     } catch (error) {
       logService.create({
         nivel: 'Error',
@@ -60,27 +66,59 @@ export const useAccountStore = defineStore('account', () => {
 
   async function login(userData: IUser, rememberMe: boolean) {
     try {
-      await service.login(userData, rememberMe).then((response) => {
-        if (response.success) {
-          token.value = response.token
-          getUser()
-          router.replace({ name: 'inicio' })
-        } else {
-          Swal.fire({
-            title: 'Error',
-            text: response.message,
-            icon: 'error',
-          })
-        }
-      })
+      const response = await service.login(userData, rememberMe);
+
+      if (response.success) {
+        console.log(response);
+
+        await getUser();
+        router.replace({ name: 'inicio' });
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: response.message,
+          icon: 'error',
+        });
+      }
     } catch (error) {
       logService.create({
         nivel: 'Error',
-        mensaje: `Error en el método login del store account: ${error.message}`,
-        excepcion: error.toString(),
-      })
+        mensaje: `Error en el método login del store account: ${error?.message || error}`,
+        excepcion: error?.toString() || 'Error desconocido',
+      });
     }
   }
+
+
+  async function refreshToken() {
+    try {
+      const response = await service.refreshToken();
+
+      if (response?.data?.token) {
+        console.log('Nuevo token recibido:', response.data.token);
+
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+
+
+        getUser();
+        return response.data.token;
+      } else {
+        logOut();
+        return false;
+      }
+    } catch (error) {
+      console.error('Error al refrescar token:', error);
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método refreshToken del store account: ${error.message}`,
+        excepcion: error.toString(),
+      });
+      logOut();
+      return false;
+    }
+  }
+
+
 
   function signIn(userData: IUser) {
     try {
@@ -121,41 +159,40 @@ export const useAccountStore = defineStore('account', () => {
     }
   }
 
-  function logOut() {
+  async function logOut() {
     try {
-      token.value = ''
-      router.replace({ name: 'login' })
+      await service.logout();
+      router.replace({ name: "login" });
     } catch (error) {
       logService.create({
-        nivel: 'Error',
+        nivel: "Error",
         mensaje: `Error en el método logOut del store account: ${error.message}`,
         excepcion: error.toString(),
-      })
+      });
     }
   }
 
-  function getUser() {
-    if (token.value) {
-      try {
-        if (isTokenExpired()) {
-          logOut()
-          return
-        }
-        user.value = jwtDecode(token.value)
-        console.error(user.value)
-      } catch (error) {
-        logService.create({
-          nivel: 'Error',
-          mensaje: `Error en el método getUser del store account: ${error.message}`,
-          excepcion: error.toString(),
-        })
-        console.error('Invalid token:', error)
-        token.value = ''
-        logOut()
-        // return false
+
+  async function getUser() {
+    try {
+      const response = await service.getCurrentUser();
+
+      if (response && response.idPersona) {
+        user.value = response;
+      } else {
+        user.value = null;
+        logOut();
       }
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getUser del store account: ${error.message}`,
+        excepcion: error.toString(),
+      });
+      logOut();
     }
   }
+
 
   // Todo: esto es para el crud de usaurios
 
@@ -252,7 +289,7 @@ export const useAccountStore = defineStore('account', () => {
 
   return {
     user,
-    token,
+    // token,
     login,
     signIn,
     getUser,
@@ -265,5 +302,6 @@ export const useAccountStore = defineStore('account', () => {
     getAllRoles,
     listRoles,
     update,
+    refreshToken,
   }
 })

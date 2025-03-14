@@ -17,19 +17,21 @@ const closeMenu = () => {
 }
 
 const routes = computed(() => {
-  return router.options.routes.filter(
-    (route) =>
-      route.meta?.menu &&
-      (!accountStore.isLoggedIn
-        ? !route.meta?.isPrivate
-        : (((route.meta?.isPrivate &&
-            route.meta?.roles.includes(
-              accountStore.user?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],
-            )) ||
-            route.meta?.isShared) ??
-          false)),
-  )
-})
+  return router.options.routes.filter((route) => {
+    if (!route.meta?.menu) return false;
+
+    if (!accountStore.user) {
+      return !route.meta?.isPrivate;
+    }
+
+    const userRole = accountStore.user?.rol?.toLowerCase() ?? '';
+    const roles = (route.meta?.roles ?? []).map((r) => r.toLowerCase());
+
+    return (
+      (route.meta?.isPrivate && roles.includes(userRole)) || route.meta?.isShared
+    );
+  });
+});
 
 const authRoutes = [
   { Name: 'Sign In', URL: 'sign in' },

@@ -23,4 +23,18 @@ export class PersonaService extends BaseService<IPersona> {
     }
   }
 
+  public getPersonaByIdUsuario = async (idUsuario: string) => {
+    try {
+      const response = await genericRequestAuthenticated(`/Persona/GetPersonaByIdUsuario/${idUsuario}`, 'GET')
+      return response
+    } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getPersonaByIdUsuario: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
 }

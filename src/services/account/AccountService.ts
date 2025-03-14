@@ -26,6 +26,20 @@ export class AccountService extends BaseService<IAccount> {
     }
   }
 
+  public async refreshToken() {
+    try {
+      console.log('Solicitando refreshToken...');
+
+      await genericRequestAuthenticated('/Account/refreshToken', 'POST', {});
+      // console.log('Token renovado correctamente.');
+      return true;
+    } catch (error) {
+      console.error(`Error en refreshToken: ${error.message}`);
+      return false;
+    }
+  }
+
+
   public getAll = async () => {
     try {
       const response = await genericRequestAuthenticated('/Account/GetAllAccounts', 'GET', {
@@ -55,4 +69,30 @@ export class AccountService extends BaseService<IAccount> {
       console.error(error)
     }
   }
+
+  public async getCurrentUser() {
+    try {
+      const response = await genericRequestAuthenticated('/Account/currentUser', 'GET');
+
+      if (response?.success && response.data) {
+        return response.data;
+      }
+      return null;
+
+    } catch (error: any) {
+      console.error('Error obteniendo usuario:', error?.message ?? error);
+      return null;
+    }
+  }
+
+
+  public async logout() {
+    try {
+      return await genericRequest('/Account/logout', 'POST');
+    } catch (error) {
+      console.error('Error en logout:', error.message);
+      throw error;
+    }
+  }
+
 }

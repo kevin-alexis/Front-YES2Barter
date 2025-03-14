@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import BaseForm from '@/components/BaseForm.vue'
-import { useObjetoStore } from '@/stores/objeto'
-import { useCategoriaStore } from '@/stores/categoria'
+import { useAccountStore } from '@/stores/account'
+import { usePersonaStore } from '@/stores/persona';
 import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
-const objetoStore = useObjetoStore()
-const categoriaStore = useCategoriaStore()
+const accountStore = useAccountStore()
+const personaStore = usePersonaStore()
 
 const route = useRoute()
 const isEdit = ref(false)
@@ -24,13 +24,8 @@ function isValidFileType(fileName: string, fileType: string) {
 const { errors, defineField, handleSubmit, setValues } = useForm({
   validationSchema: yup.object({
     nombre: yup.string().required('El nombre es obligatorio'),
-    descripcion: yup.string().required('La descripción es obligatoria'),
-    idCategoria: yup.string().required('La categoría es obligatoria'),
-    fechaPublicacion: yup
-      .date()
-      .required('La fecha de publicación es obligatoria')
-      .max(new Date().toISOString().split('T')[0], 'La fecha no puede ser posterior a hoy'),
-    rutaImagen: yup
+    biografia: yup.string().required('La biografía es obligatoria'),
+    rutaFotoPerfil: yup
       .mixed()
       .test('required-if-not-edit', 'La imagen es obligatoria', function (value) {
         if (!isEdit.value && !value) {
@@ -44,7 +39,6 @@ const { errors, defineField, handleSubmit, setValues } = useForm({
         }
         return true
       }),
-    estado: yup.string().required('El estado es obligatorio'),
   }),
 })
 
@@ -52,57 +46,34 @@ const [nombre] = defineField('nombre', {
   validateOnModelUpdate: true,
 })
 
-const [descripcion] = defineField('descripcion', {
+const [biografia] = defineField('biografia', {
   validateOnModelUpdate: true,
 })
 
-const [idCategoria] = defineField('idCategoria', {
+const [rutaFotoPerfil] = defineField('rutaFotoPerfil', {
   validateOnModelUpdate: true,
 })
-
-const [fechaPublicacion] = defineField('fechaPublicacion', {
-  validateOnModelUpdate: true,
-})
-
-const [rutaImagen] = defineField('rutaImagen', {
-  validateOnModelUpdate: true,
-})
-const [estado] = defineField('estado', { validateOnModelUpdate: true })
 
 
 const contactForm = reactive({
   nombre: nombre,
-  descripcion: descripcion,
-  idCategoria: idCategoria,
-  fechaPublicacion: fechaPublicacion,
-  rutaImagen: rutaImagen,
-  estado: estado,
+  biografia: biografia,
+  rutaFotoPerfil: rutaFotoPerfil,
 })
 
 const handleSubmitForm = handleSubmit((values: FormValues) => {
   //validaciones
-  if (!isEdit.value) {
-    objetoStore.create(values)
-  } else {
-    objetoStore.update(id.value, values)
-  }
+  // personaStore.update(id.value, values)
 })
 
 onMounted(async () => {
-  await categoriaStore.getAll()
-  isEdit.value = route.fullPath.includes('editar')
-  id.value = route.params.id as string
-  if (isEdit.value) {
-    await objetoStore.getById(id.value).then((response) => {
-      Object.assign(contactForm, {
-        ...response,
-      })
-    })
-  } else {
+  await accountStore.getUser()
+  await personaStore.getPersonaByIdUsuario(accountStore.user.uid).then(()=>{
     Object.assign(contactForm, {
-      idCategoria: id.value,
-    })
-  }
+        ...personaStore.persona,
+      })
+  })
+  isEdit.value = route.fullPath.includes('editar')
 })
 
 onMounted(async () => {})
@@ -129,20 +100,14 @@ onMounted(async () => {})
             placeholder: 'Biografia',
             type: 'textarea',
             isRequired: true,
-            model: 'nombre',
-          },
-          {
-            label: 'Número de Teléfono',
-            type: 'number',
-            isRequired: true,
-            model: 'descripcion',
+            model: 'biografia',
           },
           {
             label: 'Foto de Perfil',
             placeholder: 'Imagen',
             type: 'file',
             isRequired: !isEdit,
-            model: 'rutaImagen',
+            model: 'rutaFotoPerfil',
           },
         ],
         titleButton: isEdit ? 'Editar' : 'Crear',

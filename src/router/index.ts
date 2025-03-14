@@ -112,19 +112,6 @@ const router = createRouter({
       },
     },
     {
-      path: '/objeto/:id',
-      name: 'administrar objetos',
-      component: () => import('../views/private/Objeto/ObjetoView.vue'),
-      meta: {
-        menu: false, // despues pasarlo a true y mandar el id del usuario logeado
-        title: 'Administrar Objetos',
-        isPrivate: true,
-        isShared: false,
-        icon: 'pi-book',
-        roles: ['Administrador', 'Intercambiador'],
-      },
-    },
-    {
       path: '/objeto/crear',
       name: 'crear objeto',
       component: () => import('../views/private/Objeto/CreateEditObjetoView.vue'),
@@ -288,7 +275,7 @@ const router = createRouter({
     {
       path: '/perfil',
       name: 'perfil',
-      component: () => import('../components/Perfil/PerfilDetallesItem.vue'),
+      component: () => import('../views/private/Perfil/PerfilView.vue'),
       meta: {
         menu: true,
         title: 'Perfil',
@@ -332,35 +319,39 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+
   if (to.name === '404' || to.name === 'inicio') {
-    next()
-    return
+    next();
+    return;
   }
 
-  const accountStore = useAccountStore()
+  const accountStore = useAccountStore();
 
-  if (to.meta.isPrivate && !accountStore.isLoggedIn) {
-    next({ name: 'login' })
-    return
+  if (to.meta.isPrivate && !accountStore.user) {
+    
+    await accountStore.getUser();
+
+    if (!accountStore.user) {
+      if (to.name !== 'login') next({ name: 'login' });
+      return;
+    }
+  }
+  if (!accountStore.user && !to.meta.isPrivate) {
+    next();
+    return;
+  }
+  const userRole = accountStore.user?.rol?.toLowerCase() ?? '';
+  const roles = (to.meta?.roles ?? []).map((r) => r.toLowerCase());
+  if (!to.meta.isPrivate && accountStore.user && !to.meta.isShared) {
+    if (to.name !== 'inicio') next({ name: 'inicio' });
+    return;
   }
 
-  const userRole =
-    accountStore.user?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? ''
-  const roles = to.meta?.roles ?? []
-
-  if (!to.meta.isPrivate && accountStore.isLoggedIn && !to.meta.isShared) {
-    next({ name: 'inicio' })
-  } else if (
-    accountStore.isLoggedIn &&
-    to.meta.isPrivate &&
-    !roles.includes(userRole) &&
-    !to.meta.isShared
-  ) {
-    next({ name: 'inicio' })
-  } else {
-    next()
+  if (to.meta.isPrivate && !roles.includes(userRole) && !to.meta.isShared) {
+    if (to.name !== 'inicio') next({ name: 'inicio' });
+    return;
   }
-})
-
+  next();
+});
 export default router
