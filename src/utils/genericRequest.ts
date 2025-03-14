@@ -56,7 +56,7 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export const genericRequest = async (url, method, body, rememberMe?) => {
+export const genericRequest = async (url, method, body?, rememberMe?) => {
   try {
     const response = await axiosInstance({
       url,

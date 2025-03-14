@@ -1,7 +1,6 @@
 import type { IAccount, IUser } from '@/interfaces/account/IAccount'
 import { BaseService } from '../BaseService'
 import { genericRequest, genericRequestAuthenticated } from '@/utils/genericRequest'
-import { useAccountStore } from '@/stores/account'
 
 export class AccountService extends BaseService<IAccount> {
   private static nameController = 'Account'
