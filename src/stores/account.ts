@@ -12,6 +12,7 @@ import { axiosInstance } from '@/utils/genericRequest'
 export const useAccountStore = defineStore('account', () => {
   const user = ref(null)
   // const token = useStorage('token', '')
+  const token = ref('')
   const service = new AccountService()
   const logService = new LogService()
   const list = ref([])
@@ -70,6 +71,8 @@ export const useAccountStore = defineStore('account', () => {
 
       if (response.success) {
         console.log(response);
+        // token.value = response.token;
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
 
         await getUser();
         router.replace({ name: 'inicio' });
@@ -93,17 +96,18 @@ export const useAccountStore = defineStore('account', () => {
   async function refreshToken() {
     try {
       const response = await service.refreshToken();
+      console.log("refresh", response)
+      if (response.success) {
+        console.log('Nuevo token recibido:', response.token);
 
-      if (response?.data?.token) {
-        console.log('Nuevo token recibido:', response.data.token);
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
 
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-
-
+        // token.value = response.token;
         getUser();
-        return response.data.token;
+        return response.token;
       } else {
-        logOut();
+        // ! GENERA EL ERROR DE BORRAR LAS COOKIES
+        // logOut();
         return false;
       }
     } catch (error) {
@@ -176,7 +180,6 @@ export const useAccountStore = defineStore('account', () => {
   async function getUser() {
     try {
       const response = await service.getCurrentUser();
-
       if (response && response.idPersona) {
         user.value = response;
       } else {

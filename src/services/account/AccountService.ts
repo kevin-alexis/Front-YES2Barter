@@ -30,9 +30,9 @@ export class AccountService extends BaseService<IAccount> {
     try {
       console.log('Solicitando refreshToken...');
 
-      await genericRequestAuthenticated('/Account/refreshToken', 'POST', {});
+      const response = await genericRequestAuthenticated('/Account/refreshToken', 'POST', {});
       // console.log('Token renovado correctamente.');
-      return true;
+      return response;
     } catch (error) {
       console.error(`Error en refreshToken: ${error.message}`);
       return false;
