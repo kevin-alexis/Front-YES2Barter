@@ -1,21 +1,44 @@
 <script setup lang="ts">
 import type { IObjeto } from '@/interfaces/objeto/IObjeto'
-const URL_API_SOURCE = import.meta.env.VITE_APP_URL_API_SOURCE
+import BaseButton from '@/components/BaseButton.vue'
+import { useObjetoStore } from '@/stores/objeto'
+const objetoStore = useObjetoStore()
 
 defineProps<{
-  objeto: IObjeto
+  config: {
+    objeto: IObjeto
+    showButtons: boolean
+  }
 }>()
+
+function eliminar(id: number) {
+  objetoStore.deleteItem(id)
+}
 </script>
+
 <template>
-  <!-- RECIBIR LA CONFIG Y PARA PODER AGREGAR O NO EL EDITAR ELIMINAR
-  SEGUN LA CONFIG-->
-  <RouterLink :to="{name: 'consultar detalles objeto', params:{ id: objeto.id}}" class="w-fit!">
-    <div class="flex flex-col w-35 text-center">
-      <img :src="URL_API_SOURCE + objeto.rutaImagen" class="h-50 object-cover" />
-      <div class="w-full">
-        <p class="font-bold">{{ objeto.titulo }}</p>
-        <p>{{ objeto.fechaPublicacion }}</p>
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <RouterLink
+      :to="{ name: 'consultar detalles objeto', params: { id: config.objeto.id } }"
+      class="w-fit"
+    >
+      <img
+        alt="Imagen del objeto"
+        :src="config.objeto.rutaImagen"
+        class="w-full h-40 object-cover rounded-t-md"
+      />
+      <div class="p-4">
+        <h2 class="text-xl font-semibold text-gray-800">{{ config.objeto.nombre }}</h2>
+        <p class="text-sm text-gray-500">{{ config.objeto.fechaPublicacion }}</p>
+        <p class="text-sm text-gray-700 truncate mt-2">{{ config.objeto.descripcion }}</p>
       </div>
+    </RouterLink>
+
+    <div v-if="config.showButtons" class="flex gap-2 mt-4 p-2">
+      <RouterLink :to="{ name: 'crear objeto', params: { id: config.objeto.id } }" class="w-full">
+        <BaseButton styleType="warning">Editar</BaseButton>
+      </RouterLink>
+      <BaseButton styleType="danger" @click="eliminar(config.objeto.id)">Eliminar</BaseButton>
     </div>
-  </RouterLink>
+  </div>
 </template>

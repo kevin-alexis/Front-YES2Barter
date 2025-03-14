@@ -60,35 +60,6 @@ const router = createRouter({
       },
     },
     {
-      path: '/chat',
-      name: 'chat',
-      component: () => import('../views/private/Mensajes/MensajeView.vue'),
-      meta: {
-        menu: true,
-        title: 'Chat',
-        isPrivate: true,
-        isShared: false,
-        icon: 'pi-comments',
-        roles: ['Intercambiador'],
-      },
-      children: [
-        {
-          path: ':id',
-          name: 'chat detalles',
-          component: () => import('../views/private/Mensajes/MensajeDetalle.vue'),
-          meta: {
-            menu: false,
-            title: 'Chat',
-            isPrivate: true,
-            isShared: false,
-            icon: 'pi-comments',
-            roles: ['Intercambiador'],
-          },
-        },
-      ],
-    },
-
-    {
       path: '/categoria',
       name: 'administrar categorias',
       component: () => import('../views/private/Categorias/CategoriaView.vue'),
@@ -97,7 +68,7 @@ const router = createRouter({
         title: 'Administrar Categorias',
         isPrivate: true,
         isShared: false,
-        icon: 'pi-book',
+        icon: 'pi-objects-column',
         roles: ['Administrador'],
       },
     },
@@ -130,14 +101,14 @@ const router = createRouter({
     {
       path: '/objeto/',
       name: 'mis objetos',
-      component: () => import('../views/private/Objeto/MisObjetoView.vue'),
+      component: () => import('../views/private/Objeto/ObjetoView.vue'),
       meta: {
         menu: true,
         title: 'Mis Objetos',
         isPrivate: true,
         isShared: false,
-        icon: 'pi-book',
-        roles: ['Intercambiador'],
+        icon: 'pi-box',
+        roles: ['Intercambiador', 'Administrador'],
       },
     },
     {
@@ -154,7 +125,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/objeto/crear/:id',
+      path: '/objeto/crear',
       name: 'crear objeto',
       component: () => import('../views/private/Objeto/CreateEditObjetoView.vue'),
       meta: {
@@ -193,21 +164,49 @@ const router = createRouter({
       },
     },
     {
-      path: '/propuesta-intercambio/:id',
+      path: '/chat',
+      name: 'chat',
+      component: () => import('../views/private/Mensajes/MensajeView.vue'),
+      meta: {
+        menu: true,
+        title: 'Chat',
+        isPrivate: true,
+        isShared: false,
+        icon: 'pi-comments',
+        roles: ['Intercambiador'],
+      },
+      children: [
+        {
+          path: ':id',
+          name: 'chat detalles',
+          component: () => import('../views/private/Mensajes/MensajeDetalle.vue'),
+          meta: {
+            menu: false,
+            title: 'Chat',
+            isPrivate: true,
+            isShared: false,
+            icon: 'pi-comments',
+            roles: ['Intercambiador'],
+          },
+        },
+      ],
+    },
+    {
+      path: '/propuesta-intercambio/',
       name: 'administrar propuestas intercambios',
       component: () =>
         import('../views/private/PropuestasIntercambios/PropuestaIntercambioView.vue'),
       meta: {
-        menu: false,
-        title: 'Administrar Capítulos',
+        menu: true,
+        title: 'Administrar Propuestas',
         isPrivate: true,
         isShared: false,
-        icon: 'pi-home',
-        roles: ['Administrador', 'Intercambiador'],
+        icon: 'pi-book',
+        roles: ['Administrador'],
       },
     },
     {
-      path: '/propuesta-intercambio/crear/:id',
+      path: '/propuesta-intercambio/crear/',
       name: 'crear propuesta intercambio',
       component: () =>
         import('../views/private/PropuestasIntercambios/CreateEditPropuestaIntercambioView.vue'),
@@ -243,7 +242,7 @@ const router = createRouter({
         title: 'Administrar Usuarios',
         isPrivate: true,
         isShared: false,
-        icon: 'pi-book',
+        icon: 'pi-users',
         roles: ['Administrador'],
       },
     },
@@ -285,6 +284,32 @@ const router = createRouter({
         icon: 'pi-file',
         roles: ['Administrador'],
       },
+    },
+    {
+      path: '/perfil',
+      name: 'perfil',
+      component: () => import('../components/Perfil/PerfilDetallesItem.vue'),
+      meta: {
+        menu: true,
+        title: 'Perfil',
+        isPrivate: true,
+        isShared: false,
+        icon: 'pi-user',
+        roles: ['Intercambiador'],
+      }
+    },
+    {
+      path: '/perfil/editar/',
+      name: 'perfil editar',
+      component: () => import('../views/private/Perfil/EditPerfilView.vue'),
+      meta: {
+        menu: false,
+        title: 'Perfil',
+        isPrivate: true,
+        isShared: false,
+        icon: 'pi-user',
+        roles: ['Intercambiador'],
+      }
     },
     {
       path: '/contacto',

@@ -1,39 +1,27 @@
 <script setup lang="ts">
-// import BaseTable from '@/components/BaseTable.vue'
 import { usePropuestaIntercambioStore } from '@/stores/propuestaIntercambio'
 import { useObjetoStore } from '@/stores/objeto'
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import BaseModal from '@/components/BaseModal.vue'
-import BreadcrumbComponent from '@/components/BreadcrumbComponent.vue'
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { FilterMatchMode } from '@primevue/core/api';
-import IconField from 'primevue/iconfield';
-import InputIcon from 'primevue/inputicon';
-import InputText from 'primevue/inputtext';
-import Tag from 'primevue/tag';
 import Button from 'primevue/button';
+import { formatDateToView } from '@/utils/helper'
+import { EstatusPropuestaIntercambio } from '@/common/enums/enums'
+import Tag from 'primevue/tag';
 
-const propuestaIntercambioStore = usePropuestaIntercambioStore()
+const tipoEstatusPropuestaIntercambioList = Object.values(EstatusPropuestaIntercambio);
 const objetoStore = useObjetoStore()
-const route = useRoute()
+const propuestaIntercambioStore = usePropuestaIntercambioStore()
 const isOpen = ref(false)
 const baseUrl = import.meta.env.VITE_APP_URL_API_SOURCE
 const srcPDF = ref('')
-const objeto = ref({})
 const loading = ref(true);
 
-const breadcrumbItems = [
-  { label: 'Categorias', route: '/categoria' },
-  { label: 'Objetos', route: 'back' },
-  { label: 'Capítulos' },
-]
-
 onMounted(async () => {
-  const idObjeto = route.params.id as string
-  await propuestaIntercambioStore.getAllByIdObjeto(idObjeto)
-  objeto.value = await objetoStore.getById(idObjeto)
+
+  await propuestaIntercambioStore.getAllPropuestas()
   loading.value = false
 })
 
@@ -49,60 +37,79 @@ const filters = ref({
   idObjetoSolicitado: { value: null, matchMode: FilterMatchMode.EQUALS },
   fechaPropuesta: { value: null, matchMode: FilterMatchMode.EQUALS },
 })
+
+function getIndexEnum(enumData: any){
+  return Object.values(EstatusPropuestaIntercambio).indexOf(enumData)
+}
+
+const getSeverity = (status: number): string => {
+  switch (status) {
+    case getIndexEnum(EstatusPropuestaIntercambio.ENVIADA):
+      return 'warn';
+
+    case getIndexEnum(EstatusPropuestaIntercambio.ACEPTADA):
+      return 'success';
+
+    case getIndexEnum(EstatusPropuestaIntercambio.RECHAZADA):
+      return 'danger';
+
+    case getIndexEnum(EstatusPropuestaIntercambio.CONCRETADA):
+      return 'success';
+
+    case getIndexEnum(EstatusPropuestaIntercambio.NO_CONCRETADA):
+      return 'info';
+
+    default:
+      return 'info';
+  }
+}
+
 </script>
 
 <template>
-  <div>
-    <BreadcrumbComponent :items="breadcrumbItems" />
-    <!-- <BaseTable
-      :config="{
-        title: `Propuestas Intercambios del objeto: ${objeto?.titulo ?? ''}`,
-        // agregar: { name: 'crear propuestas intercambios', paramKey: 'id' },
-        columns: [
-          {
-            name: 'Capítulo',
-            nameData: 'numeroCapitulo',
-          },
-        ],
-        data: propuestaIntercambioStore.list,
-        buttons: [
-          {
-            title: '',
-            icon: 'pi-file-pdf',
-            type: 'action',
-            action: (row) => openModal(row.rutaPDF),
-            styleType: 'primary',
-          },
-          {
-            title: '',
-            icon: 'pi-pen-to-square',
-            type: 'router',
-            route: { name: 'editar propuesta intercambio', paramKey: 'id' },
-            styleType: 'warning',
-          },
-          {
-            title: '',
-            icon: 'pi-trash',
-            type: 'action',
-            action: (row) => propuestaIntercambioStore.deleteItem(row.id),
-            styleType: 'danger',
-          },
-        ],
-      }"
-    /> -->
-
+  <div class="p-4">
+    <div class="flex justify-end my-3">
+      <RouterLink :to="{ name: 'crear propuesta intercambio' }">
+        <Button class="p-button-general" label="Agregar" icon="pi pi-plus" />
+      </RouterLink>
+    </div>
     <DataTable v-model:filters="filters" :value="propuestaIntercambioStore.list" :loading="loading" paginator :rows="10" dataKey="id" :rowsPerPageOptions="[5, 10, 15]"
     :globalFilterFields="['idUsuarioOfertante', 'idUsuarioReceptor', 'idObjetoOfertado', 'idObjetoSolicitado', 'fechaPropuesta']" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
     currentPageReportTemplate="Mostrando de {first} a {last} de {totalRecords} propuestas de intercambio"
     >
-      <Column field="idUsuarioOfertante" header="Usuario Ofertante" />
-      <Column field="idUsuarioReceptor" header="Usuario Receptor" />
-      <Column field="idObjetoOfertado" header="Objeto Ofertado" />
-      <Column field="idObjetoSolicitado" header="Objeto Solicitado" />
-      <Column field="fechaPropuesta" header="Fecha Propuesta" />
-      <!-- <Column field="estado" header="Estado" /> -->
-      <Column field="id" header="Acciones" />
+      <Column field="personaOfertante.nombre" header="Usuario Ofertante" />
+      <Column field="personaReceptor.nombre" header="Usuario Receptor" />
+      <Column field="objetoOfertado.nombre" header="Objeto Ofertado" />
+      <Column field="objetoSolicitado.nombre" header="Objeto Solicitado" />
+      <Column field="fechaPropuesta" header="Fecha Propuesta">
+        <template #body="{ data }"> {{ formatDateToView(data.fechaPropuesta)  }} </template>
+      </Column>
+      <Column field="estado" header="Estado">
+        <template #body="{ data }">
+          <Tag :value="tipoEstatusPropuestaIntercambioList[data.estado]" :severity="getSeverity(data.estado)" />
+        </template>
+      </Column>
 
+      <Column field="actions" header="Acciones" style="width: 10rem; text-align: center;">
+        <template #body="{ data }">
+          <div class="flex gap-2 justify-center">
+            <Button
+              icon="pi pi-pen-to-square"
+              outlined
+              rounded
+              severity="success"
+              v-if="data.id"
+              @click="$router.push({ name: 'editar propuesta intercambio', params: { id: data.id } })"
+            />
+            <Button
+              icon="pi pi-trash"
+              outlined rounded
+              severity="danger"
+              @click="() => propuestaIntercambioStore.deleteItem(data.id)"
+            />
+          </div>
+        </template>
+      </Column>
     </DataTable>
 
     <BaseModal v-model:open="isOpen" :isPDF="true">

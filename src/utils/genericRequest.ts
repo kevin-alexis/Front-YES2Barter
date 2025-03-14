@@ -69,6 +69,24 @@ export const genericRequest = async (url, method, body, rememberMe?) => {
   }
 };
 
+export const genericRequestFormDataAuthenticated = async (url, method, formData) => {
+  try {
+    const accountStore = useAccountStore();
+    const response = await axiosInstance({
+      url,
+      method: method.toUpperCase(),
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${accountStore.token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error en la solicitud: ${error.response?.data || error.message}`);
+  }
+};
+
 export const genericRequestFormData = async (url, method, formData) => {
   try {
     const response = await axiosInstance({

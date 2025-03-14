@@ -8,7 +8,7 @@ import 'primeicons/primeicons.css'
   <div class="flex flex-col h-screen overflow-hidden">
     <HeaderComponent />
     <RouterView class="bg-[#E8E8F4] flex-1 overflow-auto" />
-    <FooterComponent />
+    <FooterComponent/>
   </div>
 </template>
 
