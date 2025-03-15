@@ -25,6 +25,11 @@ export default defineConfig({
     https: {
       key: fs.readFileSync('localhost-key.pem'),
       cert: fs.readFileSync('localhost.pem')
+    },
+    hmr: {
+      protocol: 'ws',
+      host: 'localhost',
+      port: 7257,
     }
   }
 })

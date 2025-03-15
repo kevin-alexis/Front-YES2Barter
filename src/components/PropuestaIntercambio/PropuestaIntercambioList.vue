@@ -4,7 +4,7 @@ const propuestasIntercambios: any = defineModel('propuestasIntercambios')
 </script>
 
 <template>
-  <div class="h-full w-full">
+  <div class="h-full w-full p-5">
     <div
 
       v-if="propuestasIntercambios.length > 0"

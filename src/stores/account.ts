@@ -52,9 +52,7 @@ export const useAccountStore = defineStore('account', () => {
   async function getAll() {
     try {
       const response = await service.getAll()
-      // console.log(response.data)
       list.value = await response.data
-      // console.log(list.value)
     } catch (error) {
       logService.create({
         nivel: 'Error',
@@ -70,8 +68,6 @@ export const useAccountStore = defineStore('account', () => {
       const response = await service.login(userData, rememberMe);
 
       if (response.success) {
-        console.log(response);
-        // token.value = response.token;
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
 
         await getUser();
@@ -96,9 +92,7 @@ export const useAccountStore = defineStore('account', () => {
   async function refreshToken() {
     try {
       const response = await service.refreshToken();
-      console.log("refresh", response)
       if (response.success) {
-        console.log('Nuevo token recibido:', response.token);
 
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
         getUser();
@@ -134,7 +128,7 @@ export const useAccountStore = defineStore('account', () => {
           }).then(() => {
             if (
               token &&
-              user.value['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ===
+              user.value.rol ===
                 'Administrador'
             ) {
               router.replace({ name: 'administrar usuarios' })
@@ -163,7 +157,15 @@ export const useAccountStore = defineStore('account', () => {
   async function logOut() {
     try {
       await service.logout().then(()=>{{
-        router.replace({ name: "login" });
+        // ! LO COMENTE PORQUE AL NO ESTAR LOGEADO SE REINICIA EL HOME
+        // router.beforeEach(async (to, from, next) => {
+        //   if (to.meta.isPrivate && to.meta.isShared) {
+        //     next();
+        //     return;
+        //   }else{
+        //     router.replace({ name: "login" });
+        //   }
+        // })
       }})
     } catch (error) {
       logService.create({
@@ -179,7 +181,6 @@ export const useAccountStore = defineStore('account', () => {
     try {
       const response = await service.getCurrentUser();
       if (response && response.idPersona) {
-        console.log("getUser", response)
         user.value = response;
       } else {
         user.value = null;
