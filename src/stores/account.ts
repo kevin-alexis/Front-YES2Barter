@@ -6,6 +6,7 @@ import { computed, ref } from 'vue'
 import { jwtDecode } from 'jwt-decode'
 import router from '@/router'
 import { LogService } from '@/services/log/LogService'
+import { useToast } from 'primevue/usetoast';
 
 export const useAccountStore = defineStore('account', () => {
   const user = ref(null)
@@ -14,6 +15,7 @@ export const useAccountStore = defineStore('account', () => {
   const logService = new LogService()
   const list = ref([])
   const listRoles = ref([])
+  const toast = useToast();
   const isLoggedIn = computed(() => {
     return !!user.value
   });
@@ -59,6 +61,7 @@ export const useAccountStore = defineStore('account', () => {
       const response = await service.login(userData, rememberMe);
       if (response.success) {
         await getUser();
+        toast.add({ severity: 'success', summary: 'Sesión iniciada', detail: '¡Sesión iniciado con éxito!', life: 2000 });
         router.replace({ name: 'inicio' });
       } else {
         Swal.fire({
@@ -85,7 +88,7 @@ export const useAccountStore = defineStore('account', () => {
         getUser();
         return response.token;
       } else {
-        logOut();
+        // logOut();
         return false;
       }
     } catch (error) {
@@ -95,7 +98,7 @@ export const useAccountStore = defineStore('account', () => {
         mensaje: `Error en el método refreshToken del store account: ${error.message}`,
         excepcion: error.toString(),
       });
-      logOut();
+      // logOut();
       return false;
     }
   }
@@ -143,20 +146,31 @@ export const useAccountStore = defineStore('account', () => {
 
   async function logOut() {
     try {
-      if(isLoggedIn){
-        await service.logout();
-        router.replace({ name: "login" })
+      const result = await Swal.fire({
+        title: '¿Estás seguro de cerrar sesión?',
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, cerrar sesión',
+        confirmButtonColor: '#3085d6',
+      });
+
+      if (result.isConfirmed) {
+        if (isLoggedIn.value) {
+          await service.logout();
+        }
         user.value = null;
+        router.replace({ name: 'login' });
       }
     } catch (error) {
       logService.create({
-        nivel: "Error",
+        nivel: 'Error',
         mensaje: `Error en el método logOut del store account: ${error.message}`,
         excepcion: error.toString(),
       });
     }
   }
-
 
   async function getUser() {
     try {
@@ -165,7 +179,7 @@ export const useAccountStore = defineStore('account', () => {
         user.value = response;
       } else {
         user.value = null;
-        logOut();
+        // logOut();
       }
     } catch (error) {
       logService.create({
@@ -173,7 +187,7 @@ export const useAccountStore = defineStore('account', () => {
         mensaje: `Error en el método getUser del store account: ${error.message}`,
         excepcion: error.toString(),
       });
-      logOut();
+      // logOut();
     }
   }
 
