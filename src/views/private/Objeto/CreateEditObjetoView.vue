@@ -5,10 +5,12 @@ import { useCategoriaStore } from '@/stores/categoria'
 import { usePersonaStore } from '@/stores/persona'
 import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import router from '@/router'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
 import { EstatusObjeto } from '@/common/enums/enums'
 import {enumFormat, formatDateToForm} from '@/utils/helper'
+import { useAccountStore } from '@/stores/account'
 
 const objetoStore = useObjetoStore()
 const categoriaStore = useCategoriaStore()
@@ -16,9 +18,10 @@ const personaStore = usePersonaStore()
 const tipoEstadoList = Object.values(EstatusObjeto);
 
 const route = useRoute()
+const accountStore = useAccountStore()
 const isEdit = ref(false)
 const id = ref('')
-
+const isCreateEditObjetoIntercambiadorRoute = ref(false)
 // const MAX_FILE_SIZE = 102400; //100KB
 
 const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] }
@@ -90,7 +93,6 @@ const contactForm = reactive({
 })
 
 const handleSubmitForm = handleSubmit((values: FormValues) => {
-  console.log(values)
   //validaciones
   if (!isEdit.value) {
     objetoStore.create(values)
@@ -102,21 +104,29 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
 onMounted(async () => {
   await categoriaStore.getAll()
   await personaStore.getAllPersonasIntercambiadores()
+
+  // Verifica el valor de isEdit
   isEdit.value = route.fullPath.includes('editar')
   id.value = route.params.id as string
   if (isEdit.value) {
-    await objetoStore.getById(id.value).then((response) => {
-      console.log(response)
+    await objetoStore.getById(id.value).then(async (response) => {
+      if(response.idUsuario !== accountStore.user.idUsuario){
+        router.back()
+      }else{
+        isCreateEditObjetoIntercambiadorRoute.value = true;
+      }
       Object.assign(contactForm, {
         ...response,
         fechaPublicacion: formatDateToForm(response.fechaPublicacion)
       })
+    }).catch(error => {
+      console.error("Error al obtener el objeto:", error)
     })
   } else {
-    Object.assign(contactForm, {
-    })
+    Object.assign(contactForm, {})
   }
 })
+
 
 </script>
 
@@ -160,6 +170,7 @@ onMounted(async () => {
             placeholder: 'Fecha de Publicación',
             type: 'date',
             isRequired: true,
+            isDisabled: isCreateEditObjetoIntercambiadorRoute,
             model: 'fechaPublicacion',
           },
           {
@@ -190,6 +201,7 @@ onMounted(async () => {
               paramKey: 'nombre',
               valueKey: 'idUsuario',
             },
+            isDisabled: isCreateEditObjetoIntercambiadorRoute,
             isRequired: true,
             model: 'idUsuario',
           },

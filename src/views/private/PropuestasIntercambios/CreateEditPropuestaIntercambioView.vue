@@ -3,34 +3,54 @@ import BaseForm from '@/components/BaseForm.vue'
 import { usePropuestaIntercambioStore } from '@/stores/propuestaIntercambio'
 import { useObjetoStore } from '@/stores/objeto'
 import { computed, onMounted, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
 import { EstatusPropuestaIntercambio } from '@/common/enums/enums'
 import { enumFormat } from '@/utils/helper'
+import { useAccountStore } from '@/stores/account'
 
 const propuestaIntercambioStore = usePropuestaIntercambioStore()
 const objetoStore = useObjetoStore()
+const accountStore = useAccountStore()
+const router = useRouter()
 const isEdit = ref(false)
 const id = ref('')
 const tipoEstadoList = Object.values(EstatusPropuestaIntercambio);
 const objetoSolicitado = computed(() => {
-  const objetoOfertado = objetoStore.list.find(item =>{
+  const objetoOfertadoItem = objetoStore.list.find(item =>{
     return item.id == idObjetoOfertado.value
   });
 
-  const idUsuarioOfertado = objetoOfertado ? objetoOfertado.idUsuario : null;
 
-  if(objetoOfertado && !isEdit){
+  const idUsuarioOfertado = objetoOfertadoItem ? objetoOfertadoItem.idUsuario : null;
+
+  if(objetoOfertadoItem && !isEdit){
     idObjetoSolicitado.value = null;
   }
 
   return objetoStore.list.filter(item => item.idUsuario !== idUsuarioOfertado);
 });
 
+const objetoOfertado = computed(() => {
+  const objetoSolicitadoItem = objetoStore.list.find(item =>{
+    return item.id == idObjetoSolicitado.value
+  });
 
+
+  const idUsuarioSocilitado = objetoSolicitadoItem ? objetoSolicitadoItem.idUsuario : null;
+
+  if(objetoSolicitadoItem && !isEdit){
+    idObjetoOfertado.value = null;
+  }
+
+  return objetoStore.list.filter(item => item.idUsuario !== idUsuarioSocilitado);
+});
 
 const route = useRoute()
+const isCreateIntercambiadorRoute = computed(()=>{
+  return route.name == 'crear propuesta intercambio intercambiador'
+})
 
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
@@ -69,6 +89,7 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
 })
 
 onMounted(async () => {
+  await accountStore.getUser()
   await objetoStore.getAll()
   isEdit.value = route.fullPath.includes('editar')
   id.value = route.params.id as string
@@ -79,11 +100,21 @@ onMounted(async () => {
       })
     })
   } else {
-    Object.assign(dataForm, {
+    await objetoStore.getById(id.value).then((response) => {
+      response.idUsuario == accountStore.user.idUsuario ? router.back() : '';
+    })
+    if(isCreateIntercambiadorRoute.value){
+      Object.assign(dataForm, {
+      idObjeto: id.value,
+      idObjetoSolicitado: id.value,
+      estado: Object.values(EstatusPropuestaIntercambio).indexOf(EstatusPropuestaIntercambio.ENVIADA)
+    })
+    }else{
+      Object.assign(dataForm, {
       idObjeto: id.value,
     })
+    }
   }
-
 })
 </script>
 
@@ -101,7 +132,7 @@ onMounted(async () => {
             placeholder: 'Objeto',
             type: 'select',
             select: {
-              data: objetoStore.list,
+              data: isCreateIntercambiadorRoute ? objetoOfertado : objetoStore.list,
               paramKey: 'nombre',
               valueKey: 'id',
             },
@@ -113,11 +144,12 @@ onMounted(async () => {
             placeholder: 'Objeto',
             type: 'select',
             select: {
-              data: objetoSolicitado,
+              data: isCreateIntercambiadorRoute ? objetoStore.list : objetoSolicitado,
               paramKey: 'nombre',
               valueKey: 'id',
             },
             isRequired: isEdit,
+            isDisabled: isCreateIntercambiadorRoute,
             model: 'idObjetoSolicitado',
           },
           {
@@ -130,6 +162,7 @@ onMounted(async () => {
               valueKey: 'id',
             },
             isRequired: isEdit,
+            isDisabled: isCreateIntercambiadorRoute,
             model: 'estado',
           },
         ],

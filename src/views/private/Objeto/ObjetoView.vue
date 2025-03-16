@@ -7,9 +7,11 @@ import MisObjetoView from '@/views/private/Objeto/MisObjetoView.vue';
 import { useAccountStore } from "@/stores/account";
 import { onMounted } from 'vue';
 const accountStore = useAccountStore()
+const isAdmin = ref(false)
 
 onMounted(()=>{
   accountStore.getUser()
+  isAdmin.value = accountStore.isLoggedIn && accountStore.user && accountStore.user.rol;
 })
 
 </script>
@@ -19,12 +21,12 @@ onMounted(()=>{
   <main>
     <ObjetoCrudView
       class="p-5"
-      v-if="accountStore.isLoggedIn && accountStore.user && accountStore.user.rol === 'Administrador'">
+      v-if="isAdmin === 'Administrador'">
   </ObjetoCrudView>
 
     <MisObjetoView
       class="p-5"
-      v-else-if="accountStore.isLoggedIn && accountStore.user && accountStore.user.rol !== 'Administrador'">
+      v-else-if="isAdmin !== 'Administrador'">
     </MisObjetoView>
 
   </main>

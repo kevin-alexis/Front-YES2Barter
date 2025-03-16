@@ -37,7 +37,7 @@ function eliminar(id: number) {
     </RouterLink>
 
     <div v-if="config.showButtons" class="flex gap-2 mt-4 p-2">
-      <RouterLink :to="{ name: 'crear objeto', params: { id: config.objeto.id } }" class="w-full">
+      <RouterLink :to="{ name: 'editar objeto', params: { id: config.objeto.id } }" class="w-full">
         <BaseButton styleType="warning">Editar</BaseButton>
       </RouterLink>
       <BaseButton styleType="danger" @click="eliminar(config.objeto.id)">Eliminar</BaseButton>

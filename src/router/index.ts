@@ -203,8 +203,24 @@ const router = createRouter({
         isPrivate: true,
         isShared: false,
         icon: 'pi-book',
-        roles: ['Administrador', 'Intercambiador'],
+        roles: ['Administrador'],
       },
+      children:[
+        {
+          path: '/propuesta-intercambio/crear/:id',
+          name: 'crear propuesta intercambio intercambiador',
+          component: () =>
+            import('../views/private/PropuestasIntercambios/CreateEditPropuestaIntercambioView.vue'),
+          meta: {
+            menu: false,
+            title: 'Crear Capítulo',
+            isPrivate: true,
+            isShared: false,
+            icon: 'pi-book',
+            roles: ['Administrador', 'Intercambiador'],
+          },
+        },
+      ]
     },
     {
       path: '/propuesta-intercambio/editar/:id',
@@ -244,7 +260,7 @@ const router = createRouter({
         isShared: false,
         icon: 'pi-book',
         roles: ['Administrador'],
-      },
+      }
     },
     {
       path: '/usuarios/editar/:idPersona',
@@ -329,7 +345,7 @@ router.beforeEach(async (to, from, next) => {
   const accountStore = useAccountStore();
 
   if (to.meta.isPrivate && !accountStore.user) {
-    
+
     await accountStore.getUser();
 
     if (!accountStore.user) {

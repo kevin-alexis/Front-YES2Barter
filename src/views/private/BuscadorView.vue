@@ -57,8 +57,6 @@ const filterObjetos = () => {
 
     return matchesName && matchesCategory
   })
-
-  console.log('Objetos filtrados:', filteredObjetos.value)
 }
 
 
