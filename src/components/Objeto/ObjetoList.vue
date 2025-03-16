@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { IObjeto } from '@/interfaces/objeto/IObjeto';
 import ObjetoItem from './ObjetoItem.vue'
 
-const objetos: any = defineModel('objetos')
+// const objetos: any = defineModel('objetos')
 
 defineProps<{
+  objetos: IObjeto[]
   config:{
     showButtons: boolean
   }

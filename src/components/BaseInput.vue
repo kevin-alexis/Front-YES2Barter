@@ -63,7 +63,7 @@ const model = defineModel()
     <div v-else class="flex w-full relative">
       <Field
 
-      class="w-full bg-white p-2 rounded-md border border-gray-300 disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50"
+      class="w-full bg-white p-2 rounded-md border border-gray-300 disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50 h-[2.85rem]"
       :placeholder="config.placeholder ?? placeholders[config.type]"
       :type="isVisible ? 'text' : config.type"
       :required="config.isRequired"
