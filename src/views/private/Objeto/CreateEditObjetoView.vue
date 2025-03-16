@@ -21,7 +21,7 @@ const route = useRoute()
 const accountStore = useAccountStore()
 const isEdit = ref(false)
 const id = ref('')
-const isCreateEditObjetoIntercambiadorRoute = ref(false)
+const isIntercambiador = ref(accountStore.user.rol == "Intercambiador")
 // const MAX_FILE_SIZE = 102400; //100KB
 
 const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] }
@@ -35,8 +35,6 @@ const { errors, defineField, handleSubmit } = useForm({
     nombre: yup.string().required('El nombre es obligatorio'),
     descripcion: yup.string().required('La descripción es obligatoria'),
     idCategoria: yup.string().required('La categoría es obligatoria'),
-    fechaPublicacion:  yup.date().required('La fecha de publicación es obligatoria')
-    .max(new Date().toISOString().split('T')[0], 'La fecha no puede ser posterior a hoy'),
     rutaImagen: yup
       .mixed()
       .test('required-if-not-edit', 'La imagen es obligatoria', function (value) {
@@ -51,8 +49,24 @@ const { errors, defineField, handleSubmit } = useForm({
         }
         return true
       }),
-    estado: yup.string().required('El estado es obligatorio'),
-    idUsuario: yup.string().required('El usaurio es obligatorio'),
+    estado: yup.string()
+    .test('required-if-not-edit', 'El estado es obligatorio', function (value) {
+        if (!isIntercambiador.value) {
+          if (!value) {
+            return this.createError({ message: 'El estado es obligatoria' });
+          }
+        }
+        return true;
+      }),
+    idUsuario: yup.string()
+      .test('required-if-not-edit', 'El dueño es obligatorio', function (value) {
+        if (!isIntercambiador.value) {
+          if (!value) {
+            return this.createError({ message: 'El usuario es obligatoria' });
+          }
+        }
+        return true;
+      })
 
   }),
 })
@@ -69,10 +83,6 @@ const [idCategoria] = defineField('idCategoria', {
   validateOnModelUpdate: true,
 })
 
-const [fechaPublicacion] = defineField('fechaPublicacion', {
-  validateOnModelUpdate: true,
-})
-
 const [rutaImagen] = defineField('rutaImagen', {
   validateOnModelUpdate: true,
 })
@@ -86,7 +96,6 @@ const contactForm = reactive({
   nombre: nombre,
   descripcion: descripcion,
   idCategoria: idCategoria,
-  fechaPublicacion: fechaPublicacion,
   rutaImagen: rutaImagen,
   estado: estado,
   idUsuario: idUsuario,
@@ -101,23 +110,20 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
   }
 })
 
-onMounted(async () => {
-  await categoriaStore.getAll()
-  await personaStore.getAllPersonasIntercambiadores()
+onMounted( () => {
+  categoriaStore.getAll()
+  personaStore.getAllPersonasIntercambiadores()
 
   // Verifica el valor de isEdit
   isEdit.value = route.fullPath.includes('editar')
   id.value = route.params.id as string
   if (isEdit.value) {
-    await objetoStore.getById(id.value).then(async (response) => {
-      if(response.idUsuario !== accountStore.user.idUsuario){
+    objetoStore.getById(id.value).then((response) => {
+      if(response.idUsuario !== accountStore.user.idUsuario && isIntercambiador.value){
         router.back()
-      }else{
-        isCreateEditObjetoIntercambiadorRoute.value = true;
       }
       Object.assign(contactForm, {
         ...response,
-        fechaPublicacion: formatDateToForm(response.fechaPublicacion)
       })
     }).catch(error => {
       console.error("Error al obtener el objeto:", error)
@@ -166,14 +172,6 @@ onMounted(async () => {
             model: 'idCategoria',
           },
           {
-            label: 'Fecha de Publicación',
-            placeholder: 'Fecha de Publicación',
-            type: 'date',
-            isRequired: true,
-            isDisabled: isCreateEditObjetoIntercambiadorRoute,
-            model: 'fechaPublicacion',
-          },
-          {
             label: 'Imagen',
             placeholder: 'Imagen',
             type: 'file',
@@ -189,7 +187,9 @@ onMounted(async () => {
               paramKey: 'name',
               valueKey: 'id',
             },
+            isDisabled: isEdit,
             isRequired: true,
+            isHidden: isIntercambiador,
             model: 'estado',
           },
           {
@@ -201,9 +201,10 @@ onMounted(async () => {
               paramKey: 'nombre',
               valueKey: 'idUsuario',
             },
-            isDisabled: isCreateEditObjetoIntercambiadorRoute,
+            isDisabled: isEdit,
             isRequired: true,
             model: 'idUsuario',
+            isHidden: isIntercambiador
           },
         ],
         titleButton: isEdit ? 'Editar' : 'Crear',

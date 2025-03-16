@@ -2,11 +2,12 @@
 import ObjetoList from '@/components/Objeto/ObjetoList.vue'
 import { onMounted } from 'vue'
 import { useObjetoStore } from '@/stores/objeto'
+import { EstatusObjeto } from '@/common/enums/enums'
 
 const objetoStore = useObjetoStore()
 
 onMounted(() => {
-  objetoStore.getAll()
+  objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
 })
 </script>
 

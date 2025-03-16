@@ -1,12 +1,32 @@
 import type { IObjeto } from '@/interfaces/objeto/IObjeto'
 import { BaseService } from '../BaseService'
 import { genericRequestAuthenticated, genericRequestFormDataAuthenticated } from '@/utils/genericRequest'
+import { EstatusObjeto } from '@/common/enums/enums'
 
 export class ObjetoService extends BaseService<IObjeto> {
   private static nameController = 'Objeto'
 
   constructor() {
     super(ObjetoService.nameController)
+  }
+
+  public getAllByIdEstatus = async (estatus?: EstatusObjeto) => {
+    try {
+      let value: number;
+      if (estatus != null) {
+        value = Object.values(EstatusObjeto).indexOf(estatus);
+      }
+
+      const response = await genericRequestAuthenticated(`/Objeto/getAllByIdEstatus`, 'POST', value)
+      return response.data
+    } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdEstatus: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
   }
 
   public GetByName = async (name: string) => {

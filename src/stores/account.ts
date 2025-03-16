@@ -105,6 +105,7 @@ export const useAccountStore = defineStore('account', () => {
   function signIn(userData: IUser) {
     try {
       service.create(userData).then((response) => {
+        console.log(response)
         if (response.success) {
           Swal.fire({
             title: '¡Registro Completo!',
@@ -113,11 +114,7 @@ export const useAccountStore = defineStore('account', () => {
             confirmButtonText: 'Ok',
             confirmButtonColor: '#6C6DE7',
           }).then(() => {
-            if (
-              token &&
-              user.value.rol ===
-                'Administrador'
-            ) {
+            if (isLoggedIn.value && user.value && user.value.rol === 'Administrador') {
               router.replace({ name: 'administrar usuarios' })
             } else {
               router.replace({ name: 'login' })

@@ -6,6 +6,7 @@ const URL_API_SOURCE = import.meta.env.VITE_APP_URL_API_SOURCE;
 
 defineProps<{
   propuestaIntercambio: any;
+  isInteractive:boolean
 }>();
 
 function cerrarPropuestaIntercambio(isSuccess: boolean, id: number){
@@ -60,7 +61,7 @@ function cerrarPropuestaIntercambio(isSuccess: boolean, id: number){
     </div>
   </div>
 
-    <div class="w-full flex gap-4 justify-center sm:justify-start mt-4">
+    <div class="w-full flex gap-4 justify-center sm:justify-start mt-4" v-if="isInteractive">
       <BaseButton styleType="success" class="w-24 py-2"
       @click="cerrarPropuestaIntercambio(true, propuestaIntercambio.id)"
       >

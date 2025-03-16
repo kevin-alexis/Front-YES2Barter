@@ -1,6 +1,6 @@
 import type { IBaseObject } from '../Base'
 import type { IPersona } from '../persona/IPersona'
-import type { IPropuestaIntercambio } from '../propuestaIntercambio/IPropuestaIntercambio'
+import type { IPropuestaIntercambioWithData } from '../propuestaIntercambio/IPropuestaIntercambio'
 
 export interface IChat extends IBaseObject {
   idUsuario1: string
@@ -11,5 +11,5 @@ export interface IChat extends IBaseObject {
 export interface IGetChatsVM extends IChat {
   personaEmisor: IPersona
   personaReceptor: IPersona
-  propuestaIntercambio: IPropuestaIntercambio
+  propuestaIntercambio: IPropuestaIntercambioWithData
 }

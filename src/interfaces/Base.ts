@@ -15,4 +15,5 @@ export interface IBaseInput {
     valueKey: string;
   };
   isDisabled?:boolean
+  isHidden?:boolean
   }

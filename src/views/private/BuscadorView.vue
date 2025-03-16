@@ -7,6 +7,7 @@ import { useObjetoStore } from '@/stores/objeto'
 import { computed, ref } from 'vue'
 import * as yup from 'yup'
 import { Form } from 'vee-validate'
+import { EstatusObjeto } from '@/common/enums/enums'
 
 const objetoStore = useObjetoStore()
 
@@ -23,14 +24,14 @@ const currentSchema = computed(() => {
 const handleSubmit = async () => {
 
   if (search.value == '') {
-    await objetoStore.getAll()
+    await objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
   } else {
     await objetoStore.getByName(search.value)
   }
 }
 
 onMounted(() => {
-  objetoStore.getAll()
+  objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
 })
 </script>
 

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import PropuestaIntercambioItem from './PropuestaIntercambioItem.vue'
 const propuestasIntercambios: any = defineModel('propuestasIntercambios')
+
+defineProps<{
+  isInteractive: boolean
+}>()
 </script>
 
 <template>
@@ -13,6 +17,7 @@ const propuestasIntercambios: any = defineModel('propuestasIntercambios')
       <PropuestaIntercambioItem
         v-for="(propuestaIntercambio, index) in propuestasIntercambios"
         :propuestaIntercambio="propuestaIntercambio"
+        :isInteractive="isInteractive"
         :key="index"
         class="w-full"
       />

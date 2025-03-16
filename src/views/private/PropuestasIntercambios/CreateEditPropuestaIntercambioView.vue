@@ -6,7 +6,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
-import { EstatusPropuestaIntercambio } from '@/common/enums/enums'
+import { EstatusObjeto, EstatusPropuestaIntercambio } from '@/common/enums/enums'
 import { enumFormat } from '@/utils/helper'
 import { useAccountStore } from '@/stores/account'
 
@@ -17,11 +17,15 @@ const router = useRouter()
 const isEdit = ref(false)
 const id = ref('')
 const tipoEstadoList = Object.values(EstatusPropuestaIntercambio);
+const propuestasRealizadas = ref([])
+
+const objetoList = computed(()=>{
+  return objetoStore.list.filter((item) => item.estado == Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE))
+})
 const objetoSolicitado = computed(() => {
   const objetoOfertadoItem = objetoStore.list.find(item =>{
     return item.id == idObjetoOfertado.value
   });
-
 
   const idUsuarioOfertado = objetoOfertadoItem ? objetoOfertadoItem.idUsuario : null;
 
@@ -29,7 +33,7 @@ const objetoSolicitado = computed(() => {
     idObjetoSolicitado.value = null;
   }
 
-  return objetoStore.list.filter(item => item.idUsuario !== idUsuarioOfertado);
+  return objetoStore.list.filter(item => item.idUsuario !== idUsuarioOfertado && item.estado == Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE));
 });
 
 const objetoOfertado = computed(() => {
@@ -37,14 +41,21 @@ const objetoOfertado = computed(() => {
     return item.id == idObjetoSolicitado.value
   });
 
-
   const idUsuarioSocilitado = objetoSolicitadoItem ? objetoSolicitadoItem.idUsuario : null;
 
   if(objetoSolicitadoItem && !isEdit){
     idObjetoOfertado.value = null;
   }
 
-  return objetoStore.list.filter(item => item.idUsuario !== idUsuarioSocilitado);
+  const objetosFiltradosPorUsuario =  objetoStore.list.filter(item => {
+    if(item.idUsuario == accountStore.user.idUsuario && item.estado == Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE)) return item
+  });
+
+  const objetosFiltradosNoOfertados = objetosFiltradosPorUsuario.filter(objeto => {
+    return !propuestasRealizadas.value.some(propuesta => { return propuesta.idObjetoOfertado == objeto.id});
+  });
+
+    return objetosFiltradosNoOfertados;
 });
 
 const route = useRoute()
@@ -89,7 +100,6 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
 })
 
 onMounted(async () => {
-  await accountStore.getUser()
   await objetoStore.getAll()
   isEdit.value = route.fullPath.includes('editar')
   id.value = route.params.id as string
@@ -100,6 +110,12 @@ onMounted(async () => {
       })
     })
   } else {
+    await propuestaIntercambioStore.getAllByIdUsuarioAndIdObjeto(accountStore.user.idUsuario, parseInt(id.value)).then((response)=>{
+      if(response.success){
+        propuestasRealizadas.value = response.data
+      }
+    })
+
     await objetoStore.getById(id.value).then((response) => {
       response.idUsuario == accountStore.user.idUsuario ? router.back() : '';
     })
@@ -132,7 +148,7 @@ onMounted(async () => {
             placeholder: 'Objeto',
             type: 'select',
             select: {
-              data: isCreateIntercambiadorRoute ? objetoOfertado : objetoStore.list,
+              data: isCreateIntercambiadorRoute ? objetoOfertado : objetoList,
               paramKey: 'nombre',
               valueKey: 'id',
             },
@@ -144,7 +160,7 @@ onMounted(async () => {
             placeholder: 'Objeto',
             type: 'select',
             select: {
-              data: isCreateIntercambiadorRoute ? objetoStore.list : objetoSolicitado,
+              data: isCreateIntercambiadorRoute ? objetoList : objetoSolicitado,
               paramKey: 'nombre',
               valueKey: 'id',
             },

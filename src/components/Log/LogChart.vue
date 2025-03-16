@@ -6,13 +6,13 @@ import { ref, onMounted, watch } from "vue";
 const logs = defineModel<ILog[]>('logs');
 const chartData = ref();
 const chartOptions = ref();
-const months = ref([
+const meses = ref([
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ]);
 
 const splitData = () => {
-  const logCountsByMonth = {
+  const logsContadorPorMes = {
     critical: Array(12).fill(0),
     error: Array(12).fill(0),
     warning: Array(12).fill(0),
@@ -21,23 +21,23 @@ const splitData = () => {
   };
 
   logs.value?.forEach((log: ILog) => {
-    const logDate = new Date(log.fecha);
-    const monthIndex = logDate.getMonth();
+    const logFecha = new Date(log.fecha);
+    const mesIndex = logFecha.getMonth();
 
     if (log.nivel === 'Critical') {
-      logCountsByMonth.critical[monthIndex]++;
+      logsContadorPorMes.critical[mesIndex]++;
     } else if (log.nivel === 'Error') {
-      logCountsByMonth.error[monthIndex]++;
+      logsContadorPorMes.error[mesIndex]++;
     } else if (log.nivel === 'Warning') {
-      logCountsByMonth.warning[monthIndex]++;
+      logsContadorPorMes.warning[mesIndex]++;
     } else if (log.nivel === 'Info') {
-      logCountsByMonth.info[monthIndex]++;
+      logsContadorPorMes.info[mesIndex]++;
     }
 
-    logCountsByMonth.total[monthIndex]++;
+    logsContadorPorMes.total[mesIndex]++;
   });
 
-  return logCountsByMonth;
+  return logsContadorPorMes;
 };
 
 const setChartData = () => {
@@ -45,7 +45,7 @@ const setChartData = () => {
   const logCounts = splitData();
 
   return {
-    labels: months.value,
+    labels: meses.value,
     datasets: [
       {
         type: 'line',
@@ -97,9 +97,9 @@ const setChartData = () => {
 
 const setChartOptions = () => {
   const documentStyle = getComputedStyle(document.documentElement);
-  const textColor = documentStyle.getPropertyValue('--p-text-color');
-  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+  const color = documentStyle.getPropertyValue('--p-text-color');
+  const colorSecundario = documentStyle.getPropertyValue('--p-text-muted-color');
+  const borde = documentStyle.getPropertyValue('--p-content-border-color');
 
   return {
     maintainAspectRatio: false,
@@ -107,25 +107,25 @@ const setChartOptions = () => {
     plugins: {
       legend: {
         labels: {
-          color: textColor
+          color: color
         }
       }
     },
     scales: {
       x: {
         ticks: {
-          color: textColorSecondary
+          color: colorSecundario
         },
         grid: {
-          color: surfaceBorder
+          color: borde
         }
       },
       y: {
         ticks: {
-          color: textColorSecondary
+          color: colorSecundario
         },
         grid: {
-          color: surfaceBorder
+          color: borde
         }
       }
     }

@@ -52,7 +52,7 @@ export class BaseService<T> {
   public create = async (body: T) => {
     try {
       const response = await genericRequestAuthenticated(`${this.baseUrl}/${this.nameController}`, 'POST', body)
-      return response.data
+      return response
     } catch (error) {
       this.logService.create({
         nivel: 'Error',
