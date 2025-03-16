@@ -21,7 +21,7 @@ const currentSchema = computed(() => {
 })
 
 const handleSubmit = async () => {
-  
+
   if (search.value == '') {
     await objetoStore.getAll()
   } else {
@@ -29,8 +29,8 @@ const handleSubmit = async () => {
   }
 }
 
-onMounted(async () => {
-  await objetoStore.getAll()
+onMounted(() => {
+  objetoStore.getAll()
 })
 </script>
 

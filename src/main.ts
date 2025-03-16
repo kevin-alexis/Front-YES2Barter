@@ -9,6 +9,7 @@ import Tooltip from 'primevue/tooltip';
 
 import App from './App.vue'
 import router from './router'
+import { useAccountStore } from './stores/account';
 
 const app = createApp(App)
 app.use(PrimeVue, {
@@ -21,6 +22,11 @@ app.use(PrimeVue, {
 });
 app.directive('tooltip', Tooltip);
 app.use(createPinia())
-app.use(router)
 
-app.mount('#app')
+const accountStore = useAccountStore()
+
+accountStore.getUser().finally(() => {
+  app.use(router)
+
+  app.mount('#app')
+})

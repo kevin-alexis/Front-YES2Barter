@@ -5,8 +5,8 @@ import { useObjetoStore } from '@/stores/objeto'
 
 const objetoStore = useObjetoStore()
 
-onMounted(async () => {
-  await objetoStore.getAll()
+onMounted(() => {
+  objetoStore.getAll()
 })
 </script>
 

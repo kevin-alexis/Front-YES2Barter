@@ -336,30 +336,31 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
+  const accountStore = useAccountStore();
 
   if (to.name === '404' || to.name === 'inicio') {
     next();
     return;
   }
 
-  const accountStore = useAccountStore();
 
-  if (to.meta.isPrivate && !accountStore.user) {
+  if (to.meta.isPrivate && !accountStore.isLoggedIn) {
 
-    await accountStore.getUser();
-
-    if (!accountStore.user) {
+    if (!accountStore.isLoggedIn) {
       if (to.name !== 'login') next({ name: 'login' });
       return;
     }
   }
-  if (!accountStore.user && !to.meta.isPrivate) {
+
+  if (!accountStore.isLoggedIn && !to.meta.isPrivate) {
     next();
     return;
   }
+
   const userRole = accountStore.user?.rol?.toLowerCase() ?? '';
   const roles = (to.meta?.roles ?? []).map((r) => r.toLowerCase());
-  if (!to.meta.isPrivate && accountStore.user && !to.meta.isShared) {
+
+  if (!to.meta.isPrivate && accountStore.isLoggedIn && !to.meta.isShared) {
     if (to.name !== 'inicio') next({ name: 'inicio' });
     return;
   }
@@ -368,6 +369,9 @@ router.beforeEach(async (to, from, next) => {
     if (to.name !== 'inicio') next({ name: 'inicio' });
     return;
   }
+
   next();
 });
+
+
 export default router

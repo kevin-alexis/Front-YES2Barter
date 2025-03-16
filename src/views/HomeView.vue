@@ -8,7 +8,6 @@ import { onMounted } from 'vue';
 const accountStore = useAccountStore()
 
 onMounted(()=>{
-  accountStore.getUser()
 })
 
 </script>
@@ -18,12 +17,12 @@ onMounted(()=>{
   <main>
     <DashboardAdmin
       class="p-5"
-      v-if="accountStore.isLoggedIn && accountStore.user && accountStore.user.idRol === 'Administrador'">
+      v-if="accountStore.isLoggedIn && accountStore.user && accountStore.user.rol === 'Administrador'">
     </DashboardAdmin>
 
     <InicioLogeado
       class="p-5"
-      v-else-if="accountStore.isLoggedIn && accountStore.user && accountStore.user.idRol !== 'Administrador'">
+      v-else-if="accountStore.isLoggedIn && accountStore.user && accountStore.user.rol !== 'Administrador'">
     </InicioLogeado>
 
     <InicioNoLogeado v-else></InicioNoLogeado>

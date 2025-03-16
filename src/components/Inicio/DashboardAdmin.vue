@@ -2,13 +2,16 @@
 import { onMounted } from 'vue'
 import { useObjetoStore } from '@/stores/objeto'
 import { useAccountStore } from '@/stores/account'
+import { usePropuestaIntercambioStore } from '../../stores/propuestaIntercambio';
 
 const objetoStore = useObjetoStore()
 const accountStore = useAccountStore()
+const propuestaIntercambioStore = usePropuestaIntercambioStore()
 
-onMounted(async () => {
-  await objetoStore.getAll()
-  await accountStore.getAll()
+onMounted(() => {
+  propuestaIntercambioStore.getAll()
+  objetoStore.getAll()
+  accountStore.getAll()
 })
 
 const scrollToTop = () => {
@@ -25,14 +28,14 @@ const scrollToTop = () => {
       <div
         class="flex flex-col justify-center items-center gap-5 bg-gradient-to-t from-[var(--primary)] to-[var(--primary-gradient)] h-60 p-10 rounded-2xl text-center"
       >
-        <h1 class="text-4xl font-bold text-white">Administrar Categorías</h1>
-        <RouterLink :to="{ name: 'administrar categorias' }">
+        <h1 class="text-4xl font-bold text-white">Administrar Propuestas de Intercambios</h1>
+        <RouterLink :to="{ name: 'administrar propuestas intercambios' }">
           <button
             id="scrollButton2"
             @click="scrollToTop"
             class="cursor-pointer mt-5 px-8 py-3 bg-white text-[var(--primary)] rounded-full hover:bg-gray-100 transition duration-200"
           >
-            Gestionar Categorias
+            Gestionar Propuestas de Intercambios
           </button>
         </RouterLink>
       </div>
@@ -60,9 +63,8 @@ const scrollToTop = () => {
         <div
           class="bg-white p-5 rounded-2xl shadow-md text-center border border-gray-200 hover:shadow-lg transition-all duration-200"
         >
-          <h3 class="font-bold text-2xl">Total de Cambios concretados</h3>
-          <p class="text-4xl">12</p>
-          <!-- CAMBIARLO POR CAMBIOS CONCRETADOS UNA VEZ ESTE ESE ENDPOINT -->
+          <h3 class="font-bold text-2xl">Total de Propuestas de Intercambios</h3>
+          <p class="text-4xl">{{propuestaIntercambioStore.list.length}}</p>
         </div>
 
         <div
