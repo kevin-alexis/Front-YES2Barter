@@ -1,28 +1,19 @@
 import type { IUser } from '@/interfaces/account/IAccount'
 import { AccountService } from '@/services/account/AccountService'
 import { defineStore } from 'pinia'
-import { useStorage } from '@vueuse/core'
 import Swal from 'sweetalert2'
 import { computed, ref } from 'vue'
 import { jwtDecode } from 'jwt-decode'
 import router from '@/router'
 import { LogService } from '@/services/log/LogService'
-import { axiosInstance } from '@/utils/genericRequest'
 
 export const useAccountStore = defineStore('account', () => {
   const user = ref(null)
-  // const token = useStorage('token', '')
   const token = ref('')
   const service = new AccountService()
   const logService = new LogService()
   const list = ref([])
   const listRoles = ref([])
-  // const isLoggedIn = computed(() => {
-  //   if (token.value && !user.value) {
-  //     getUser()
-  //   }
-  //   return token.value !== '' && token.value !== undefined
-  // })
   const isLoggedIn = computed(() => {
     return !!user.value
   });
@@ -66,10 +57,7 @@ export const useAccountStore = defineStore('account', () => {
   async function login(userData: IUser, rememberMe: boolean) {
     try {
       const response = await service.login(userData, rememberMe);
-
       if (response.success) {
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
-
         await getUser();
         router.replace({ name: 'inicio' });
       } else {
@@ -94,7 +82,6 @@ export const useAccountStore = defineStore('account', () => {
       const response = await service.refreshToken();
       if (response.success) {
 
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
         getUser();
         return response.token;
       } else {
@@ -156,17 +143,11 @@ export const useAccountStore = defineStore('account', () => {
 
   async function logOut() {
     try {
-      await service.logout().then(()=>{{
-        // ! LO COMENTE PORQUE AL NO ESTAR LOGEADO SE REINICIA EL HOME
-        // router.beforeEach(async (to, from, next) => {
-        //   if (to.meta.isPrivate && to.meta.isShared) {
-        //     next();
-        //     return;
-        //   }else{
-        //     router.replace({ name: "login" });
-        //   }
-        // })
-      }})
+      if(isLoggedIn){
+        await service.logout();
+        router.replace({ name: "login" })
+        user.value = null;
+      }
     } catch (error) {
       logService.create({
         nivel: "Error",
@@ -195,7 +176,6 @@ export const useAccountStore = defineStore('account', () => {
       logOut();
     }
   }
-
 
   // Todo: esto es para el crud de usaurios
 
@@ -292,7 +272,6 @@ export const useAccountStore = defineStore('account', () => {
 
   return {
     user,
-    // token,
     login,
     signIn,
     getUser,

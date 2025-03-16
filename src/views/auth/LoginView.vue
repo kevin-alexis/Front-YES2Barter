@@ -2,7 +2,7 @@
 import BaseForm from '@/components/BaseForm.vue'
 import { RouterLink } from 'vue-router'
 import { useAccountStore } from '@/stores/account'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
 import type { IUser } from '@/interfaces/account/IAccount'

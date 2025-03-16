@@ -19,11 +19,11 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const accountStore = useAccountStore();
-
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (originalRequest.url.includes('/Account/refreshToken')) {
         return Promise.reject(error);
       }
+
       if (isRefreshing) {
         return new Promise((resolve) => {
           refreshSubscribers.push((token: string) => {
