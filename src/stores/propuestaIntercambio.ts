@@ -6,12 +6,14 @@ import Swal from 'sweetalert2'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import { LogService } from '@/services/log/LogService'
+import { useToast } from 'primevue/usetoast';
 
 export const usePropuestaIntercambioStore = defineStore('propuesta intercambio', () => {
   const service = new PropuestaIntercambioService()
   const logService = new LogService()
   const list: Ref<IPropuestaIntercambio[]> = ref([])
   const route = useRoute()
+  const toast = useToast()
 
   async function getAll() {
     try {
@@ -66,6 +68,7 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
               confirmButtonText: 'Ok',
               confirmButtonColor: '#6C6DE7',
             }).then(() => {
+              toast.add({severity:'success', summary: 'Éxito', detail: '¡Haz realizado correctamente la propuesta!', life: 2000});
               router.back()
           })
         }else{
@@ -103,6 +106,7 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
           }).then(() => {
             router.back()
           })
+          console.log(response)
         }else{
           Swal.fire({
             title: 'Error',

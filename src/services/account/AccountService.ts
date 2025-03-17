@@ -28,8 +28,6 @@ export class AccountService extends BaseService<IAccount> {
 
   public async refreshToken() {
     try {
-      console.log('Solicitando refreshToken...');
-
       const response = await genericRequestAuthenticated('/Account/refreshToken', 'POST', {});
       return response;
     } catch (error) {
