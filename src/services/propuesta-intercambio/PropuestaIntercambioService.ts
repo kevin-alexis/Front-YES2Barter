@@ -114,4 +114,23 @@ export class PropuestaIntercambioService extends BaseService<IPropuestaIntercamb
     }
   }
 
+  public acceptOrDeclinePropuestaIntercambio = async (idPropuesta: number, isAccepted: boolean) => {
+    try {
+      const body = { idPropuesta, isAccepted }
+      const response = await genericRequestAuthenticated(
+        `/PropuestaIntercambio/AcceptOrDeclinePropuestaIntercambio/`,
+        'POST',
+        body
+      )
+      return response
+    } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método acceptOrDeclinePropuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
 }

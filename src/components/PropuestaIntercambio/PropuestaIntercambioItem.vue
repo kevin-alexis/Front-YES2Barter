@@ -1,16 +1,19 @@
 <script setup lang="ts">
+import { EstatusPropuestaIntercambio } from '@/common/enums/enums';
 import { formatDateToView } from '../../utils/helper';
 import BaseButton from '@/components/BaseButton.vue'
+import Tag from 'primevue/tag';
+import { usePropuestaIntercambioStore } from '@/stores/propuestaIntercambio';
 
 const URL_API_SOURCE = import.meta.env.VITE_APP_URL_API_SOURCE;
-
+const propuestaIntercambioStore = usePropuestaIntercambioStore()
 defineProps<{
   propuestaIntercambio: any;
   isInteractive:boolean
 }>();
 
-function cerrarPropuestaIntercambio(isSuccess: boolean, id: number){
-  console.log(isSuccess, id)
+function cerrarPropuestaIntercambio(id: number, isSuccess: boolean){
+  propuestaIntercambioStore.acceptOrDeclinePropuestaIntercambio(id, isSuccess);
 }
 
 </script>
@@ -19,8 +22,8 @@ function cerrarPropuestaIntercambio(isSuccess: boolean, id: number){
   <div class="flex flex-wrap items-center bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl mx-auto mb-6 hover:shadow-xl transition-shadow duration-300">
 
     <!-- <RouterLink :to="{ name: 'consultar detalles objeto', params: { id: propuestaIntercambio.objetoOfertado.id } }" -->
-    <div
-      class="flex flex-wrap items-center w-full max-w-4xl mx-auto">
+
+    <div class="flex flex-wrap items-center w-full max-w-4xl mx-auto">
       <div class="flex-shrink-0 w-32 h-32 rounded-lg overflow-hidden mr-6 mb-6 sm:mb-0">
       <img
         :src="URL_API_SOURCE + propuestaIntercambio.objetoOfertado.rutaImagen"
@@ -34,6 +37,13 @@ function cerrarPropuestaIntercambio(isSuccess: boolean, id: number){
       <p class="font-semibold text-xl text-gray-800 mb-1">{{ propuestaIntercambio.objetoOfertado.nombre }}</p>
       <p class="font-light text-sm text-gray-800 mb-1">{{ propuestaIntercambio.objetoOfertado.descripcion }}</p>
       <p class="text-xs text-gray-500">{{ formatDateToView(propuestaIntercambio.objetoOfertado.fechaPublicacion) }}</p>
+      <div class="flex flex-wrap gap-2 mt-3">
+            <Tag
+              class="text-sm font-semibold"
+              :value="Object.values(EstatusPropuestaIntercambio)[propuestaIntercambio.estado]"
+              severity="info"
+            />
+          </div>
     </div>
 
     <div class="flex items-center ml-6 mb-6 sm:mb-0">
@@ -63,13 +73,13 @@ function cerrarPropuestaIntercambio(isSuccess: boolean, id: number){
 
     <div class="w-full flex gap-4 justify-center sm:justify-start mt-4" v-if="isInteractive">
       <BaseButton styleType="success" class="w-24 py-2"
-      @click="cerrarPropuestaIntercambio(true, propuestaIntercambio.id)"
+      @click="cerrarPropuestaIntercambio(propuestaIntercambio.id, true)"
       >
         <i class="pi pi-check text-white"></i>
         Aceptar
       </BaseButton>
       <BaseButton styleType="danger" class="w-24 py-2"
-      @click="cerrarPropuestaIntercambio(false, propuestaIntercambio.id)"
+      @click="cerrarPropuestaIntercambio(propuestaIntercambio.id, false)"
       >
         <i class="pi pi-times text-white"></i>
         Rechazar

@@ -13,15 +13,14 @@ import Button from 'primevue/button'
 import { useCategoriaStore } from '@/stores/categoria'
 import { EstatusObjeto } from '@/common/enums/enums'
 import { formatDateToView } from '@/utils/helper'
+
 const URL_API_SOURCE = import.meta.env.VITE_APP_URL_API_SOURCE
 
 const loading = ref(true)
 const objetoStore = useObjetoStore()
 const categoriaStore = useCategoriaStore()
-const baseUrl = import.meta.env.VITE_APP_URL_API_SOURCE
 const tipoEstadoList = Object.values(EstatusObjeto);
-const srcImage = ref('')
-const isOpen = ref(false)
+
 
 onMounted(async () => {
   await categoriaStore.getAll()
@@ -43,10 +42,6 @@ const getSeverity = (status: boolean) => {
   return status ? 'danger' : 'success'
 }
 
-function openModal(src: string) {
-  srcImage.value = baseUrl + src.replace('\\', '/')
-  isOpen.value = true
-}
 </script>
 
 <template>

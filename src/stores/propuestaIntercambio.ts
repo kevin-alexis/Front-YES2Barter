@@ -199,5 +199,41 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
     }
   }
 
-  return { list, getAll, getAllByIdUsuarioAndIdObjeto, getAllPropuestas, getById, getAllByIdObjeto, deleteItem, create, update }
+  async function acceptOrDeclinePropuestaIntercambio(idPropuesta: number, isAccepted: boolean) {
+    try {
+      const response = await service.acceptOrDeclinePropuestaIntercambio(idPropuesta, isAccepted).then((response) => {
+        if(response.success){
+            Swal.fire({
+              title: '¡Éxito!',
+              text: response.message,
+              icon: 'success',
+              confirmButtonText: 'Ok',
+              confirmButtonColor: '#6C6DE7',
+            }).then(() => {
+              toast.add({severity:'success', summary: 'Éxito', detail: '¡Se ha aceptado correctamente la propuesta!', life: 2000});
+              router.back()
+          })
+        }else{
+          Swal.fire({
+            title: 'Error!',
+            text: response.message,
+            icon: 'error',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#6C6DE7',
+          })
+        }
+
+      })
+      return await response
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método acceptOrDeclinePropuestaIntercambio del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
+  return { list, getAll, getAllByIdUsuarioAndIdObjeto, getAllPropuestas, getById, getAllByIdObjeto, deleteItem, create, update, acceptOrDeclinePropuestaIntercambio }
 })

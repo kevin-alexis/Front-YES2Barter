@@ -14,6 +14,7 @@ defineProps<{
       v-if="propuestasIntercambios.length > 0"
       class="flex flex-col"
     >
+    <h2 class="text-xl font-semibold text-[var(--primary)] mb-6 text-center">{{ isInteractive ? 'Propuestas Recibidas' : 'Propuestas Enviadas' }}</h2>
       <PropuestaIntercambioItem
         v-for="(propuestaIntercambio, index) in propuestasIntercambios"
         :propuestaIntercambio="propuestaIntercambio"
