@@ -11,7 +11,7 @@ const props = defineProps<{
 
 const isEmisor = ref(
   props.mensaje.idUsuarioEmisor !=
-    accountStore.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'],
+    accountStore.user.idUsuario,
 )
 </script>
 <template>

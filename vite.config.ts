@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+import fs from 'fs'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -14,4 +15,16 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  //es para tener https en local y se pueda manejar cookies
+  server: {
+    https: {
+      key: fs.readFileSync('localhost-key.pem'),
+      cert: fs.readFileSync('localhost.pem')
+    },
+    hmr: {
+      protocol: 'ws',
+      host: 'localhost',
+      port: 5173,
+    }
+  }
 })

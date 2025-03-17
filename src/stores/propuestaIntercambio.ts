@@ -5,17 +5,39 @@ import { ref, type Ref } from 'vue'
 import Swal from 'sweetalert2'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import { LogService } from '@/services/log/LogService'
+import { useToast } from 'primevue/usetoast';
 
 export const usePropuestaIntercambioStore = defineStore('propuesta intercambio', () => {
   const service = new PropuestaIntercambioService()
+  const logService = new LogService()
   const list: Ref<IPropuestaIntercambio[]> = ref([])
-  const route = useRoute()
+  const toast = useToast()
 
   async function getAll() {
     try {
       const response = await service.getAll()
       list.value = await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAll del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
+  async function getAllPropuestas() {
+    try {
+      const response = await service.getAllPropuestas()
+      list.value = await response.data
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllPropuestas del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -25,6 +47,11 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
       const response = await service.GetAllByIdObjeto(id)
       list.value = await response.data
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdObjeto del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -32,37 +59,71 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
   async function create(item: any) {
     try {
       const response = await service.createPropuestaIntercambio(item).then((response) => {
-        Swal.fire({
-          title: '¡Éxito!',
-          text: 'La propuesta de intercambio ha sido añadida exitosamente a la lista.',
-          icon: 'success',
-          confirmButtonText: 'Ok',
-          confirmButtonColor: '#6C6DE7',
-        }).then(() => {
-          router.back()
-        })
+        if(response.success){
+            Swal.fire({
+              title: '¡Éxito!',
+              text: response.message,
+              icon: 'success',
+              confirmButtonText: 'Ok',
+              confirmButtonColor: '#6C6DE7',
+            }).then(() => {
+              toast.add({severity:'success', summary: 'Éxito', detail: '¡Haz realizado correctamente la propuesta!', life: 2000});
+              router.back()
+          })
+        }else{
+          Swal.fire({
+            title: 'Error!',
+            text: response.message,
+            icon: 'error',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#6C6DE7',
+          })
+        }
+
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método create del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
 
-  async function update(id: string, item: any) {
+  async function update(id: number, item: any) {
     try {
-      const response = await service.updatePropuestaIntercambio(id, item).then(() => {
-        Swal.fire({
-          title: '¡Éxito!',
-          text: 'La propuesta de intercambio ha sido editada exitosamente.',
-          icon: 'success',
-          confirmButtonText: 'Ok',
-          confirmButtonColor: '#6C6DE7',
-        }).then(() => {
-          router.back()
-        })
+      const response = await service.updatePropuestaIntercambio(id, item).then((response) => {
+        if(response.success){
+          Swal.fire({
+            title: '¡Éxito!',
+            text: response.message,
+            icon: 'success',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#6C6DE7',
+          }).then(() => {
+            router.back()
+          })
+          console.log(response)
+        }else{
+          Swal.fire({
+            title: 'Error',
+            text: response.message,
+            icon: 'error',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#6C6DE7',
+          })
+        }
+
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método update del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -81,15 +142,14 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
       }).then(async (result) => {
         if (result.isConfirmed) {
           await service
-            .delete(id)
+            .deletePropuestaIntercambio(id)
             .then(async () => {
               Swal.fire({
                 title: 'Eliminar!',
                 text: 'El registro fue eliminado.',
                 icon: 'success',
               })
-              const idObjeto = route.params.id as string
-              await getAllByIdObjeto(idObjeto)
+              await getAllPropuestas()
             })
             .catch((error) => {
               Swal.fire({
@@ -101,6 +161,11 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
         }
       })
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método deleteItem del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -110,9 +175,64 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
       const response = await service.getById(id)
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getById del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
 
-  return { list, getAll, getById, getAllByIdObjeto, deleteItem, create, update }
+  async function getAllByIdUsuarioAndIdObjeto(idUsuario: string, idObjeto: number) {
+    try {
+      const response = await service.getAllByIdUsuarioAndIdObjeto(idUsuario, idObjeto)
+      return await response
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdUsuarioAndIdObjeto del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
+  async function acceptOrDeclinePropuestaIntercambio(idPropuesta: number, isAccepted: boolean) {
+    try {
+      const response = await service.acceptOrDeclinePropuestaIntercambio(idPropuesta, isAccepted).then((response) => {
+        if(response.success){
+            Swal.fire({
+              title: '¡Éxito!',
+              text: response.message,
+              icon: 'success',
+              confirmButtonText: 'Ok',
+              confirmButtonColor: '#6C6DE7',
+            }).then(() => {
+              toast.add({severity:'success', summary: 'Éxito', detail: '¡Se ha aceptado correctamente la propuesta!', life: 2000});
+              router.back()
+          })
+        }else{
+          Swal.fire({
+            title: 'Error!',
+            text: response.message,
+            icon: 'error',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#6C6DE7',
+          })
+        }
+
+      })
+      return await response
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método acceptOrDeclinePropuestaIntercambio del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
+  return { list, getAll, getAllByIdUsuarioAndIdObjeto, getAllPropuestas, getById, getAllByIdObjeto, deleteItem, create, update, acceptOrDeclinePropuestaIntercambio }
 })

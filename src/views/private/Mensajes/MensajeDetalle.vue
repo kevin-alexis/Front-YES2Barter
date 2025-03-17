@@ -52,7 +52,7 @@ onMounted(() => {
 
   accountStore.getUser()
   idEmisor.value =
-    accountStore.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']
+    accountStore.user.idUsuario
   id.value = route.params.id as string
   mensajeStore.getAllByIdChat(parseInt(id.value))
   conectarAlChat(id.value)

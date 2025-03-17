@@ -2,13 +2,23 @@
 
 @theme {
     --primary: #A8D08D;
+    /*propuesta de color primario: */
+    /* --primary: #2E7D32; */
+    /* --secondary: #8D6E63; */ /*propuesta de color secundario */
     --secondary: #C2B280;
+    --tertiary: #4FC3F7;
     --warning: #e0bc2b;
-    --danger: red;
+    --danger: #E53935;
     --success: #3ebe3e;
     --primary-gradient: #228B22;
     /* --primary-gradient: #228B22; */
     --background: #E8E8F4;
+}
+
+.image-object-detail img{
+  object-fit: cover;
+  width: 100%;
+
 }
 
 .p-button-general {
@@ -22,3 +32,64 @@
     transition: all 0.3s;
 }
 
+.p-inputtext {
+  border-color: var(--primary) !important;
+  transition: background
+}
+
+.p-select {
+  border-color: var(--primary) !important;
+  transition: background
+}
+
+.p-select-option.p-select-option-selected.p-focus {
+  background: var(--primary) !important;
+}
+
+.button-admon {
+  background: white !important;
+  border-color: var(--tertiary) !important;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.button-admon:hover {
+  background: white!important;
+  border-color: #039BE5 !important;
+}
+
+.button-edit {
+  background: white !important;
+  border-color: #4CAF50 !important;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.button-edit:hover {
+  background: #43A047 !important;
+  border-color: #43A047 !important;
+}
+
+.button-delete {
+  background: white !important;
+  border-color: var(--danger) !important;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.button-delete:hover {
+  background: #C62828 !important;
+  border-color: #C62828 !important;
+}

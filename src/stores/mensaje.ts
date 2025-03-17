@@ -4,9 +4,11 @@ import { ref, type Ref } from 'vue'
 import Swal from 'sweetalert2'
 import router from '@/router'
 import { MensajeService } from '@/services/mensaje/MensajeService'
+import { LogService } from '@/services/log/LogService'
 
 export const useMensajeStore = defineStore('mensaje', () => {
   const service = new MensajeService()
+  const logService = new LogService()
   const list: Ref<IMensaje[]> = ref([])
 
   async function getAll() {
@@ -14,6 +16,11 @@ export const useMensajeStore = defineStore('mensaje', () => {
       const response = await service.getAll()
       list.value = await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAll del store mensaje: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -23,6 +30,11 @@ export const useMensajeStore = defineStore('mensaje', () => {
       const response = await service.getById(id)
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getById del store mensaje: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -42,6 +54,11 @@ export const useMensajeStore = defineStore('mensaje', () => {
       }
       list.value = await response.data
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdChat del store mensaje: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -61,6 +78,11 @@ export const useMensajeStore = defineStore('mensaje', () => {
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método create del store mensaje: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -80,6 +102,11 @@ export const useMensajeStore = defineStore('mensaje', () => {
       })
       return await response
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método update del store mensaje: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }
@@ -117,6 +144,11 @@ export const useMensajeStore = defineStore('mensaje', () => {
         }
       })
     } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método deleteItem del store mensaje: ${error.message}`,
+        excepcion: error.toString(),
+      })
       console.error(error)
     }
   }

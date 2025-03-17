@@ -2,13 +2,15 @@
 import { RouterView } from 'vue-router'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
+import Toast from 'primevue/toast';
 import 'primeicons/primeicons.css'
 </script>
 <template>
   <div class="flex flex-col h-screen overflow-hidden">
     <HeaderComponent />
     <RouterView class="bg-[#E8E8F4] flex-1 overflow-auto" />
-    <FooterComponent />
+    <Toast />
+    <FooterComponent/>
   </div>
 </template>
 

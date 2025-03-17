@@ -5,9 +5,12 @@ import PrimeVue from 'primevue/config';
 import 'primeicons/primeicons.css';
 import { createPinia } from 'pinia'
 import Lara from '@primeuix/themes/lara';
+import Tooltip from 'primevue/tooltip';
+import ToastService from 'primevue/toastservice';
 
 import App from './App.vue'
 import router from './router'
+import { useAccountStore } from './stores/account';
 
 const app = createApp(App)
 app.use(PrimeVue, {
@@ -18,7 +21,14 @@ app.use(PrimeVue, {
     }
   }
 });
+app.directive('tooltip', Tooltip);
+app.use(ToastService);
 app.use(createPinia())
-app.use(router)
 
-app.mount('#app')
+const accountStore = useAccountStore()
+
+accountStore.getUser().finally(() => {
+  app.use(router)
+
+  app.mount('#app')
+})

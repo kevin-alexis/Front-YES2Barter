@@ -2,34 +2,39 @@
 import BaseForm from '@/components/BaseForm.vue'
 import { useObjetoStore } from '@/stores/objeto'
 import { useCategoriaStore } from '@/stores/categoria'
+import { usePersonaStore } from '@/stores/persona'
 import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import router from '@/router'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
+import { EstatusObjeto } from '@/common/enums/enums'
+import {enumFormat, formatDateToForm} from '@/utils/helper'
+import { useAccountStore } from '@/stores/account'
+
 const objetoStore = useObjetoStore()
 const categoriaStore = useCategoriaStore()
+const personaStore = usePersonaStore()
+const tipoEstadoList = Object.values(EstatusObjeto);
 
 const route = useRoute()
+const accountStore = useAccountStore()
 const isEdit = ref(false)
 const id = ref('')
-
+const isIntercambiador = ref(accountStore.user.rol == "Intercambiador")
 // const MAX_FILE_SIZE = 102400; //100KB
 
 const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] }
 
-function isValidFileType(fileName, fileType) {
-  return fileName && validFileExtensions[fileType].indexOf(fileName.split('.').pop()) > -1
+function isValidFileType(fileName: string, fileType: string) {
+  return fileName && validFileExtensions[fileType].includes(fileName.split('.').pop()?.toLowerCase() || '')
 }
 
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
-    titulo: yup.string().required('El nombre es obligatorio'),
+    nombre: yup.string().required('El nombre es obligatorio'),
     descripcion: yup.string().required('La descripción es obligatoria'),
-    idCategoria: yup.string().required('La categoría es obligatorio'),
-    fechaPublicacion: yup
-      .date()
-      .required('La fecha de publicación es obligatoria')
-      .max(new Date().toISOString().split('T')[0], 'La fecha no puede ser posterior a hoy'),
+    idCategoria: yup.string().required('La categoría es obligatoria'),
     rutaImagen: yup
       .mixed()
       .test('required-if-not-edit', 'La imagen es obligatoria', function (value) {
@@ -38,16 +43,35 @@ const { errors, defineField, handleSubmit } = useForm({
         }
         return true
       })
-      .test('is-valid-type', 'El formato de la imagen no es valido', (value) => {
+      .test('is-valid-type', 'El formato de la imagen no es válido', (value) => {
         if (!isEdit.value && value) {
-          return isValidFileType(value && value.name.toLowerCase(), 'image')
+          return isValidFileType(value.name, 'image')
         }
         return true
       }),
+    estado: yup.string()
+    .test('required-if-not-edit', 'El estado es obligatorio', function (value) {
+        if (!isIntercambiador.value) {
+          if (!value) {
+            return this.createError({ message: 'El estado es obligatoria' });
+          }
+        }
+        return true;
+      }),
+    idUsuario: yup.string()
+      .test('required-if-not-edit', 'El dueño es obligatorio', function (value) {
+        if (!isIntercambiador.value) {
+          if (!value) {
+            return this.createError({ message: 'El usuario es obligatoria' });
+          }
+        }
+        return true;
+      })
+
   }),
 })
 
-const [titulo] = defineField('titulo', {
+const [nombre] = defineField('nombre', {
   validateOnModelUpdate: true,
 })
 
@@ -59,20 +83,22 @@ const [idCategoria] = defineField('idCategoria', {
   validateOnModelUpdate: true,
 })
 
-const [fechaPublicacion] = defineField('fechaPublicacion', {
-  validateOnModelUpdate: true,
-})
-
 const [rutaImagen] = defineField('rutaImagen', {
   validateOnModelUpdate: true,
 })
 
+const [estado] = defineField('estado', { validateOnModelUpdate: true })
+
+const [idUsuario] = defineField('idUsuario', { validateOnModelUpdate: true })
+
+
 const contactForm = reactive({
-  titulo: titulo,
+  nombre: nombre,
   descripcion: descripcion,
   idCategoria: idCategoria,
-  fechaPublicacion: fechaPublicacion,
   rutaImagen: rutaImagen,
+  estado: estado,
+  idUsuario: idUsuario,
 })
 
 const handleSubmitForm = handleSubmit((values: FormValues) => {
@@ -84,22 +110,30 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
   }
 })
 
-onMounted(async () => {
-  await categoriaStore.getAll()
+onMounted( () => {
+  categoriaStore.getAll()
+  personaStore.getAllPersonasIntercambiadores()
+
+  // Verifica el valor de isEdit
   isEdit.value = route.fullPath.includes('editar')
   id.value = route.params.id as string
   if (isEdit.value) {
-    await objetoStore.getById(id.value).then((response) => {
+    objetoStore.getById(id.value).then((response) => {
+      if(response.idUsuario !== accountStore.user.idUsuario && isIntercambiador.value){
+        router.back()
+      }
       Object.assign(contactForm, {
         ...response,
       })
+    }).catch(error => {
+      console.error("Error al obtener el objeto:", error)
     })
   } else {
-    Object.assign(contactForm, {
-      idCategoria: id.value,
-    })
+    Object.assign(contactForm, {})
   }
 })
+
+
 </script>
 
 <template>
@@ -112,22 +146,22 @@ onMounted(async () => {
       :config="{
         inputs: [
           {
-            label: 'Titulo',
-            placeholder: 'Título',
+            label: 'Nombre',
+            placeholder: 'Nombre',
             type: 'text',
             isRequired: true,
-            model: 'titulo',
+            model: 'nombre',
           },
           {
-            label: 'Descripcion',
+            label: 'Descripción',
             placeholder: 'Descripción',
             type: 'textarea',
             isRequired: true,
             model: 'descripcion',
           },
           {
-            label: 'Categoria',
-            placeholder: 'Categoria',
+            label: 'Categoría',
+            placeholder: 'Categoría',
             type: 'select',
             select: {
               data: categoriaStore.list,
@@ -135,22 +169,42 @@ onMounted(async () => {
               valueKey: 'id',
             },
             isRequired: true,
-            isDisabled: true, // esto segun sea creación o edición
             model: 'idCategoria',
-          },
-          {
-            label: 'Fecha Publicación',
-            placeholder: 'Fecha publicación',
-            type: 'date',
-            isRequired: true,
-            model: 'fechaPublicacion',
           },
           {
             label: 'Imagen',
             placeholder: 'Imagen',
             type: 'file',
-            isRequired: true,
+            isRequired: !isEdit,
             model: 'rutaImagen',
+          },
+          {
+            label: 'Estado',
+            placeholder: 'Estado',
+            type: 'select',
+            select: {
+              data:enumFormat(tipoEstadoList),
+              paramKey: 'name',
+              valueKey: 'id',
+            },
+            isDisabled: isEdit,
+            isRequired: true,
+            isHidden: isIntercambiador,
+            model: 'estado',
+          },
+          {
+            label: 'Dueño',
+            placeholder: 'Usuario Dueño',
+            type: 'select',
+            select: {
+              data: personaStore.list,
+              paramKey: 'nombre',
+              valueKey: 'idUsuario',
+            },
+            isDisabled: isEdit,
+            isRequired: true,
+            model: 'idUsuario',
+            isHidden: isIntercambiador
           },
         ],
         titleButton: isEdit ? 'Editar' : 'Crear',
