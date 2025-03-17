@@ -25,10 +25,12 @@ const props = defineProps<{
     isCanceled?: boolean
   }
 }>()
+
+
 </script>
 
 <template>
-  <Form class="grid gap-2">
+  <Form class="grid gap-2" @submit="handleSubmit">
     <slot name="headerForm"></slot>
     <BaseInput
       v-for="(input, index) in props.config.inputs"

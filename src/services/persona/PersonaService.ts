@@ -13,21 +13,25 @@ export class PersonaService extends BaseService<IPersona> {
     try {
       const response = await genericRequestAuthenticated('/Persona/GetAllPersonasIntercambiadores', 'GET')
       return response
-    } catch (error) {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
       this.logService.create({
         nivel: 'Error',
         mensaje: `Error en el método getAllPersonasIntercambiadores: ${error.message}`,
         excepcion: error.toString(),
       })
       console.error(error)
+      
     }
   }
+}
 
   public getPersonaByIdUsuario = async (idUsuario: string) => {
     try {
       const response = await genericRequestAuthenticated(`/Persona/GetPersonaByIdUsuario/${idUsuario}`, 'GET')
       return response
-    } catch (error) {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
       this.logService.create({
         nivel: 'Error',
         mensaje: `Error en el método getPersonaByIdUsuario: ${error.message}`,
@@ -36,5 +40,35 @@ export class PersonaService extends BaseService<IPersona> {
       console.error(error)
     }
   }
-
+}
+  public createPersona = async (formData: FormData) => {
+    try {
+      const response = await genericRequestAuthenticated('/Persona/CreatePersona', 'POST', formData)
+      return response
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método createPersona: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+}
+  public updatePersona = async (id: string, formData: FormData) => {
+    try {
+      const response = await genericRequestAuthenticated(`/Persona/UpdatePersona/${id}`, 'PUT', formData)
+      return response
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método updatePersona: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+  }
 }
