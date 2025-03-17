@@ -40,8 +40,6 @@ onBeforeMount(async () => {
       if (response.success) {
         isAvailable.value = response.data.length < objetoStore.list.length
         propuestasRealizadas.value = response.data
-        console.log(response.data)
-        console.log(response.message)
       } else {
         console.log(response.data)
         console.log(response.message)
@@ -51,7 +49,7 @@ onBeforeMount(async () => {
   Object.assign(objeto, response)
   if (objeto?.idUsuario == accountStore?.user?.idUsuario) {
     isDueño.value = true
-    propuestaIntercambioStore.getAllByIdObjeto(objeto.id)
+    await propuestaIntercambioStore.getAllByIdObjeto(objeto.id)
   }
 })
 </script>
@@ -79,7 +77,7 @@ onBeforeMount(async () => {
         </RouterLink>
       </div>
 
-      <div :class="[!isDueño ?'h-1/2 overflow-y-scroll' : 'h-1/2 overflow-y-scroll']">
+      <div :class="[!isDueño ?'h-10/12 overflow-y-scroll' : 'h-1/2 overflow-y-scroll']">
         <PropuestaIntercambioList
           :propuestasIntercambios="isDueño ? propuestas : propuestasRealizadas"
           :isInteractive="isDueño"
