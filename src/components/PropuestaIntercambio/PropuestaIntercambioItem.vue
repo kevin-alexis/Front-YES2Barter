@@ -11,7 +11,7 @@ defineProps<{
     <div class="flex flex-col w-35 text-center">
       <img :src="URL_API_SOURCE + propuestaIntercambio.rutaImagen" class="h-50 object-cover" />
       <div class="w-full">
-        <p class="font-bold">{{ propuestaIntercambio.titulo }}</p>
+        <p class="font-bold">{{ propuestaIntercambio.nombre }}</p>
         <p>{{ propuestaIntercambio.fechaPublicacion }}</p>
       </div>
     </div>
