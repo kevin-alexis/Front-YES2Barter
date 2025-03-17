@@ -30,7 +30,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <Form class="grid gap-2" @submit="handleSubmit">
+  <Form class="grid gap-2" @submit.prevent="()=> $emit('submit')">
     <slot name="headerForm"></slot>
     <BaseInput
       v-for="(input, index) in props.config.inputs"

@@ -20,7 +20,13 @@ function isValidFileType(fileName: string, fileType: string) {
   return fileName && validFileExtensions[fileType].includes(fileName.split('.').pop()?.toLowerCase() || '')
 }
 
-const { errors, defineField, handleSubmit } = useForm({
+interface FormValues{
+  nombre: string;
+  biografia: string;
+  rutaFotoPerfil?: File;
+}
+
+const { errors, defineField, handleSubmit } = useForm<FormValues>({
   validationSchema: yup.object({
     nombre: yup.string().required('El nombre es obligatorio'),
     biografia: yup.string().required('La biografía es obligatoria'),
@@ -34,12 +40,17 @@ const { errors, defineField, handleSubmit } = useForm({
       })
       .test('is-valid-type', 'El formato de la imagen no es válido', (value) => {
         if (!isEdit.value && value) {
-          return isValidFileType(value.name, 'image')
+          if (value instanceof File) {
+            return isValidFileType(value.name, 'image');
+          } else {
+            return this.createError({ message: 'El valor no es un archivo válido' });
+          }
         }
-        return true
+        return true;
       }),
   }),
-})
+});
+
 
 const [nombre] = defineField('nombre', {
   validateOnModelUpdate: true,
@@ -73,18 +84,19 @@ const handleSubmitForm = handleSubmit(async (values: FormValues) => {
     // Actualiza la persona
     personaStore.updatePersona(id.value, formData)
   } else {
-    // Crea una nueva persona
-    personaStore.createPersona(formData)
   }
 })
 
 onMounted(async () => {
   await accountStore.getUser()
+
+  if (accountStore.user) {
   await personaStore.getPersonaByIdUsuario(accountStore.user.idUsuario).then(() => {
     Object.assign(contactForm, {
       ...personaStore.persona,
-    })
-  })
+    });
+  });
+}
   isEdit.value = route.fullPath.includes('editar')
 })
 </script>
@@ -104,7 +116,7 @@ onMounted(async () => {
             type: 'text',
             isRequired: true,
             model: 'nombre',
-            class: 'border-2 border-gray-300 p-3 rounded-md w-full'
+            //class: 'border-2 border-gray-300 p-3 rounded-md w-full'
           },
           {
             label: 'Biografía',
@@ -112,7 +124,7 @@ onMounted(async () => {
             type: 'textarea',
             isRequired: true,
             model: 'biografia',
-            class: 'border-2 border-gray-300 p-3 rounded-md w-full h-32'
+            //class: 'border-2 border-gray-300 p-3 rounded-md w-full h-32'
           },
           {
             label: 'Foto de Perfil',
@@ -120,7 +132,7 @@ onMounted(async () => {
             type: 'file',
             isRequired: !isEdit,
             model: 'rutaFotoPerfil',
-            class: 'border-2 border-gray-300 p-3 rounded-md w-full'
+            //class: 'border-2 border-gray-300 p-3 rounded-md w-full'
           },
         ],
         titleButton: isEdit ? 'Editar' : 'Crear',
