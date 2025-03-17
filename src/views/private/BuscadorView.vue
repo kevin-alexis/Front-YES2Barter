@@ -6,9 +6,9 @@ import { useObjetoStore } from '@/stores/objeto'
 import { computed, ref } from 'vue'
 import * as yup from 'yup'
 import { Form } from 'vee-validate'
-import { EstatusObjeto } from '@/common/enums/enums'
 import MultiSelect from 'primevue/multiselect';
 import { useCategoriaStore } from '@/stores/categoria'
+import { EstatusObjeto } from '@/common/enums/enums'
 
 const objetoStore = useObjetoStore()
 const categoriaStore = useCategoriaStore()
@@ -25,17 +25,17 @@ const currentSchema = computed(() => {
 
 const handleSubmit = async () => {
 
-  if (search.value == '') {
-    await objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
-  } else {
-    await objetoStore.getByName(search.value)
-  }
+if (search.value == '') {
+  await objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
+} else {
+  await objetoStore.getByName(search.value)
+}
 }
 
 onMounted(async () => {
-  await objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
-  await categoriaStore.getAll()
-  filterObjetos()
+await objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
+await categoriaStore.getAll()
+filterObjetos()
 })
 
 const filterObjetos = () => {
@@ -56,7 +56,6 @@ const filterObjetos = () => {
 watch([search, selectedCategorias], () => {
   filterObjetos()
 })
-
 </script>
 
 <template>
@@ -73,11 +72,20 @@ watch([search, selectedCategorias], () => {
         @submit="handleSubmit"
         class="flex flex-row sm:flex-row justify-center items-end gap-3 sm:gap-2"
       >
-      <div class="card flex flex-col justify-center">
-        <h1>Por categoría</h1>
-        <MultiSelect v-model="selectedCategorias" display="chip" :options="categoriaStore.list" optionLabel="nombre" filter placeholder="Filtra por categoría"
-            :maxSelectedLabels="3" selected-items-label="{0} elementos seleccionados" class="w-full md:w-80" />
-    </div>
+        <div class="card flex flex-col justify-center">
+          <h1>Por categoría</h1>
+          <MultiSelect
+            v-model="selectedCategorias"
+            display="chip"
+            :options="categoriaStore.list"
+            optionLabel="nombre"
+            filter
+            placeholder="Filtra por categoría"
+            :maxSelectedLabels="3"
+            selected-items-label="{0} elementos seleccionados"
+            class="w-full md:w-80"
+          />
+        </div>
         <BaseInput
           v-model="search"
           placeholder="Buscador"
