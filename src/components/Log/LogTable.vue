@@ -59,15 +59,23 @@ const clearFilter = () => {
 const getSeverity = (status) => {
   switch (status) {
     case 'Error':
-      return 'danger'
+      return 'danger';
     case 'Warning':
-      return 'warn'
+      return 'warn';
     case 'Info':
-      return 'info'
+      return 'info';
+    case 'Critical':
+      return 'danger';
+    case 'Success':
+      return 'success';
+    case 'NotFound':
+      return 'secondary';
     default:
-      return 'info'
+      return 'gray';
   }
 }
+
+
 </script>
 
 <template>
@@ -80,7 +88,7 @@ const getSeverity = (status) => {
       dataKey="id"
       filterDisplay="menu"
       v-model:expandedRows="expandedRows"
-      :globalFilterFields="['mensaje', 'excepcion', 'fecha', 'nivel']"
+      :globalFilterFields="['mensaje', 'excepcion', 'fecha', 'nivel', 'fuente']"
       paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
       :rowsPerPageOptions="[5, 10, 25]"
     >
@@ -131,6 +139,19 @@ const getSeverity = (status) => {
       <Column field="nivel" header="Nivel" sortable filterMatchMode="equals" style="width: 25%">
         <template #body="{ data }">
           <Tag :value="data.nivel" :severity="getSeverity(data.nivel)" />
+        </template>
+        <template #filter="{ filterModel }">
+          <Select v-model="filterModel.value" :options="niveles" placeholder="Select One" showClear>
+            <template #option="slotProps">
+              <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+            </template>
+          </Select>
+        </template>
+      </Column>
+
+      <Column field="fuente" header="Fuente" sortable filterMatchMode="equals" style="width: 25%">
+        <template #body="{ data }">
+          <Tag :value="data.fuente" :severity="getSeverity(data.fuente)" />
         </template>
         <template #filter="{ filterModel }">
           <Select v-model="filterModel.value" :options="niveles" placeholder="Select One" showClear>

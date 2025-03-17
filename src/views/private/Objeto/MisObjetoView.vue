@@ -3,17 +3,16 @@ import { onBeforeMount, ref } from 'vue'
 import ObjetoList from '@/components/Objeto/ObjetoList.vue'
 import { useObjetoStore } from '@/stores/objeto'
 import { useAccountStore } from '@/stores/account'
+import { RouterLink } from 'vue-router'
+import Button from 'primevue/button'
 
 const objetoStore = useObjetoStore()
 const accountStore = useAccountStore()
 
 const isLoading = ref(true)
 
-onBeforeMount(async () => {
-  await accountStore.getUser()
-  await objetoStore.getAllByIdUsuario(
-    accountStore.user.idUsuario,
-  )
+onBeforeMount(() => {
+  objetoStore.getAllByIdUsuario(accountStore.user.idUsuario)
   isLoading.value = false
 })
 </script>
@@ -27,6 +26,11 @@ onBeforeMount(async () => {
     </div>
 
     <div v-else class="w-full max-h-screen overflow-y-auto p-2">
+      <div class="flex justify-end my-3">
+        <RouterLink :to="{ name: 'crear objeto' }">
+          <Button class="p-button-general" label="Agregar" icon="pi pi-plus" />
+        </RouterLink>
+      </div>
       <ObjetoList
         v-model:objetos="objetoStore.list"
         :config="{

@@ -9,6 +9,7 @@ import * as yup from 'yup'
 import { Form } from 'vee-validate'
 import MultiSelect from 'primevue/multiselect';
 import { useCategoriaStore } from '@/stores/categoria'
+import { EstatusObjeto } from '@/common/enums/enums'
 
 const objetoStore = useObjetoStore()
 const categoriaStore = useCategoriaStore()
@@ -25,7 +26,7 @@ const currentSchema = computed(() => {
 })
 
 const handleSubmit = async () => {
-  await objetoStore.getAll()
+  await objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
   filterObjetos()
   // if (search.value == '') {
   //   await objetoStore.getAll()
@@ -35,7 +36,7 @@ const handleSubmit = async () => {
 }
 
 onMounted(async () => {
-  await objetoStore.getAll()
+  await objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
   filterObjetos()
 })
 

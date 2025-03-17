@@ -6,12 +6,27 @@ import Swal from 'sweetalert2'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import { LogService } from '@/services/log/LogService'
+import { EstatusObjeto } from '../common/enums/enums';
 
 export const useObjetoStore = defineStore('objeto', () => {
   const service = new ObjetoService()
   const logService = new LogService()
   const list: Ref<IObjeto[]> = ref([])
   const route = useRoute()
+
+  async function getAllByIdEstatus(estatus?: EstatusObjeto) {
+    try {
+      const response = await service.getAllByIdEstatus(estatus)
+      list.value = await response
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdEstatus del store objeto: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
 
   async function getAll() {
     try {
@@ -184,5 +199,5 @@ export const useObjetoStore = defineStore('objeto', () => {
     }
   }
 
-  return { list, getAll, getById, getByName, getAllByIdUsuario, getAllByIdCategoria, deleteItem, create, update }
+  return { list, getAll, getAllByIdEstatus, getById, getByName, getAllByIdUsuario, getAllByIdCategoria, deleteItem, create, update }
 })

@@ -27,16 +27,17 @@ const model = defineModel()
 </script>
 
 <template>
-  <div :class="[
+  <div
+  v-if="!config.isHidden"
+  :class="[
     'flex ',
     config.type === 'checkbox' ? '': 'flex-col'
   ]">
-    <label class="m-1"
-      >{{ config.label }}<span v-if="config.isRequired" class="text-red-600">*</span></label
+    <label :class="['m-1']">{{ config.label }}<span v-if="config.isRequired" class="text-red-600">*</span></label
     >
     <textarea
       v-if="config.type == 'textarea'"
-      class="bg-white p-1 rounded-md disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50"
+      :class="['bg-white p-1 rounded-md disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50']"
       :placeholder="config.placeholder ?? placeholders[config.type]"
       :type="config.type"
       :required="config.isRequired"
@@ -44,13 +45,13 @@ const model = defineModel()
       :disabled="config.isDisabled"
     />
     <select v-else-if="config.type == 'select' && config.select && config.select.data.length" v-model="model" class="bg-white p-2 rounded-md border border-gray-300 disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50"
-    :disabled="config.isDisabled">
+    :disabled="config.isDisabled" :hidden="config.isHidden">
       <option v-for="option in config.select.data" :key="option[config.select.valueKey]" :value="option[config.select.valueKey]">
         {{ option[config.select.paramKey] }}
       </option>
     </select>
 
-    <div v-else-if="config.type === 'checkbox'" class="flex items-center gap-2">
+    <div v-else-if="config.type === 'checkbox'" :class="['flex items-center gap-2']">
       <input
         type="checkbox"
         :checked="model"
@@ -80,6 +81,6 @@ const model = defineModel()
     </div>
 
     <span v-if="errors" class="text-red-500">{{ errors }}</span>
-    <!-- <ErrorMessage :name="config.model" class="text-red-600"/> -->
   </div>
+
 </template>

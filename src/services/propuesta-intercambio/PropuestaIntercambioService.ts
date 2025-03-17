@@ -97,4 +97,21 @@ export class PropuestaIntercambioService extends BaseService<IPropuestaIntercamb
     }
   }
 
+  public getAllByIdUsuarioAndIdObjeto = async (idUsuario: string, idObjeto: number) => {
+    try {
+      const response = await genericRequestAuthenticated(
+        `/PropuestaIntercambio/GetAllByIdUsuarioAndIdObjeto/?idUsuario=${idUsuario}&idObjeto=${idObjeto}`,
+        'GET'
+      )
+      return response
+    } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdUsuarioAndIdObjeto: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
 }

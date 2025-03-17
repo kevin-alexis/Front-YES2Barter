@@ -185,5 +185,19 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
     }
   }
 
-  return { list, getAll, getAllPropuestas, getById, getAllByIdObjeto, deleteItem, create, update }
+  async function getAllByIdUsuarioAndIdObjeto(idUsuario: string, idObjeto: number) {
+    try {
+      const response = await service.getAllByIdUsuarioAndIdObjeto(idUsuario, idObjeto)
+      return await response
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método getAllByIdUsuarioAndIdObjeto del store propuestaIntercambio: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+
+  return { list, getAll, getAllByIdUsuarioAndIdObjeto, getAllPropuestas, getById, getAllByIdObjeto, deleteItem, create, update }
 })

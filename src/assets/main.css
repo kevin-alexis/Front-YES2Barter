@@ -15,8 +15,10 @@
     --background: #E8E8F4;
 }
 
-img{
+.image-object-detail img{
   object-fit: cover;
+  width: 100%;
+
 }
 
 .p-button-general {

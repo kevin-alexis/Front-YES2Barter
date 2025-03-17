@@ -66,6 +66,7 @@ onBeforeMount(async () => {
           <div v-else class="w-32 h-32 rounded-full bg-gray-300 border-4 border-[var(--primary)]"></div>
 
           <input
+            v-if="config.isEditable"
             type="file"
             @change="handleFileChange"
             accept="image/*"

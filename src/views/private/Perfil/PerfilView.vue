@@ -10,7 +10,6 @@ const accountStore = useAccountStore()
 const personaStore = usePersonaStore()
 
 onBeforeMount(async () => {
-  await accountStore.getUser()
   await personaStore.getPersonaByIdUsuario(accountStore.user.idUsuario);
 })
 
