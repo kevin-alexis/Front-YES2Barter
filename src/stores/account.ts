@@ -1,4 +1,4 @@
-import type { IUser } from '@/interfaces/account/IAccount'
+import type { IAccount, IUser } from '@/interfaces/account/IAccount'
 import { AccountService } from '@/services/account/AccountService'
 import { defineStore } from 'pinia'
 import Swal from 'sweetalert2'
@@ -9,7 +9,7 @@ import { LogService } from '@/services/log/LogService'
 import { useToast } from 'primevue/usetoast';
 
 export const useAccountStore = defineStore('account', () => {
-  const user = ref(null)
+  const user = ref<IAccount | null>(null);
   const token = ref('')
   const service = new AccountService()
   const logService = new LogService()
@@ -20,27 +20,27 @@ export const useAccountStore = defineStore('account', () => {
     return !!user.value
   });
 
-  function isTokenExpired(): boolean {
-    if (!token.value) {
-      return true
-    }
-    try {
-      const decodedToken: any = jwtDecode(token.value)
-      const exp = decodedToken?.exp
-      if (!exp) {
-        return true
-      }
-      return Date.now() >= exp * 1000
-    } catch (error) {
-      logService.create({
-        nivel: 'Error',
-        mensaje: `Error en el método isTokenExpired del store account: ${error.message}`,
-        excepcion: error.toString(),
-      })
-      console.error('Invalid token:', error)
-      return true
-    }
-  }
+  // function isTokenExpired(): boolean {
+  //   if (!token.value) {
+  //     return true
+  //   }
+  //   try {
+  //     const decodedToken: any = jwtDecode(token.value)
+  //     const exp = decodedToken?.exp
+  //     if (!exp) {
+  //       return true
+  //     }
+  //     return Date.now() >= exp * 1000
+  //   } catch (error) {
+  //     logService.create({
+  //       nivel: 'Error',
+  //       mensaje: `Error en el método isTokenExpired del store account: ${error.message}`,
+  //       excepcion: error.toString(),
+  //     })
+  //     console.error('Invalid token:', error)
+  //     return true
+  //   }
+  // }
 
   async function getAll() {
     try {

@@ -17,3 +17,10 @@ export interface IPropuestaIntercambioWithData extends IPropuestaIntercambio {
   objetoOfertado: IObjeto
   objetoSolicitado: IObjeto
 }
+
+export interface IPropuestaIntercambioWithDataPersona extends IPropuestaIntercambio {
+  personaOfertante: IPersona
+  personaReceptor: IPersona
+  objetoOfertado: IObjeto
+  objetoSolicitado: IObjeto
+}

@@ -9,14 +9,25 @@ import { computed, onBeforeMount, reactive, ref } from 'vue'
 import { useObjetoStore } from '@/stores/objeto'
 import BaseButton from '@/components/BaseButton.vue'
 import { usePropuestaIntercambioStore } from '../../../stores/propuestaIntercambio'
-import { EstatusPropuestaIntercambio } from '@/common/enums/enums'
+import type { IObjeto } from '@/interfaces/objeto/IObjeto'
 
 const route = useRoute()
 const objetoStore = useObjetoStore()
 const accountStore = useAccountStore()
 const personaStore = usePersonaStore()
 const propuestaIntercambioStore = usePropuestaIntercambioStore()
-const objeto = reactive({})
+const objeto = reactive<IObjeto>({
+  id: 0,
+  nombre: '',
+  descripcion: '',
+  idCategoria: 0,
+  fechaPublicacion: new Date(),
+  estado: 0,
+  rutaImagen: '',
+  idUsuario: '',
+  esBorrado: false
+});
+
 const id = ref('')
 const isDueño = ref(false)
 const isAvailable = ref(true)
@@ -33,9 +44,9 @@ onBeforeMount(async () => {
   const response = await objetoStore.getById(id.value)
   await accountStore.getUser()
   await personaStore.getPersonaByIdUsuario(response.idUsuario)
-  await objetoStore.getAllByIdUsuario(accountStore?.user?.idUsuario)
+  await objetoStore.getAllByIdUsuario(accountStore?.user?.idUsuario ?? "")
   await propuestaIntercambioStore
-    .getAllByIdUsuarioAndIdObjeto(accountStore?.user?.idUsuario, parseInt(id.value))
+    .getAllByIdUsuarioAndIdObjeto(accountStore?.user?.idUsuario ?? "", parseInt(id.value))
     .then((response) => {
       if (response.success) {
         isAvailable.value = response.data.length < objetoStore.list.length
@@ -45,11 +56,10 @@ onBeforeMount(async () => {
         console.log(response.message)
       }
     })
-
   Object.assign(objeto, response)
   if (objeto?.idUsuario == accountStore?.user?.idUsuario) {
     isDueño.value = true
-    await propuestaIntercambioStore.getAllByIdObjeto(objeto.id)
+    await propuestaIntercambioStore.getAllByIdObjeto(objeto.id.toString())
   }
 })
 </script>

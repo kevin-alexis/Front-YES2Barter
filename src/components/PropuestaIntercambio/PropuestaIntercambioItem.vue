@@ -4,11 +4,12 @@ import { formatDateToView } from '../../utils/helper';
 import BaseButton from '@/components/BaseButton.vue'
 import Tag from 'primevue/tag';
 import { usePropuestaIntercambioStore } from '@/stores/propuestaIntercambio';
+import type { IPropuestaIntercambioWithDataPersona } from '@/interfaces/propuestaIntercambio/IPropuestaIntercambio';
 
 const URL_API_SOURCE = import.meta.env.VITE_APP_URL_API_SOURCE;
 const propuestaIntercambioStore = usePropuestaIntercambioStore()
 defineProps<{
-  propuestaIntercambio: any;
+  propuestaIntercambio: IPropuestaIntercambioWithDataPersona;
   isInteractive:boolean
 }>();
 

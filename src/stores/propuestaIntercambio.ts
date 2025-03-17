@@ -12,7 +12,6 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
   const service = new PropuestaIntercambioService()
   const logService = new LogService()
   const list: Ref<IPropuestaIntercambio[]> = ref([])
-  const route = useRoute()
   const toast = useToast()
 
   async function getAll() {
