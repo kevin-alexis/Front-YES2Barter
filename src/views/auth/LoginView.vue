@@ -6,10 +6,9 @@ import { reactive } from 'vue'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
 import type { IUser } from '@/interfaces/account/IAccount'
-import Checkbox from 'primevue/checkbox';
 
 const accountStore = useAccountStore()
-
+const ImageLogin = "https://www.finservkart.com/img/login@4x.png"
 // Validaciones con VeeValidate
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
@@ -50,9 +49,9 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
 <template>
   <div class="flex flex-col lg:flex-row">
     <div
-      class="lg:flex items-end bg-gradient-to-t from-[var(--primary)] to-[var(--primary-gradient)] min-h-screen w-full rounded-l-xl hidden"
+      class="lg:flex items-center justify-center bg-gradient-to-t from-[var(--primary)] to-[var(--primary-gradient)] min-h-screen w-full rounded-l-xl hidden"
     >
-      <!-- <img :src="ImageLogin" /> -->
+      <img :src="ImageLogin" class="w-full"/>
     </div>
     <div class="min-h-screen w-full">
       <BaseForm
@@ -87,7 +86,6 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
         <template #headerForm>
           <h1 class="text-4xl font-bold text-left">Inicio de Sesión</h1>
         </template>
-        <!-- Link para registro -->
         <template #linkBottom>
           <p>
             ¿Aún no tienes cuenta?

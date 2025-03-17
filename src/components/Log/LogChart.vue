@@ -13,28 +13,55 @@ const meses = ref([
 
 const splitData = () => {
   const logsContadorPorMes = {
-    critical: Array(12).fill(0),
-    error: Array(12).fill(0),
-    warning: Array(12).fill(0),
-    info: Array(12).fill(0),
-    total: Array(12).fill(0)
+    criticalFrontEnd: Array(12).fill(0),
+    criticalBackEnd: Array(12).fill(0),
+    errorFrontEnd: Array(12).fill(0),
+    errorBackEnd: Array(12).fill(0),
+    warningFrontEnd: Array(12).fill(0),
+    warningBackEnd: Array(12).fill(0),
+    infoFrontEnd: Array(12).fill(0),
+    infoBackEnd: Array(12).fill(0),
+    totalFrontEnd: Array(12).fill(0),
+    totalBackEnd: Array(12).fill(0)
   };
 
   logs.value?.forEach((log: ILog) => {
     const logFecha = new Date(log.fecha);
     const mesIndex = logFecha.getMonth();
+    const isFrontEnd = log.fuente?.toLowerCase().includes("front-end");
+    const isBackEnd = log.fuente?.toLowerCase().includes("back-end");
 
-    if (log.nivel === 'Critical') {
-      logsContadorPorMes.critical[mesIndex]++;
-    } else if (log.nivel === 'Error') {
-      logsContadorPorMes.error[mesIndex]++;
-    } else if (log.nivel === 'Warning') {
-      logsContadorPorMes.warning[mesIndex]++;
-    } else if (log.nivel === 'Info') {
-      logsContadorPorMes.info[mesIndex]++;
+    if (log.nivel == 'Critical') {
+      if (isFrontEnd) {
+        logsContadorPorMes.criticalFrontEnd[mesIndex]++;
+      } else if (isBackEnd) {
+        logsContadorPorMes.criticalBackEnd[mesIndex]++;
+      }
+    } else if (log.nivel == 'Error') {
+      if (isFrontEnd) {
+        logsContadorPorMes.errorFrontEnd[mesIndex]++;
+      } else if (isBackEnd) {
+        logsContadorPorMes.errorBackEnd[mesIndex]++;
+      }
+    } else if (log.nivel == 'Warning') {
+      if (isFrontEnd) {
+        logsContadorPorMes.warningFrontEnd[mesIndex]++;
+      } else if (isBackEnd) {
+        logsContadorPorMes.warningBackEnd[mesIndex]++;
+      }
+    } else if (log.nivel == 'Info') {
+      if (isFrontEnd) {
+        logsContadorPorMes.infoFrontEnd[mesIndex]++;
+      } else if (isBackEnd) {
+        logsContadorPorMes.infoBackEnd[mesIndex]++;
+      }
     }
 
-    logsContadorPorMes.total[mesIndex]++;
+    if (isFrontEnd) {
+      logsContadorPorMes.totalFrontEnd[mesIndex]++;
+    } else if (isBackEnd) {
+      logsContadorPorMes.totalBackEnd[mesIndex]++;
+    }
   });
 
   return logsContadorPorMes;
@@ -49,45 +76,89 @@ const setChartData = () => {
     datasets: [
       {
         type: 'line',
-        label: 'Errores Críticos por mes',
+        label: 'Errores Críticos por mes Front End',
         borderColor: documentStyle.getPropertyValue('--p-red-500'),
         borderWidth: 2,
         fill: false,
         tension: 0.4,
-        data: logCounts.critical
+        data: logCounts.criticalFrontEnd
       },
       {
         type: 'line',
-        label: 'Errores por mes',
+        label: 'Errores Críticos por mes Back End',
+        borderColor: documentStyle.getPropertyValue('--p-red-500'),
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4,
+        data: logCounts.criticalBackEnd
+      },
+      {
+        type: 'line',
+        label: 'Errores por mes Front End',
         borderColor: documentStyle.getPropertyValue('--p-orange-500'),
         borderWidth: 2,
         fill: false,
         tension: 0.4,
-        data: logCounts.error
+        data: logCounts.errorFrontEnd
       },
       {
         type: 'line',
-        label: 'Advertencias por mes',
+        label: 'Errores por mes Back End',
+        borderColor: documentStyle.getPropertyValue('--p-orange-500'),
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4,
+        data: logCounts.errorBackEnd
+      },
+      {
+        type: 'line',
+        label: 'Advertencias por mes Front End',
         borderColor: documentStyle.getPropertyValue('--p-yellow-500'),
         borderWidth: 2,
         fill: false,
         tension: 0.4,
-        data: logCounts.warning
+        data: logCounts.warningFrontEnd
       },
       {
         type: 'line',
-        label: 'Información por mes',
+        label: 'Advertencias por mes Back End',
+        borderColor: documentStyle.getPropertyValue('--p-yellow-500'),
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4,
+        data: logCounts.warningBackEnd
+      },
+      {
+        type: 'line',
+        label: 'Información por mes Front End',
         borderColor: documentStyle.getPropertyValue('--p-blue-500'),
         borderWidth: 2,
         fill: false,
         tension: 0.4,
-        data: logCounts.info
+        data: logCounts.infoFrontEnd
+      },
+      {
+        type: 'line',
+        label: 'Información por mes Back End',
+        borderColor: documentStyle.getPropertyValue('--p-blue-500'),
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4,
+        data: logCounts.infoBackEnd
       },
       {
         type: 'bar',
-        label: 'Total de Logs por mes',
+        label: 'Total de Logs por mes Front End',
         backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
-        data: logCounts.total,
+        data: logCounts.totalFrontEnd,
+        borderColor: 'white',
+        borderWidth: 2
+      },
+      {
+        type: 'bar',
+        label: 'Total de Logs por mes Back End',
+        backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
+        data: logCounts.totalBackEnd,
         borderColor: 'white',
         borderWidth: 2
       }

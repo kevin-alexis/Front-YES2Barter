@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { usePropuestaIntercambioStore } from '@/stores/propuestaIntercambio'
 import { useObjetoStore } from '@/stores/objeto'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import BaseModal from '@/components/BaseModal.vue'
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -18,6 +18,17 @@ const isOpen = ref(false)
 const baseUrl = import.meta.env.VITE_APP_URL_API_SOURCE
 const srcPDF = ref('')
 const loading = ref(true);
+// const estados = ref([
+//   Object.values(EstatusPropuestaIntercambio).indexOf(EstatusPropuestaIntercambio.ACEPTADA),
+//   Object.values(EstatusPropuestaIntercambio).indexOf(EstatusPropuestaIntercambio.ENVIADA),
+//   Object.values(EstatusPropuestaIntercambio).indexOf(EstatusPropuestaIntercambio.NO_CONCRETADA),
+// ])
+
+// const propuestas = computed(()=>{
+//   return propuestaIntercambioStore.list.filter((item) => {
+//     return estados.value.includes(item.estado);
+//   });
+// })
 
 onMounted(async () => {
 

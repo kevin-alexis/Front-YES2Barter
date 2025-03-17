@@ -26,10 +26,11 @@ onMounted(() => {
     </div>
 
     <div class="flex flex-col gap-8 mt-10">
-      <h2 class="text-center font-bold text-4xl md:text-5xl text-[var(--primary)] mb-6">
+
+      <div class="bg-white p-8 rounded-2xl shadow-lg">
+        <h2 class="text-center md:text-start font-bold text-xl text-[var(--primary)] mb-6">
         Recientes
       </h2>
-      <div class="bg-white p-8 rounded-2xl shadow-lg">
         <ObjetoList v-model:objetos="objetoStore.list"
         :config="{
           showButtons: false

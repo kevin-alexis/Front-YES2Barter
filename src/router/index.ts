@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { useAccountStore } from '@/stores/account'
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -100,7 +99,7 @@ const router = createRouter({
     },
     {
       path: '/objeto/',
-      name: 'mis objetos',
+      name:'mis objetos',
       component: () => import('../views/private/Objeto/ObjetoView.vue'),
       meta: {
         menu: true,

@@ -79,7 +79,7 @@ onBeforeMount(async () => {
         </RouterLink>
       </div>
 
-      <div :class="[!isDueño ?'h-1/2 overflow-y-scroll' : '']">
+      <div :class="[!isDueño ?'h-1/2 overflow-y-scroll' : 'h-1/2 overflow-y-scroll']">
         <PropuestaIntercambioList
           :propuestasIntercambios="isDueño ? propuestas : propuestasRealizadas"
           :isInteractive="isDueño"

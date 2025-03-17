@@ -16,50 +16,62 @@ const accountStore = useAccountStore()
 const router = useRouter()
 const isEdit = ref(false)
 const id = ref('')
-const tipoEstadoList = Object.values(EstatusPropuestaIntercambio);
+const tipoEstadoList = Object.values(EstatusPropuestaIntercambio)
 const propuestasRealizadas = ref([])
 
-const objetoList = computed(()=>{
-  return objetoStore.list.filter((item) => item.estado == Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE))
+const objetoList = computed(() => {
+  return objetoStore.list.filter(
+    (item) => item.estado == Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE),
+  )
 })
 const objetoSolicitado = computed(() => {
-  const objetoOfertadoItem = objetoStore.list.find(item =>{
+  const objetoOfertadoItem = objetoStore.list.find((item) => {
     return item.id == idObjetoOfertado.value
-  });
+  })
 
-  const idUsuarioOfertado = objetoOfertadoItem ? objetoOfertadoItem.idUsuario : null;
+  const idUsuarioOfertado = objetoOfertadoItem ? objetoOfertadoItem.idUsuario : null
 
-  if(objetoOfertadoItem && !isEdit){
-    idObjetoSolicitado.value = null;
+  if (objetoOfertadoItem && !isEdit) {
+    idObjetoSolicitado.value = null
   }
 
-  return objetoStore.list.filter(item => item.idUsuario !== idUsuarioOfertado && item.estado == Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE));
-});
+  return objetoStore.list.filter(
+    (item) =>
+      item.idUsuario !== idUsuarioOfertado &&
+      item.estado == Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE),
+  )
+})
 
 const objetoOfertado = computed(() => {
-  const objetoSolicitadoItem = objetoStore.list.find(item =>{
+  const objetoSolicitadoItem = objetoStore.list.find((item) => {
     return item.id == idObjetoSolicitado.value
-  });
+  })
 
-  const idUsuarioSocilitado = objetoSolicitadoItem ? objetoSolicitadoItem.idUsuario : null;
+  const idUsuarioSocilitado = objetoSolicitadoItem ? objetoSolicitadoItem.idUsuario : null
 
-  if(objetoSolicitadoItem && !isEdit){
-    idObjetoOfertado.value = null;
+  if (objetoSolicitadoItem && !isEdit) {
+    idObjetoOfertado.value = null
   }
 
-  const objetosFiltradosPorUsuario =  objetoStore.list.filter(item => {
-    if(item.idUsuario == accountStore.user.idUsuario && item.estado == Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE)) return item
-  });
+  const objetosFiltradosPorUsuario = objetoStore.list.filter((item) => {
+    if (
+      item.idUsuario == accountStore.user.idUsuario &&
+      item.estado == Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE)
+    )
+      return item
+  })
 
-  const objetosFiltradosNoOfertados = objetosFiltradosPorUsuario.filter(objeto => {
-    return !propuestasRealizadas.value.some(propuesta => { return propuesta.idObjetoOfertado == objeto.id});
-  });
+  const objetosFiltradosNoOfertados = objetosFiltradosPorUsuario.filter((objeto) => {
+    return !propuestasRealizadas.value.some((propuesta) => {
+      return propuesta.idObjetoOfertado == objeto.id
+    })
+  })
 
-    return objetosFiltradosNoOfertados;
-});
+  return objetosFiltradosNoOfertados
+})
 
 const route = useRoute()
-const isCreateIntercambiadorRoute = computed(()=>{
+const isCreateIntercambiadorRoute = computed(() => {
   return route.name == 'crear propuesta intercambio intercambiador'
 })
 
@@ -67,9 +79,9 @@ const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
     idObjetoOfertado: yup.string().required('El objeto ofertado es obligatorio'),
     idObjetoSolicitado: yup
-    .string()
-    .notOneOf([yup.ref('idObjetoOfertado')], 'Los objetos no pueden ser los mismo')
-    .required('El objeto solicitado es obligatorio'),
+      .string()
+      .notOneOf([yup.ref('idObjetoOfertado')], 'Los objetos no pueden ser los mismo')
+      .required('El objeto solicitado es obligatorio'),
     estado: yup.string().required('El estado es obligatorio'),
   }),
 })
@@ -87,7 +99,7 @@ const [estado] = defineField('estado', { validateOnModelUpdate: true })
 const dataForm = reactive({
   idObjetoOfertado: idObjetoOfertado,
   idObjetoSolicitado: idObjetoSolicitado,
-  estado: estado
+  estado: estado,
 })
 
 const handleSubmitForm = handleSubmit((values: FormValues) => {
@@ -110,26 +122,54 @@ onMounted(async () => {
       })
     })
   } else {
-    await propuestaIntercambioStore.getAllByIdUsuarioAndIdObjeto(accountStore.user.idUsuario, parseInt(id.value)).then((response)=>{
-      if(response.success){
-        propuestasRealizadas.value = response.data
+    if (id.value) {
+      if (accountStore.user.idUsuario) {
+        await propuestaIntercambioStore
+          .getAllByIdUsuarioAndIdObjeto(accountStore.user.idUsuario, parseInt(id.value))
+          .then((response) => {
+            if (response.success) {
+              propuestasRealizadas.value = response.data
+            }
+          })
       }
-    })
 
-    await objetoStore.getById(id.value).then((response) => {
-      response.idUsuario == accountStore.user.idUsuario ? router.back() : '';
-    })
-    if(isCreateIntercambiadorRoute.value){
-      Object.assign(dataForm, {
-      idObjeto: id.value,
-      idObjetoSolicitado: id.value,
-      estado: Object.values(EstatusPropuestaIntercambio).indexOf(EstatusPropuestaIntercambio.ENVIADA)
-    })
-    }else{
-      Object.assign(dataForm, {
-      idObjeto: id.value,
-    })
+      await objetoStore.getById(id.value).then((response) => {
+        response.idUsuario == accountStore.user.idUsuario ? router.back() : ''
+      })
+
+      if (isCreateIntercambiadorRoute.value) {
+        Object.assign(dataForm, {
+          idObjeto: id.value,
+          idObjetoSolicitado: id.value,
+          estado: Object.values(EstatusPropuestaIntercambio).indexOf(
+            EstatusPropuestaIntercambio.ENVIADA,
+          ),
+        })
+      } else {
+        Object.assign(dataForm, {
+          idObjeto: id.value,
+          estado: Object.values(EstatusPropuestaIntercambio).indexOf(
+            EstatusPropuestaIntercambio.ENVIADA,
+          ),
+        })
+      }
+    } else {
+      if (isCreateIntercambiadorRoute.value) {
+        Object.assign(dataForm, {
+          estado: Object.values(EstatusPropuestaIntercambio).indexOf(
+            EstatusPropuestaIntercambio.ENVIADA,
+          ),
+        })
+      } else {
+        Object.assign(dataForm, {
+          estado: Object.values(EstatusPropuestaIntercambio).indexOf(
+            EstatusPropuestaIntercambio.ENVIADA,
+          ),
+        })
+      }
     }
+
+    console.log('isCreated', isCreateIntercambiadorRoute.value)
   }
 })
 </script>
@@ -177,8 +217,8 @@ onMounted(async () => {
               paramKey: 'name',
               valueKey: 'id',
             },
-            isRequired: isEdit,
-            isDisabled: isCreateIntercambiadorRoute,
+            isRequired: true,
+            isDisabled: true,
             model: 'estado',
           },
         ],

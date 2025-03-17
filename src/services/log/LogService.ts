@@ -34,7 +34,10 @@ export class LogService {
       const response = await genericRequestAuthenticated(
         `${this.baseUrl}/${LogService.nameController}`,
         'POST',
-        body,
+        {...body,
+          fuente: `Front-End: ${window.location.origin}`,
+        }
+        ,
       )
       return response
     } catch (error) {

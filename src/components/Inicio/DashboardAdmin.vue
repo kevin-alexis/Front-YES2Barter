@@ -134,7 +134,6 @@ const scrollToTop = () => {
       </div>
     </div>
 
-    <!-- Grid for statistics -->
     <div class="flex flex-col justify-center items-center gap-5 h-full mx-5 sm:mx-10 mt-10 rounded-2xl">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 w-full">
         <div
@@ -160,7 +159,6 @@ const scrollToTop = () => {
       </div>
     </div>
 
-    <!-- Bar charts section -->
     <div class="flex flex-col sm:flex-row w-full px-5 sm:px-10 pt-10 gap-10">
       <div class="w-full sm:w-1/2 pb-10 sm:pb-0">
         <h3 class="font-bold text-2xl text-center pb-5">Objetos por Categoría</h3>
