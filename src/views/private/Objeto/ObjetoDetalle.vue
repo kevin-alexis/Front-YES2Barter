@@ -11,6 +11,7 @@ import BaseButton from '@/components/BaseButton.vue'
 import { usePropuestaIntercambioStore } from '../../../stores/propuestaIntercambio'
 import type { IObjeto } from '@/interfaces/objeto/IObjeto'
 import ProgressSpinner from 'primevue/progressspinner'
+import Message from 'primevue/message'
 
 const route = useRoute()
 const objetoStore = useObjetoStore()
@@ -32,6 +33,7 @@ const objeto = reactive<IObjeto>({
 const id = ref('')
 const isDueño = ref(false)
 const isAvailable = ref(true)
+const noTieneObjetos = ref(false)
 const isLoading = ref(true)
 const propuestas = computed(() => {
   return propuestaIntercambioStore.list.filter(
@@ -53,6 +55,11 @@ onBeforeMount(async () => {
       if (response.success) {
         isAvailable.value = response.data.length < objetoStore.list.length
         propuestasRealizadas.value = response.data
+      }else{
+        if(objetoStore.list.length == 0){
+          isAvailable.value = false
+          noTieneObjetos.value = true
+        }
       }
     })
   Object.assign(objeto, response)
@@ -84,7 +91,12 @@ onBeforeMount(async () => {
       </div>
 
       <div class="w-full md:w-1/2">
+        <div class="px-7 py-4" v-if="noTieneObjetos">
+          <Message severity="warn" closable>¡Ups! Aún no tienes objetos. Crea uno para poder hacer ofertas.</Message>
+        </div>
+
         <PerfilDetallesItem
+          :class="[!noTieneObjetos ? 'mt-8' : '']"
           v-if="!isDueño"
           :config="{
             persona: personaStore.persona,
@@ -92,7 +104,7 @@ onBeforeMount(async () => {
           }"
         ></PerfilDetallesItem>
 
-        <div class="p-5" v-if="!isDueño && isAvailable">
+        <div class="p-7" v-if="!isDueño && isAvailable">
           <RouterLink
             :to="{ name: 'crear propuesta intercambio intercambiador', params: { id: id } }"
           >

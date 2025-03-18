@@ -75,7 +75,7 @@ const onPage = (event) => {
       v-model:filters="filters"
       :value="propuestaIntercambioStore.list"
       paginator
-      :rows="10"
+      :rows="5"
       dataKey="id"
       :rowsPerPageOptions="[5, 10, 15]"
       :globalFilterFields="[

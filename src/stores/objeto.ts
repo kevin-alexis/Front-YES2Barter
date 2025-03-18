@@ -4,7 +4,6 @@ import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
 import Swal from 'sweetalert2'
 import router from '@/router'
-import { useRoute } from 'vue-router'
 import { LogService } from '@/services/log/LogService'
 import { EstatusObjeto } from '../common/enums/enums';
 
@@ -12,7 +11,6 @@ export const useObjetoStore = defineStore('objeto', () => {
   const service = new ObjetoService()
   const logService = new LogService()
   const list: Ref<IObjeto[]> = ref([])
-  const route = useRoute()
 
   async function getAllByIdEstatus(estatus?: EstatusObjeto) {
     try {
@@ -143,48 +141,53 @@ export const useObjetoStore = defineStore('objeto', () => {
 
   async function deleteItem(id: number) {
     try {
-      Swal.fire({
-        title: '¿Estas seguro?',
-        text: 'No podras revertirlo!',
+      const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'No podrás revertirlo!',
         icon: 'warning',
         showCancelButton: true,
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, eliminar!',
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          await service
-            .delete(id)
-            .then(async () => {
-              Swal.fire({
-                title: 'Eliminar!',
-                text: 'El registro fue eliminado.',
-                icon: 'success',
-              })
+      });
 
-              await getAll()
-              const idCategoria = route.params.id as string
-              if(idCategoria){
-                getAllByIdCategoria(idCategoria)
-              }
-            })
-            .catch((error) => {
-              Swal.fire({
-                title: 'No se pudo elimnar!',
-                text: `El registro no fue eliminado ${error}.`,
-                icon: 'error',
-              })
-            })
+      if (result.isConfirmed) {
+        try {
+          const response = await service.delete(id);
+          if (response?.success) {
+            await Swal.fire({
+              title: 'Eliminado!',
+              text: response.message || 'El objeto fue eliminado.',
+              icon: 'success',
+            });
+
+            await getAll();
+          } else {
+            throw new Error(response?.message || 'El objeto tiene propuestas activas y no puede ser eliminado.');
+          }
+        } catch (error) {
+          await Swal.fire({
+            title: 'No se pudo eliminar!',
+            text: error.message || 'Ocurrió un error inesperado.',
+            icon: 'error',
+          });
         }
-      })
+      }
     } catch (error) {
       logService.create({
         nivel: 'Error',
         mensaje: `Error en el método deleteItem del store objeto: ${error.message}`,
         excepcion: error.toString(),
-      })
-      console.error(error)
+      });
+
+      console.error(error);
+
+      await Swal.fire({
+        title: 'Error!',
+        text: 'Ocurrió un error inesperado.',
+        icon: 'error',
+      });
     }
   }
 

@@ -51,7 +51,7 @@ function cerrarPropuestaIntercambio(id: number, isSuccess: boolean){
       <img
         :src="URL_API_SOURCE + propuestaIntercambio.personaOfertante.rutaFotoPerfil"
         alt="Foto de perfil ofertante"
-        class="h-12 w-12 rounded-full border-2 border-gray-300 shadow-sm"
+        class="h-12 w-12 rounded-full border-2 border-gray-300 shadow-sm object-cover"
       />
       <div class="ml-3">
         <p class="font-medium text-gray-800">Ofertante:</p>
@@ -63,7 +63,7 @@ function cerrarPropuestaIntercambio(id: number, isSuccess: boolean){
       <img
         :src="URL_API_SOURCE + propuestaIntercambio.personaReceptor.rutaFotoPerfil"
         alt="Foto de perfil receptor"
-        class="h-12 w-12 rounded-full border-2 border-gray-300 shadow-sm"
+        class="h-12 w-12 rounded-full border-2 border-gray-300 shadow-sm object-cover"
       />
       <div class="ml-3">
         <p class="font-medium text-gray-800">Receptor:</p>

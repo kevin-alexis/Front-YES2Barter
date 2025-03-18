@@ -40,7 +40,7 @@ const onPage = (event) => {
       v-model:filters="filters"
       :value="accountStore.list"
       paginator
-      :rows="10"
+      :rows="5"
       dataKey="id"
       :rowsPerPageOptions="[5, 10, 15]"
       :globalFilter="filters.nombre.value"

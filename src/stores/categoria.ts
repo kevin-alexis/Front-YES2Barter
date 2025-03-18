@@ -6,6 +6,8 @@ import Swal from 'sweetalert2'
 import router from '@/router'
 import { LogService } from '@/services/log/LogService'
 
+
+
 export const useCategoriaStore = defineStore('categoria', () => {
   const service = new CategoriaService()
   const logService = new LogService()
@@ -84,45 +86,60 @@ export const useCategoriaStore = defineStore('categoria', () => {
 
   async function deleteItem(id: number) {
     try {
-      Swal.fire({
-        title: '¿Estas seguro?',
-        text: 'No podras revertirlo!',
+      const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'No podrás revertirlo!',
         icon: 'warning',
         showCancelButton: true,
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, eliminar!',
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          await service
-            .delete(id)
-            .then(async () => {
-              Swal.fire({
-                title: 'Eliminar!',
-                text: 'El registro fue eliminado.',
-                icon: 'success',
-              })
-              await getAll()
-            })
-            .catch((error) => {
-              Swal.fire({
-                title: 'No se pudo elimnar!',
-                text: `El registro no fue eliminado ${error}.`,
-                icon: 'error',
-              })
-            })
+      });
+
+      if (result.isConfirmed) {
+        try {
+          const response = await service.delete(id);
+
+          if (response?.success) {
+            await Swal.fire({
+              title: 'Eliminado!',
+              text: response.message || 'La categoría fue eliminada.',
+              icon: 'success',
+            });
+
+            await getAll();
+          } else {
+            throw new Error(response?.message || 'La categoría tiene objetos relacionados y no puede ser eliminada.');
+          }
+        } catch (error) {
+          await Swal.fire({
+            title: 'No se pudo eliminar!',
+            text: error.message || 'Ocurrió un error inesperado.',
+            icon: 'error',
+          });
         }
-      })
+      }
     } catch (error) {
       logService.create({
         nivel: 'Error',
-        mensaje: `Error en el método deleteItem del store categoria: ${error.message}`,
+        mensaje: `Error en deleteItem: ${error.message}`,
         excepcion: error.toString(),
-      })
-      console.error(error)
+      });
+
+      console.error(error);
+
+      await Swal.fire({
+        title: 'Error!',
+        text: 'Ocurrió un error inesperado.',
+        icon: 'error',
+      });
     }
   }
+
+
+
+
 
   return { list, getAll, getById, deleteItem, create, update }
 })
