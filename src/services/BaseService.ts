@@ -1,24 +1,14 @@
-import axios from 'axios'
 import { LogService } from './log/LogService'
 import { genericRequestAuthenticated } from '@/utils/genericRequest'
 
 export class BaseService<T> {
   private baseUrl = import.meta.env.VITE_APP_URL_API
   private nameController: string
-  // private token: string | null
   protected logService: LogService
 
   constructor(nameController: string) {
     this.nameController = nameController
-    // this.token = localStorage.getItem('token') || ''
     this.logService = new LogService()
-  }
-
-  private getHeaders() {
-    return {
-      'Content-Type': 'application/json',
-      // Authorization: `Bearer ${this.token}`,
-    }
   }
 
   public getAll = async () => {

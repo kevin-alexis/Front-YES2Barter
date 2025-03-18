@@ -1,47 +1,28 @@
 <script setup lang="ts">
 import { usePropuestaIntercambioStore } from '@/stores/propuestaIntercambio'
-import { useObjetoStore } from '@/stores/objeto'
-import { computed, onMounted, ref } from 'vue'
-import BaseModal from '@/components/BaseModal.vue'
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import { FilterMatchMode } from '@primevue/core/api';
-import Button from 'primevue/button';
+import { onMounted, ref } from 'vue'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import { FilterMatchMode } from '@primevue/core/api'
+import Button from 'primevue/button'
 import { formatDateToView } from '@/utils/helper'
 import { EstatusPropuestaIntercambio } from '@/common/enums/enums'
-import Tag from 'primevue/tag';
+import Tag from 'primevue/tag'
+import IconField from 'primevue/iconfield'
+import InputText from 'primevue/inputtext'
+import InputIcon from 'primevue/inputicon'
 
-const tipoEstatusPropuestaIntercambioList = Object.values(EstatusPropuestaIntercambio);
-const objetoStore = useObjetoStore()
+const tipoEstatusPropuestaIntercambioList = Object.values(EstatusPropuestaIntercambio)
 const propuestaIntercambioStore = usePropuestaIntercambioStore()
-const isOpen = ref(false)
-const baseUrl = import.meta.env.VITE_APP_URL_API_SOURCE
-const srcPDF = ref('')
-const loading = ref(true);
-// const estados = ref([
-//   Object.values(EstatusPropuestaIntercambio).indexOf(EstatusPropuestaIntercambio.ACEPTADA),
-//   Object.values(EstatusPropuestaIntercambio).indexOf(EstatusPropuestaIntercambio.ENVIADA),
-//   Object.values(EstatusPropuestaIntercambio).indexOf(EstatusPropuestaIntercambio.NO_CONCRETADA),
-// ])
-
-// const propuestas = computed(()=>{
-//   return propuestaIntercambioStore.list.filter((item) => {
-//     return estados.value.includes(item.estado);
-//   });
-// })
+const loading = ref(true)
 
 onMounted(async () => {
-
   await propuestaIntercambioStore.getAllPropuestas()
   loading.value = false
 })
 
-function openModal(src: string) {
-  srcPDF.value = baseUrl + src.replace('\\', '/')
-  isOpen.value = true
-}
-
 const filters = ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   idUsuarioOfertante: { value: null, matchMode: FilterMatchMode.CONTAINS },
   idUsuarioReceptor: { value: null, matchMode: FilterMatchMode.CONTAINS },
   idObjetoOfertado: { value: null, matchMode: FilterMatchMode.EQUALS },
@@ -49,31 +30,37 @@ const filters = ref({
   fechaPropuesta: { value: null, matchMode: FilterMatchMode.EQUALS },
 })
 
-function getIndexEnum(enumData: any){
+function getIndexEnum(enumData: any) {
   return Object.values(EstatusPropuestaIntercambio).indexOf(enumData)
 }
 
 const getSeverity = (status: number): string => {
   switch (status) {
     case getIndexEnum(EstatusPropuestaIntercambio.ENVIADA):
-      return 'warn';
+      return 'warn'
 
     case getIndexEnum(EstatusPropuestaIntercambio.ACEPTADA):
-      return 'success';
+      return 'success'
 
     case getIndexEnum(EstatusPropuestaIntercambio.RECHAZADA):
-      return 'danger';
+      return 'danger'
 
     case getIndexEnum(EstatusPropuestaIntercambio.CONCRETADA):
-      return 'success';
+      return 'success'
 
     case getIndexEnum(EstatusPropuestaIntercambio.NO_CONCRETADA):
-      return 'info';
+      return 'info'
 
     default:
-      return 'info';
+      return 'info'
   }
 }
+
+const first = ref(0);
+
+const onPage = (event) => {
+  first.value = event.first;
+};
 
 </script>
 
@@ -84,24 +71,64 @@ const getSeverity = (status: number): string => {
         <Button class="p-button-general" label="Agregar" icon="pi pi-plus" />
       </RouterLink>
     </div>
-    <DataTable v-model:filters="filters" :value="propuestaIntercambioStore.list" :loading="loading" paginator :rows="10" dataKey="id" :rowsPerPageOptions="[5, 10, 15]"
-    :globalFilterFields="['idUsuarioOfertante', 'idUsuarioReceptor', 'idObjetoOfertado', 'idObjetoSolicitado', 'fechaPropuesta']" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-    currentPageReportTemplate="Mostrando de {first} a {last} de {totalRecords} propuestas de intercambio"
+    <DataTable
+      v-model:filters="filters"
+      :value="propuestaIntercambioStore.list"
+      paginator
+      :rows="10"
+      dataKey="id"
+      :rowsPerPageOptions="[5, 10, 15]"
+      :globalFilterFields="[
+        'personaOfertante.nombre',
+        'personaReceptor.nombre',
+        'objetoOfertado.nombre',
+        'objetoSolicitado.nombre',
+        'fechaPropuesta',
+        'estado',
+      ]"
+      paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+      currentPageReportTemplate="Mostrando de {first} a {last} de {totalRecords} propuestas de intercambio"
+      :loading="loading"
+      :first="first"
+      @page="onPage($event)"
     >
-      <Column field="personaOfertante.nombre" header="Usuario Ofertante" />
-      <Column field="personaReceptor.nombre" header="Usuario Receptor" />
-      <Column field="objetoOfertado.nombre" header="Objeto Ofertado" />
-      <Column field="objetoSolicitado.nombre" header="Objeto Solicitado" />
-      <Column field="fechaPropuesta" header="Fecha Propuesta">
-        <template #body="{ data }"> {{ formatDateToView(data.fechaPropuesta)  }} </template>
-      </Column>
-      <Column field="estado" header="Estado">
-        <template #body="{ data }">
-          <Tag :value="tipoEstatusPropuestaIntercambioList[data.estado]" :severity="getSeverity(data.estado)" />
+      <template #header>
+        <div class="flex justify-end">
+          <IconField>
+            <InputIcon>
+              <i class="pi pi-search" />
+            </InputIcon>
+            <InputText v-model="filters['global'].value" placeholder="Buscar" />
+          </IconField>
+        </div>
+      </template>
+
+      <template #empty>Sin propuestas encontradas</template>
+      <template #loading>Cargando propuestas</template>
+
+      <Column field="id" header="No." sortable>
+        <template #body="{ index }">
+          {{ index + 1 + first }}
         </template>
       </Column>
 
-      <Column field="actions" header="Acciones" style="width: 10rem; text-align: center;">
+      <Column field="personaOfertante.nombre" header="Usuario Ofertante" sortable />
+      <Column field="personaReceptor.nombre" header="Usuario Receptor" sortable />
+      <Column field="objetoOfertado.nombre" header="Objeto Ofertado" sortable />
+      <Column field="objetoSolicitado.nombre" header="Objeto Solicitado" sortable />
+      <Column field="fechaPropuesta" header="Fecha Propuesta" sortable>
+        <template #body="{ data }"> {{ formatDateToView(data.fechaPropuesta) }} </template>
+      </Column>
+      <Column field="estado" header="Estado" sortable>
+        <template #body="{ data }">
+          <Tag
+            :value="tipoEstatusPropuestaIntercambioList[data.estado]"
+            :severity="getSeverity(data.estado)"
+          />
+        </template>
+      </Column>
+
+      <Column field="actions" header="Acciones" style="width: 10rem; text-align: center">
         <template #body="{ data }">
           <div class="flex gap-2 justify-center">
             <Button
@@ -110,11 +137,14 @@ const getSeverity = (status: number): string => {
               rounded
               severity="success"
               v-if="data.id"
-              @click="$router.push({ name: 'editar propuesta intercambio', params: { id: data.id } })"
+              @click="
+                $router.push({ name: 'editar propuesta intercambio', params: { id: data.id } })
+              "
             />
             <Button
               icon="pi pi-trash"
-              outlined rounded
+              outlined
+              rounded
               severity="danger"
               @click="() => propuestaIntercambioStore.deleteItem(data.id)"
             />
@@ -122,9 +152,5 @@ const getSeverity = (status: number): string => {
         </template>
       </Column>
     </DataTable>
-
-    <BaseModal v-model:open="isOpen" :isPDF="true">
-      <iframe :src="srcPDF" class="h-full w-full" />
-    </BaseModal>
   </div>
 </template>

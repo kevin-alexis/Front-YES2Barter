@@ -21,6 +21,10 @@
 
 }
 
+circle{
+  stroke: var(--primary) !important;
+}
+
 .p-button-general {
     background: var(--primary) !important;
     border-color: var(--primary) !important;

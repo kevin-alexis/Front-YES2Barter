@@ -1,6 +1,6 @@
-import { BaseService } from '../BaseService'
 import { genericRequestAuthenticated } from '@/utils/genericRequest'
 import type { IPersona } from '@/interfaces/persona/IPersona'
+import { BaseService } from '../BaseService'
 
 export class PersonaService extends BaseService<IPersona> {
   private static nameController = 'Persona'

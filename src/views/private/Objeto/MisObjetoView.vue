@@ -5,24 +5,34 @@ import { useObjetoStore } from '@/stores/objeto'
 import { useAccountStore } from '@/stores/account'
 import { RouterLink } from 'vue-router'
 import Button from 'primevue/button'
+import ProgressSpinner from 'primevue/progressspinner'
 
 const objetoStore = useObjetoStore()
 const accountStore = useAccountStore()
 
 const isLoading = ref(true)
 
-onBeforeMount(() => {
-  objetoStore.getAllByIdUsuario(accountStore.user.idUsuario)
-  isLoading.value = false
+onBeforeMount(async () => {
+  try {
+    await objetoStore.getAllByIdUsuario(accountStore.user.idUsuario)
+  } catch (error) {
+    console.error('Error al cargar los objetos:', error)
+  } finally {
+    isLoading.value = false
+  }
 })
 </script>
 
 <template>
-  <div>
+  <div :class="[isLoading ? 'flex justify-center items-center h-full': '']">
     <div v-if="isLoading" class="loading-message max-h-screen flex justify-center items-center">
-      <div>
-        <h1 class="text-2xl sm:text-3xl md:text-4xl font-light text-center">Cargando objetos...</h1>
-      </div>
+      <ProgressSpinner
+      style="width: 50px; height: 50px"
+      strokeWidth="8"
+      fill="transparent"
+      animationDuration=".5s"
+      aria-label="Custom ProgressSpinner"
+    />
     </div>
 
     <div v-else class="w-full max-h-screen overflow-y-auto p-2">
