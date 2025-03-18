@@ -6,6 +6,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
+
 const accountStore = useAccountStore()
 const personaStore = usePersonaStore()
 
@@ -13,15 +14,19 @@ const route = useRoute()
 const isEdit = ref(false)
 const id = ref('')
 
-// const MAX_FILE_SIZE = 102400; //100KB
-
-const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] }
+const validFileExtensions: { [key: string]: string[] } = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] }
 
 function isValidFileType(fileName: string, fileType: string) {
   return fileName && validFileExtensions[fileType].includes(fileName.split('.').pop()?.toLowerCase() || '')
 }
 
-const { errors, defineField, handleSubmit, setValues } = useForm({
+interface FormValues{
+  nombre: string;
+  biografia: string;
+  rutaFotoPerfil?: File;
+}
+
+const { errors, defineField, handleSubmit } = useForm<FormValues>({
   validationSchema: yup.object({
     nombre: yup.string().required('El nombre es obligatorio'),
     biografia: yup.string().required('La biografía es obligatoria'),
@@ -35,12 +40,17 @@ const { errors, defineField, handleSubmit, setValues } = useForm({
       })
       .test('is-valid-type', 'El formato de la imagen no es válido', (value) => {
         if (!isEdit.value && value) {
-          return isValidFileType(value.name, 'image')
+          if (value instanceof File) {
+            return isValidFileType(value.name, 'image');
+          } else {
+            return this.createError({ message: 'El valor no es un archivo válido' });
+          }
         }
-        return true
+        return true;
       }),
   }),
-})
+});
+
 
 const [nombre] = defineField('nombre', {
   validateOnModelUpdate: true,
@@ -54,35 +64,47 @@ const [rutaFotoPerfil] = defineField('rutaFotoPerfil', {
   validateOnModelUpdate: true,
 })
 
-
 const contactForm = reactive({
   nombre: nombre,
   biografia: biografia,
   rutaFotoPerfil: rutaFotoPerfil,
 })
 
-const handleSubmitForm = handleSubmit((values: FormValues) => {
-  //validaciones
-  // personaStore.update(id.value, values)
+const handleSubmitForm = handleSubmit(async (values: FormValues) => {
+  const formData = new FormData()
+
+  formData.append('Nombre', values.nombre)
+  formData.append('Biografia', values.biografia)
+
+  if (values.rutaFotoPerfil) {
+    formData.append('RutaFotoPerfil', values.rutaFotoPerfil)
+  }
+
+  if (isEdit.value) {
+    // Actualiza la persona
+    personaStore.updatePersona(id.value, formData)
+  } else {
+  }
 })
 
 onMounted(async () => {
   await accountStore.getUser()
-  await personaStore.getPersonaByIdUsuario(accountStore.user.idUsuario).then(()=>{
+
+  if (accountStore.user) {
+  await personaStore.getPersonaByIdUsuario(accountStore.user.idUsuario).then(() => {
     Object.assign(contactForm, {
-        ...personaStore.persona,
-      })
-  })
+      ...personaStore.persona,
+    });
+  });
+}
   isEdit.value = route.fullPath.includes('editar')
 })
-
-onMounted(async () => {})
 </script>
 
 <template>
-  <div class="p-5 w-full">
+  <div class="p-6 sm:p-8 lg:p-12 w-full">
     <BaseForm
-      class="max-w-4xl mx-auto p-5 sm:p-8 md:p-10 lg:p-12"
+      class="max-w-4xl mx-auto p-6 sm:p-8 md:p-10 lg:p-12 bg-white rounded-xl shadow-lg"
       v-model:model="contactForm"
       v-model:errors="errors"
       @submit="handleSubmitForm"
@@ -94,13 +116,15 @@ onMounted(async () => {})
             type: 'text',
             isRequired: true,
             model: 'nombre',
+            //class: 'border-2 border-gray-300 p-3 rounded-md w-full'
           },
           {
             label: 'Biografía',
-            placeholder: 'Biografia',
+            placeholder: 'Biografía',
             type: 'textarea',
             isRequired: true,
             model: 'biografia',
+            //class: 'border-2 border-gray-300 p-3 rounded-md w-full h-32'
           },
           {
             label: 'Foto de Perfil',
@@ -108,6 +132,7 @@ onMounted(async () => {})
             type: 'file',
             isRequired: !isEdit,
             model: 'rutaFotoPerfil',
+            //class: 'border-2 border-gray-300 p-3 rounded-md w-full'
           },
         ],
         titleButton: isEdit ? 'Editar' : 'Crear',
@@ -115,8 +140,8 @@ onMounted(async () => {})
       }"
     >
       <template #headerForm>
-        <h1 class="text-[var(--primary)] text-3xl sm:text-4xl md:text-5xl font-bold text-center">
-          Editar Perfil
+        <h1 class="text-4xl sm:text-5xl text-center font-bold text-[var(--primary)] mb-8">
+          {{ isEdit ? 'Editar Perfil' : 'Crear Perfil' }}
         </h1>
       </template>
     </BaseForm>

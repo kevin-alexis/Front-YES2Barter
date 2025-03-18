@@ -44,65 +44,50 @@ defineProps<{
     persona: IPersona,
     isEditable: boolean
   }
-}>()
+}>();
 
 onBeforeMount(async () => {
-  isLoading.value = false
-})
-
+  isLoading.value = false;
+});
 </script>
 
 <template>
-  <div class="w-full mx-auto p-8">
-    <h2 class="text-3xl font-semibold text-[var(--primary)] mb-6 text-center">Perfil {{ config.isEditable ? 'de Usuario' : 'del Intercambiador'}} </h2>
+  <div class="max-w-4xl mx-auto p-8 bg-white shadow-xl rounded-xl mt-16">
+    <h2 class="text-3xl font-semibold text-[var(--primary)] mb-6 text-center">Perfil {{ config.isEditable ? 'de Usuario' : 'del Intercambiador' }}</h2>
 
-    <div class="  ">
-      <div class="flex justify-center items-center">
-        <div class="relative">
-          <img
-            v-if="config.persona.rutaFotoPerfil"
-            :src="baseUrl + config.persona.rutaFotoPerfil"
-            alt="Foto de Perfil"
-            class="w-32 h-32 rounded-full object-cover border-4 border-[var(--primary)]"
-          />
-          <div v-else class="w-32 h-32 rounded-full bg-gray-300 border-4 border-[var(--primary)]"></div>
+    <div class="flex flex-col items-center space-y-6">
+      <!-- Foto de perfil -->
+      <div class="relative">
+        <img
+          v-if="config.persona.rutaFotoPerfil"
+          :src="baseUrl + config.persona.rutaFotoPerfil"
+          alt="Foto de Perfil"
+          class="w-32 h-32 rounded-full object-cover border-4 border-[var(--primary)]"
+        />
+        <div v-else class="w-32 h-32 rounded-full bg-gray-300 border-4 border-[var(--primary)]"></div>
+      </div>
 
-          <input
-            v-if="config.isEditable"
-            type="file"
-            @change="handleFileChange"
-            accept="image/*"
-            class="absolute bottom-0 right-0 w-8 h-8 bg-[var(--primary)] text-white rounded-full cursor-pointer border-2 border-white transform translate-x-1 translate-y-1 hover:bg-[var(--primary)]"
-          />
+      <!-- Detalles del perfil -->
+      <div class="w-full space-y-4 text-gray-700">
+        <div class="flex justify-between">
+          <span class="font-medium">Nombre:</span>
+          <span class="text-lg">{{ config.persona.nombre }}</span>
+        </div>
+
+        <div class="flex flex-col justify-between">
+          <span class="font-medium">Biografía:</span>
+          <p class="text-gray-600">{{ config.persona.biografia == "" ? "¡Cuéntanos más sobre ti! Agrega tu bio para que te conozcan mejor." : config.persona.biografia }}</p>
         </div>
       </div>
 
-      <div class="space-y-4">
-        <div class="flex flex-col md:flex-row justify-start items-start md:items-center">
-          <span class="font-medium text-gray-600">Nombre:&nbsp;</span>
-          <span class="text-gray-800 text-lg">{{ config.persona.nombre }}</span>
-        </div>
-
-        <div class="flex flex-col md:flex-row justify-start items-start md:items-center">
-          <span class="font-medium text-gray-600">Fecha de Registro:&nbsp;</span>
-          <span class="text-gray-800">{{ user.fechaRegistro }}</span>
-        </div>
-
-        <div class="flex flex-col md:flex-row justify-start items-start md:items-center">
-          <span class="font-medium text-gray-600">Biografía:&nbsp;</span>
-          <p class="text-gray-800">{{ config.persona.biografia == "" ? "¡Cuéntanos más sobre ti! Agrega tu bio para que te conozcan mejor." : config.persona.biografia}}</p>
-        </div>
+      <!-- Botón de editar perfil -->
+      <div class="mt-8 text-center w-full md:w-fit" v-if="config.isEditable">
+        <router-link :to="{name: 'perfil editar'}">
+          <BaseButton styleType="primary" class="px-8 py-3 bg-[var(--primary)] text-white text-lg font-semibold hover:bg-[var(--primary)] transition duration-300 ease-in-out">
+            Editar Perfil
+          </BaseButton>
+        </router-link>
       </div>
-    </div>
-
-    <div class="flex justify-center w-full" v-if="config.isEditable">
-      <div class="mt-8 text-center w-full md:w-fit">
-      <router-link :to="{name: 'perfil editar'}">
-        <BaseButton styleType="primary" class="px-8 py-3 bg-[var(--primary)] text-white text-lg font-semibold hover:bg-[var(--primary)] transition duration-300 ease-in-out">
-          Editar Perfil
-        </BaseButton>
-      </router-link>
-    </div>
     </div>
   </div>
 </template>

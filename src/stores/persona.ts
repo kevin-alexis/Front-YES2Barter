@@ -13,7 +13,8 @@ export const usePersonaStore = defineStore('persona', () => {
     try {
       const response = await service.getAllPersonasIntercambiadores()
       list.value = await response
-    } catch (error) {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
       logService.create({
         nivel: 'Error',
         mensaje: `Error en el método getAllPersonasIntercambiadores del store persona: ${error.message}`,
@@ -22,12 +23,13 @@ export const usePersonaStore = defineStore('persona', () => {
       console.error(error)
     }
   }
-
+  }
   async function getPersonaByIdUsuario(idUsuario: string) {
     try {
       const response = await service.getPersonaByIdUsuario(idUsuario)
       persona.value = await response
-    } catch (error) {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
       logService.create({
         nivel: 'Error',
         mensaje: `Error en el método getPersonaByIdUsuario del store persona: ${error.message}`,
@@ -36,12 +38,28 @@ export const usePersonaStore = defineStore('persona', () => {
       console.error(error)
     }
   }
-
+  }
+  async function updatePersona(id: string, formData: FormData) {
+    try {
+      const response = await service.updatePersona(id, formData)
+      persona.value = response
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error al actualizar persona: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error(error)
+    }
+  }
+  }
 
   return {
     getAllPersonasIntercambiadores,
     getPersonaByIdUsuario,
     list,
-    persona
+    persona,
+    updatePersona
   }
 })
