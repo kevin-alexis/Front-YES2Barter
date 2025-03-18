@@ -1,5 +1,5 @@
-import { genericRequestAuthenticated } from '@/utils/genericRequest'
-import type { IPersona } from '@/interfaces/persona/IPersona'
+import { genericRequestAuthenticated, genericRequestFormDataAuthenticated } from '@/utils/genericRequest'
+import type { IPersona, IUpdatePersona } from '@/interfaces/persona/IPersona'
 import { BaseService } from '../BaseService'
 
 export class PersonaService extends BaseService<IPersona> {
@@ -21,7 +21,7 @@ export class PersonaService extends BaseService<IPersona> {
         excepcion: error.toString(),
       })
       console.error(error)
-      
+
     }
   }
 }
@@ -56,9 +56,9 @@ export class PersonaService extends BaseService<IPersona> {
     }
   }
 }
-  public updatePersona = async (id: string, formData: FormData) => {
+  public updatePersona = async (id: string, formData: IUpdatePersona) => {
     try {
-      const response = await genericRequestAuthenticated(`/Persona/UpdatePersona/${id}`, 'PUT', formData)
+      const response = await genericRequestFormDataAuthenticated(`/Persona/UpdatePerfil/${id}`, 'PUT', formData)
       return response
     } catch (error: unknown) {
       if (error instanceof Error) {

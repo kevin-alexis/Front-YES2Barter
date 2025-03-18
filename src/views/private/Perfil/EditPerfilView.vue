@@ -14,22 +14,16 @@ const route = useRoute()
 const isEdit = ref(false)
 const id = ref('')
 
-const validFileExtensions: { [key: string]: string[] } = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] }
+const validFileExtensions = { image: ['jpg', 'png', 'jpeg', 'svg', 'webp'] }
 
 function isValidFileType(fileName: string, fileType: string) {
   return fileName && validFileExtensions[fileType].includes(fileName.split('.').pop()?.toLowerCase() || '')
 }
 
-interface FormValues{
-  nombre: string;
-  biografia: string;
-  rutaFotoPerfil?: File;
-}
-
-const { errors, defineField, handleSubmit } = useForm<FormValues>({
+const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
     nombre: yup.string().required('El nombre es obligatorio'),
-    biografia: yup.string().required('La biografía es obligatoria'),
+    biografia: yup.string(),
     rutaFotoPerfil: yup
       .mixed()
       .test('required-if-not-edit', 'La imagen es obligatoria', function (value) {
@@ -40,13 +34,9 @@ const { errors, defineField, handleSubmit } = useForm<FormValues>({
       })
       .test('is-valid-type', 'El formato de la imagen no es válido', (value) => {
         if (!isEdit.value && value) {
-          if (value instanceof File) {
-            return isValidFileType(value.name, 'image');
-          } else {
-            return this.createError({ message: 'El valor no es un archivo válido' });
-          }
+          return isValidFileType(value.name, 'image')
         }
-        return true;
+        return true
       }),
   }),
 });
@@ -70,31 +60,20 @@ const contactForm = reactive({
   rutaFotoPerfil: rutaFotoPerfil,
 })
 
-const handleSubmitForm = handleSubmit(async (values: FormValues) => {
-  const formData = new FormData()
-
-  formData.append('Nombre', values.nombre)
-  formData.append('Biografia', values.biografia)
-
-  if (values.rutaFotoPerfil) {
-    formData.append('RutaFotoPerfil', values.rutaFotoPerfil)
-  }
-
-  if (isEdit.value) {
-    // Actualiza la persona
-    personaStore.updatePersona(id.value, formData)
-  } else {
-  }
+const handleSubmitForm = handleSubmit((values: FormValues) => {
+  personaStore.updatePersona(id.value, values)
 })
 
 onMounted(async () => {
   await accountStore.getUser()
 
   if (accountStore.user) {
-  await personaStore.getPersonaByIdUsuario(accountStore.user.idUsuario).then(() => {
+  await personaStore.getPersonaByIdUsuario(accountStore.user.idUsuario).then((response) => {
     Object.assign(contactForm, {
-      ...personaStore.persona,
+      ...response,
     });
+
+    id.value = response.id;
   });
 }
   isEdit.value = route.fullPath.includes('editar')
@@ -104,7 +83,7 @@ onMounted(async () => {
 <template>
   <div class="p-6 sm:p-8 lg:p-12 w-full">
     <BaseForm
-      class="max-w-4xl mx-auto p-6 sm:p-8 md:p-10 lg:p-12 bg-white rounded-xl shadow-lg"
+      class="max-w-4xl mx-auto p-6 sm:p-8 md:p-10 lg:p-12 "
       v-model:model="contactForm"
       v-model:errors="errors"
       @submit="handleSubmitForm"
@@ -116,15 +95,13 @@ onMounted(async () => {
             type: 'text',
             isRequired: true,
             model: 'nombre',
-            //class: 'border-2 border-gray-300 p-3 rounded-md w-full'
           },
           {
             label: 'Biografía',
             placeholder: 'Biografía',
             type: 'textarea',
-            isRequired: true,
+            isRequired: false,
             model: 'biografia',
-            //class: 'border-2 border-gray-300 p-3 rounded-md w-full h-32'
           },
           {
             label: 'Foto de Perfil',
@@ -132,16 +109,15 @@ onMounted(async () => {
             type: 'file',
             isRequired: !isEdit,
             model: 'rutaFotoPerfil',
-            //class: 'border-2 border-gray-300 p-3 rounded-md w-full'
           },
         ],
-        titleButton: isEdit ? 'Editar' : 'Crear',
+        titleButton: 'Editar',
         isCanceled: true,
       }"
     >
       <template #headerForm>
         <h1 class="text-4xl sm:text-5xl text-center font-bold text-[var(--primary)] mb-8">
-          {{ isEdit ? 'Editar Perfil' : 'Crear Perfil' }}
+          Editar Perfil
         </h1>
       </template>
     </BaseForm>

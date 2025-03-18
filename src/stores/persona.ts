@@ -2,12 +2,16 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { LogService } from '@/services/log/LogService'
 import { PersonaService } from '@/services/persona/PersonaService'
+import type { IUpdatePersona } from '@/interfaces/persona/IPersona'
+import { useToast } from 'primevue/usetoast';
+import router from '@/router'
 
 export const usePersonaStore = defineStore('persona', () => {
   const persona = ref(null)
   const service = new PersonaService()
   const logService = new LogService()
   const list = ref([])
+  const toast = useToast();
 
   async function getAllPersonasIntercambiadores() {
     try {
@@ -28,6 +32,7 @@ export const usePersonaStore = defineStore('persona', () => {
     try {
       const response = await service.getPersonaByIdUsuario(idUsuario)
       persona.value = await response
+      return response
     } catch (error: unknown) {
       if (error instanceof Error) {
       logService.create({
@@ -39,15 +44,21 @@ export const usePersonaStore = defineStore('persona', () => {
     }
   }
   }
-  async function updatePersona(id: string, formData: FormData) {
+  async function updatePersona(id: string, formData: IUpdatePersona) {
     try {
       const response = await service.updatePersona(id, formData)
-      persona.value = response
+      if(response.success){
+        toast.add({ severity: 'success', summary: 'Perfil editado', detail: response.message, life: 2000 });
+        router.replace({ name: 'perfil' })
+      }else{
+        toast.add({ severity: 'error', summary: 'Error', detail: response.message, life: 2000 });
+      }
+      persona.value = response.data
     } catch (error: unknown) {
       if (error instanceof Error) {
       logService.create({
         nivel: 'Error',
-        mensaje: `Error al actualizar persona: ${error.message}`,
+        mensaje: `Error en el método updatePersona del store persona: ${error.message}`,
         excepcion: error.toString(),
       })
       console.error(error)

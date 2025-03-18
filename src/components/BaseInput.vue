@@ -37,7 +37,7 @@ const model = defineModel()
     >
     <textarea
       v-if="config.type == 'textarea'"
-      :class="['bg-white p-1 rounded-md disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50']"
+      :class="['bg-white p-1 rounded-md border border-gray-300 disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50']"
       :placeholder="config.placeholder ?? placeholders[config.type]"
       :type="config.type"
       :required="config.isRequired"

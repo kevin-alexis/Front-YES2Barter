@@ -3,7 +3,6 @@ import { AccountService } from '@/services/account/AccountService'
 import { defineStore } from 'pinia'
 import Swal from 'sweetalert2'
 import { computed, ref } from 'vue'
-import { jwtDecode } from 'jwt-decode'
 import router from '@/router'
 import { LogService } from '@/services/log/LogService'
 import { useToast } from 'primevue/usetoast';
