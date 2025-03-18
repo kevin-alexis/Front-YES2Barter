@@ -2,12 +2,14 @@
 import { ref, onBeforeMount } from 'vue';
 import axios from 'axios';
 import BaseButton from '../BaseButton.vue';
+import type { IPersona } from '@/interfaces/persona/IPersona';
 const baseUrl = import.meta.env.VITE_APP_URL_API_SOURCE
 const isLoading = ref(true)
 const user = ref({
   nombre: '',
   biografia: '',
-  fotoPerfil: ''
+  fotoPerfil: '',
+  fechaRegistro: ''
 });
 
 const photoFile = ref<File | null>(null);
@@ -39,7 +41,7 @@ const updateProfilePicture = async () => {
 
 defineProps<{
   config:{
-    persona: any,
+    persona: IPersona,
     isEditable: boolean
   }
 }>()

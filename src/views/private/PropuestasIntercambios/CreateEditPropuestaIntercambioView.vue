@@ -168,8 +168,6 @@ onMounted(async () => {
         })
       }
     }
-
-    console.log('isCreated', isCreateIntercambiadorRoute.value)
   }
 })
 </script>

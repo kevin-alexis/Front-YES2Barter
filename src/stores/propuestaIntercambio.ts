@@ -105,7 +105,6 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
           }).then(() => {
             router.back()
           })
-          console.log(response)
         }else{
           Swal.fire({
             title: 'Error',

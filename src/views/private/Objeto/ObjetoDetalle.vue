@@ -10,6 +10,7 @@ import { useObjetoStore } from '@/stores/objeto'
 import BaseButton from '@/components/BaseButton.vue'
 import { usePropuestaIntercambioStore } from '../../../stores/propuestaIntercambio'
 import type { IObjeto } from '@/interfaces/objeto/IObjeto'
+import ProgressSpinner from 'primevue/progressspinner'
 
 const route = useRoute()
 const objetoStore = useObjetoStore()
@@ -25,12 +26,13 @@ const objeto = reactive<IObjeto>({
   estado: 0,
   rutaImagen: '',
   idUsuario: '',
-  esBorrado: false
-});
+  esBorrado: false,
+})
 
 const id = ref('')
 const isDueño = ref(false)
 const isAvailable = ref(true)
+const isLoading = ref(true)
 const propuestas = computed(() => {
   return propuestaIntercambioStore.list.filter(
     (item) => item.idObjetoOfertado != parseInt(id.value),
@@ -44,16 +46,13 @@ onBeforeMount(async () => {
   const response = await objetoStore.getById(id.value)
   await accountStore.getUser()
   await personaStore.getPersonaByIdUsuario(response.idUsuario)
-  await objetoStore.getAllByIdUsuario(accountStore?.user?.idUsuario ?? "")
+  await objetoStore.getAllByIdUsuario(accountStore?.user?.idUsuario ?? '')
   await propuestaIntercambioStore
-    .getAllByIdUsuarioAndIdObjeto(accountStore?.user?.idUsuario ?? "", parseInt(id.value))
+    .getAllByIdUsuarioAndIdObjeto(accountStore?.user?.idUsuario ?? '', parseInt(id.value))
     .then((response) => {
       if (response.success) {
         isAvailable.value = response.data.length < objetoStore.list.length
         propuestasRealizadas.value = response.data
-      } else {
-        console.log(response.data)
-        console.log(response.message)
       }
     })
   Object.assign(objeto, response)
@@ -61,37 +60,52 @@ onBeforeMount(async () => {
     isDueño.value = true
     await propuestaIntercambioStore.getAllByIdObjeto(objeto.id.toString())
   }
+  isLoading.value = false
 })
 </script>
 
 <template>
-  <div class="flex flex-col md:flex-row justify-between w-full">
-    <div class="w-full md:w-1/2">
-      <ObjetoItemDetalle class="w-full" />
-    </div>
+  <div :class="[
+    'flex flex-col md:flex-row justify-between w-full',
+    isLoading ? 'justify-center items-center' : ''
+  ]">
+    <ProgressSpinner
+      v-if="isLoading"
+      style="width: 50px; height: 50px;"
+      strokeWidth="8"
+      fill="transparent"
+      animationDuration=".5s"
+      aria-label="Custom ProgressSpinner"
+    />
 
-    <div class="w-full md:w-1/2">
-      <PerfilDetallesItem
-        v-if="!isDueño"
-        :config="{
-          persona: personaStore.persona,
-          isEditable: false,
-        }"
-      ></PerfilDetallesItem>
-
-      <div class="p-5" v-if="!isDueño && isAvailable">
-        <RouterLink
-          :to="{ name: 'crear propuesta intercambio intercambiador', params: { id: id } }"
-        >
-          <BaseButton style-type="primary">Hacer una propuesta</BaseButton>
-        </RouterLink>
+    <div v-else class="flex flex-col md:flex-row justify-between w-full">
+      <div class="w-full md:w-1/2">
+        <ObjetoItemDetalle class="w-full" />
       </div>
 
-      <div :class="[!isDueño ?'h-10/12 overflow-y-scroll' : 'h-1/2 overflow-y-scroll']">
-        <PropuestaIntercambioList
-          :propuestasIntercambios="isDueño ? propuestas : propuestasRealizadas"
-          :isInteractive="isDueño"
-        ></PropuestaIntercambioList>
+      <div class="w-full md:w-1/2">
+        <PerfilDetallesItem
+          v-if="!isDueño"
+          :config="{
+            persona: personaStore.persona,
+            isEditable: false,
+          }"
+        ></PerfilDetallesItem>
+
+        <div class="p-5" v-if="!isDueño && isAvailable">
+          <RouterLink
+            :to="{ name: 'crear propuesta intercambio intercambiador', params: { id: id } }"
+          >
+            <BaseButton style-type="primary">Hacer una propuesta</BaseButton>
+          </RouterLink>
+        </div>
+
+        <div :class="[!isDueño ? 'h-10/12 overflow-y-scroll' : 'h-1/2 overflow-y-scroll']">
+          <PropuestaIntercambioList
+            :propuestasIntercambios="isDueño ? propuestas : propuestasRealizadas"
+            :isInteractive="isDueño"
+          ></PropuestaIntercambioList>
+        </div>
       </div>
     </div>
   </div>

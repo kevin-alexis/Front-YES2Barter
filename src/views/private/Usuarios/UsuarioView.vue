@@ -21,6 +21,12 @@ const filters = ref({
   nombre: { value: null, matchMode: FilterMatchMode.CONTAINS },
   esBorrado: { value: null, matchMode: FilterMatchMode.EQUALS },
 })
+
+const first = ref(0);
+
+const onPage = (event) => {
+  first.value = event.first;
+};
 </script>
 
 <template>
@@ -42,6 +48,8 @@ const filters = ref({
       paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
       currentPageReportTemplate="Mostrando de {first} a {last} de {totalRecords} categorías"
       :loading="loading"
+      :first="first"
+      @page="onPage($event)"
     >
       <template #header>
         <div class="flex justify-end">
@@ -55,12 +63,12 @@ const filters = ref({
       </template>
       <template #empty>Sin usuarios encontradas</template>
       <template #loading>Cargando Usuarios</template>
-      <Column field="id" header="No.">
-        <template #body="{ data }">
-          {{ data.idPersona }}
+      <Column field="id" header="No." sortable>
+        <template #body="{ index }">
+          {{ index + 1 + first }}
         </template>
       </Column>
-      <Column field="nombre" header="Nombre">
+      <Column field="nombre" header="Nombre" sortable>
         <template #body="{ data }">
           {{ data.nombre }}
         </template>
@@ -73,7 +81,7 @@ const filters = ref({
           />
         </template>
       </Column>
-      <Column field="email" header="Email">
+      <Column field="email" header="Email" sortable>
         <template #body="{ data }">
           {{ data.email }}
         </template>

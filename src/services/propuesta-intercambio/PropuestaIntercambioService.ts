@@ -1,6 +1,6 @@
-import { BaseService } from '../BaseService'
 import type { IPropuestaIntercambio } from '@/interfaces/propuestaIntercambio/IPropuestaIntercambio'
 import { genericRequestAuthenticated, genericRequestFormDataAuthenticated } from '@/utils/genericRequest'
+import { BaseService } from '../BaseService'
 
 export class PropuestaIntercambioService extends BaseService<IPropuestaIntercambio> {
   private static nameController = 'PropuestaIntercambio'

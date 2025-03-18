@@ -1,7 +1,7 @@
-import { BaseService } from '../BaseService'
 import { genericRequestAuthenticated } from '@/utils/genericRequest'
 import type { IChat } from '@/interfaces/chat/IChat'
 import router from '@/router'
+import { BaseService } from '../BaseService'
 
 export class ChatService extends BaseService<IChat> {
   private static nameController = 'Chat'
