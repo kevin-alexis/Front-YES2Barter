@@ -108,7 +108,6 @@ export const useAccountStore = defineStore('account', () => {
   function signIn(userData: IUser) {
     try {
       service.create(userData).then((response) => {
-        console.log(response)
         if (response.success) {
           Swal.fire({
             title: '¡Registro Completo!',

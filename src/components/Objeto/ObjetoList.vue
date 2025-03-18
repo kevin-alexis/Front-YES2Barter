@@ -15,10 +15,7 @@ defineProps<{
 
 <template>
   <div class="h-full w-full">
-    <div
-      v-if="objetos.length > 0"
-      class="grid xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4"
-    >
+    <div v-if="objetos.length > 0" class="grid xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
       <ObjetoItem
         v-for="(objeto, index) in objetos"
         :config="{

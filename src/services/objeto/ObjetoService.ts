@@ -1,7 +1,7 @@
 import type { IObjeto } from '@/interfaces/objeto/IObjeto'
-import { BaseService } from '../BaseService'
 import { genericRequestAuthenticated, genericRequestFormDataAuthenticated } from '@/utils/genericRequest'
 import { EstatusObjeto } from '@/common/enums/enums'
+import { BaseService } from '../BaseService'
 
 export class ObjetoService extends BaseService<IObjeto> {
   private static nameController = 'Objeto'

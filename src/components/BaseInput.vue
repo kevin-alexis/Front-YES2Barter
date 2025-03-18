@@ -72,9 +72,9 @@ const model = defineModel()
       :name="config.model"
       :disabled="config.isDisabled"
     />
-    <button @click="switchVisibility" type="button" class="absolute right-2 top-2" v-if="config.type === 'password'">
+    <button @click="switchVisibility" type="button" class="absolute right-2 top-3 cursor-pointer" v-if="config.type === 'password'">
       <i :class="[
-        'pi text-2xl',
+        'pi text-4xl',
         isVisible ? 'pi-eye' : 'pi-eye-slash'
       ]"></i>
     </button>

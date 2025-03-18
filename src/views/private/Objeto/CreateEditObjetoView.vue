@@ -129,7 +129,9 @@ onMounted( () => {
       console.error("Error al obtener el objeto:", error)
     })
   } else {
-    Object.assign(contactForm, {})
+    Object.assign(contactForm, {
+      estado: Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE)
+    })
   }
 })
 
@@ -187,7 +189,7 @@ onMounted( () => {
               paramKey: 'name',
               valueKey: 'id',
             },
-            isDisabled: isEdit,
+            isDisabled: true,
             isRequired: true,
             isHidden: isIntercambiador,
             model: 'estado',

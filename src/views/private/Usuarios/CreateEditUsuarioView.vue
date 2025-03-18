@@ -37,7 +37,7 @@ const { errors, defineField, handleSubmit } = useForm({
         return true
       })
       .test('min-length', 'La contraseña debe tener al menos 6 caracteres', (value) => {
-        if (!isEdit.value && value) {
+        if ( value) {
           return value.length >= 6
         }
         return true
@@ -46,14 +46,14 @@ const { errors, defineField, handleSubmit } = useForm({
         'has-uppercase',
         'La contraseña debe contener al menos una letra mayúscula',
         (value) => {
-          if (!isEdit.value && value) {
+          if ( value) {
             return /[A-Z]/.test(value)
           }
           return true
         },
       )
       .test('has-number', 'La contraseña debe contener al menos un número', (value) => {
-        if (!isEdit.value && value) {
+        if ( value) {
           return /[0-9]/.test(value)
         }
         return true
@@ -62,7 +62,7 @@ const { errors, defineField, handleSubmit } = useForm({
         'has-special-char',
         'La contraseña debe contener al menos un carácter especial',
         (value) => {
-          if (!isEdit.value && value) {
+          if ( value) {
             return /[\W_]/.test(value)
           }
           return true
@@ -82,7 +82,7 @@ const { errors, defineField, handleSubmit } = useForm({
         },
       )
       .test('password-match', 'Las contraseñas no coinciden', function (value) {
-        if (!isEdit.value && value) {
+        if ( value) {
           return value === this.parent.password
         }
         return true
