@@ -3,13 +3,11 @@ import { AccountService } from '@/services/account/AccountService'
 import { defineStore } from 'pinia'
 import Swal from 'sweetalert2'
 import { computed, ref } from 'vue'
-import router from '@/router'
 import { LogService } from '@/services/log/LogService'
 import { useToast } from 'primevue/usetoast';
 
 export const useAccountStore = defineStore('account', () => {
   const user = ref<IAccount | null>(null);
-  const token = ref('')
   const service = new AccountService()
   const logService = new LogService()
   const list = ref([])
@@ -18,28 +16,6 @@ export const useAccountStore = defineStore('account', () => {
   const isLoggedIn = computed(() => {
     return !!user.value
   });
-
-  // function isTokenExpired(): boolean {
-  //   if (!token.value) {
-  //     return true
-  //   }
-  //   try {
-  //     const decodedToken: any = jwtDecode(token.value)
-  //     const exp = decodedToken?.exp
-  //     if (!exp) {
-  //       return true
-  //     }
-  //     return Date.now() >= exp * 1000
-  //   } catch (error) {
-  //     logService.create({
-  //       nivel: 'Error',
-  //       mensaje: `Error en el método isTokenExpired del store account: ${error.message}`,
-  //       excepcion: error.toString(),
-  //     })
-  //     console.error('Invalid token:', error)
-  //     return true
-  //   }
-  // }
 
   async function getAll() {
     try {
@@ -61,7 +37,9 @@ export const useAccountStore = defineStore('account', () => {
       if (response.success) {
         await getUser();
         toast.add({ severity: 'success', summary: 'Sesión iniciada', detail: '¡Sesión iniciado con éxito!', life: 2000 });
-        router.replace({ name: 'inicio' });
+        import('@/router').then(({ default: router }) => {
+          router.replace({ name: 'inicio' });
+        })
       } else {
         Swal.fire({
           title: 'Error',
@@ -116,9 +94,13 @@ export const useAccountStore = defineStore('account', () => {
             confirmButtonColor: '#6C6DE7',
           }).then(() => {
             if (isLoggedIn.value && user.value && user.value.rol === 'Administrador') {
-              router.replace({ name: 'administrar usuarios' })
+              import('@/router').then(({ default: router }) => {
+                router.replace({ name: 'administrar usuarios' })
+              })
             } else {
-              router.replace({ name: 'login' })
+              import('@/router').then(({ default: router }) => {
+                router.replace({ name: 'login' })
+              })
             }
           })
         } else {
@@ -156,7 +138,9 @@ export const useAccountStore = defineStore('account', () => {
           await service.logout();
         }
         user.value = null;
-        router.replace({ name: 'login' });
+        import('@/router').then(({ default: router }) => {
+          router.replace({ name: 'login' });
+        })
       }
     } catch (error) {
       logService.create({
@@ -249,7 +233,9 @@ export const useAccountStore = defineStore('account', () => {
           confirmButtonText: 'Ok',
           confirmButtonColor: '#6C6DE7',
         }).then(() => {
-          router.back()
+          import('@/router').then(({ default: router }) => {
+            router.back()
+          })
         })
       })
       return await response

@@ -4,7 +4,6 @@ import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
 import Swal from 'sweetalert2'
 import router from '@/router'
-import { useRoute } from 'vue-router'
 import { LogService } from '@/services/log/LogService'
 import { EstatusObjeto } from '../common/enums/enums';
 
@@ -12,7 +11,6 @@ export const useObjetoStore = defineStore('objeto', () => {
   const service = new ObjetoService()
   const logService = new LogService()
   const list: Ref<IObjeto[]> = ref([])
-  const route = useRoute()
 
   async function getAllByIdEstatus(estatus?: EstatusObjeto) {
     try {
@@ -157,17 +155,16 @@ export const useObjetoStore = defineStore('objeto', () => {
       if (result.isConfirmed) {
         try {
           const response = await service.delete(id);
-
           if (response?.success) {
             await Swal.fire({
               title: 'Eliminado!',
-              text: response.message || 'El registro fue eliminado.',
+              text: response.message || 'El objeto fue eliminado.',
               icon: 'success',
             });
 
             await getAll();
           } else {
-            throw new Error(response?.message || 'El registro tiene relaciones y no puede ser eliminado.');
+            throw new Error(response?.message || 'El objeto tiene propuestas activas y no puede ser eliminado.');
           }
         } catch (error) {
           await Swal.fire({
@@ -193,13 +190,6 @@ export const useObjetoStore = defineStore('objeto', () => {
       });
     }
   }
-
-
-
-
-
-
-
 
   async function getById(id: string) {
     try {

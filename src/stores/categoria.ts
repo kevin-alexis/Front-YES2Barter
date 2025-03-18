@@ -104,13 +104,13 @@ export const useCategoriaStore = defineStore('categoria', () => {
           if (response?.success) {
             await Swal.fire({
               title: 'Eliminado!',
-              text: response.message || 'El registro fue eliminado.',
+              text: response.message || 'La categoría fue eliminada.',
               icon: 'success',
             });
 
             await getAll();
           } else {
-            throw new Error(response?.message || 'El registro tiene relaciones y no puede ser eliminado.');
+            throw new Error(response?.message || 'La categoría tiene objetos relacionados y no puede ser eliminada.');
           }
         } catch (error) {
           await Swal.fire({
