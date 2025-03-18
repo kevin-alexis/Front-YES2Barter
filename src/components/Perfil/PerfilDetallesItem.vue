@@ -18,7 +18,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto p-8 bg-white shadow-xl rounded-xl mt-16">
+  <div class="max-w-4xl mx-auto p-8 bg-white shadow-xl rounded-xl ">
     <h2 class="text-3xl font-semibold text-[var(--primary)] mb-6 text-center">Perfil {{ config.isEditable ? 'de Usuario' : 'del Intercambiador' }}</h2>
 
     <div class="flex flex-col items-center space-y-6">
@@ -40,7 +40,8 @@ onBeforeMount(async () => {
 
         <div class="flex flex-col justify-between">
           <span class="font-medium">Biografía:</span>
-          <p class="text-gray-600">{{ config.persona.biografia == "" ? "¡Cuéntanos más sobre ti! Agrega tu bio para que te conozcan mejor." : config.persona.biografia }}</p>
+          <p v-if="config.isEditable" class="text-gray-600">{{ config.persona.biografia == "" ? "¡Cuéntanos más sobre ti! Agrega tu bio para que te conozcan mejor." : config.persona.biografia }}</p>
+          <p v-else :class="['text-gray-600']">{{ config.persona.biografia == "" ? "Aún no se ha registrado una biografía para este usuario." : config.persona.biografia }}</p>
         </div>
       </div>
 

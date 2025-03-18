@@ -14,7 +14,7 @@ const chats: any = defineModel('chats')
     </div>
     <div v-else class="flex justify-center items-center h-64">
       <h1 class="text-2xl sm:text-3xl md:text-4xl font-light text-center">
-        No hay coincidencias...
+        Aún no tienes chats. ¡Empieza a hacer ofertas para conectar con otros y recibir respuestas!
       </h1>
     </div>
   </div>
