@@ -10,9 +10,7 @@ const accountStore = useAccountStore()
 const sidebarVisible = ref(true)
 
 onMounted(() => {
-  chatStore.getAllByIdUsuario(
-    accountStore.user.idUsuario,
-  )
+  chatStore.getAllByIdUsuario(accountStore.user.idUsuario)
 })
 
 const toggleSidebar = () => {

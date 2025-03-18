@@ -147,7 +147,6 @@ export const useChatStore = defineStore('chat', () => {
         mensaje: `Error en el método closeChat del store chat: ${error.message}`,
         excepcion: error.toString(),
       })
-      console.log(error)
     }
   }
 

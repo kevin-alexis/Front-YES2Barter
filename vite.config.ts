@@ -27,9 +27,10 @@ export default defineConfig({
       cert: fs.readFileSync('localhost.pem')
     },
     hmr: {
-      protocol: 'ws',
+      // WS - PARA HTTP     WSS PARA HTTPS
+      protocol: 'wss',
       host: 'localhost',
-      port: 5173,
+      port: 5174,
     }
   }
 })

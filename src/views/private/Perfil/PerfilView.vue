@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PerfilDetallesItem from '@/components/Perfil/PerfilDetallesItem.vue';
+import type { IPersona } from '@/interfaces/persona/IPersona';
 
 import { useAccountStore } from '@/stores/account'
 import { usePersonaStore } from '@/stores/persona';
@@ -10,7 +11,7 @@ const accountStore = useAccountStore()
 const personaStore = usePersonaStore()
 
 onBeforeMount(async () => {
-  await personaStore.getPersonaByIdUsuario(accountStore.user.idUsuario);
+  await personaStore.getPersonaByIdUsuario(accountStore?.user?.idUsuario ?? "");
 })
 
 </script>
@@ -19,7 +20,7 @@ onBeforeMount(async () => {
   <div>
     <PerfilDetallesItem
     :config="{
-      persona: personaStore.persona,
+      persona: personaStore.persona ?? {} as IPersona,
       isEditable: true
     }"
     ></PerfilDetallesItem>

@@ -1,6 +1,6 @@
 import type { IMensaje } from './../../interfaces/mensaje/IMensaje'
-import { BaseService } from '../BaseService'
 import { genericRequestAuthenticated } from '@/utils/genericRequest'
+import { BaseService } from '../BaseService'
 
 export class MensajeService extends BaseService<IMensaje> {
   private static nameController = 'Mensaje'
