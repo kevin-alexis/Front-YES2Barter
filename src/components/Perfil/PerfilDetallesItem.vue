@@ -56,7 +56,7 @@ onBeforeMount(async () => {
         <button
           v-if="props.config.isEditable"
           @click="triggerFileInput"
-          class="absolute bottom-0 right-0 bg-[var(--primary)] p-2 rounded-full border-2 border-[var(--primary)] shadow-md hover:bg-[var(--primary)] hover:border-[var(--primary)] w-8 h-8 flex items-center justify-center"
+          class="cursor-pointer absolute bottom-0 right-0 bg-[var(--primary)] p-2 rounded-full border-2 border-[var(--primary)] shadow-md hover:bg-[var(--primary)] hover:border-[var(--primary)] w-8 h-8 flex items-center justify-center"
           >
           <i class="pi pi-camera text-white text-lg"></i>
         </button>
