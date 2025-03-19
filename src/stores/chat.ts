@@ -5,11 +5,13 @@ import Swal from 'sweetalert2'
 import router from '@/router'
 import { ChatService } from '@/services/chat/ChatService'
 import { LogService } from '@/services/log/LogService'
+import { useToast } from 'primevue/usetoast'
 
 export const useChatStore = defineStore('chat', () => {
   const service = new ChatService()
   const logService = new LogService()
   const list: Ref<IChat[]> = ref([])
+  const toast = useToast()
 
   async function getAll() {
     try {
@@ -140,7 +142,61 @@ export const useChatStore = defineStore('chat', () => {
 
   async function closeChat(isSuccess: boolean, idChat: number) {
     try {
-      service.closeChat(isSuccess, idChat)
+      if (isSuccess === false) {
+        Swal.fire({
+          title: '¿Estás seguro de cerrar el chat?',
+          text: 'No podrás revertirlo!',
+          icon: 'warning',
+          showCancelButton: true,
+          cancelButtonText: 'Cancelar',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sí, cerrar!',
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            await service.closeChat(isSuccess, idChat);
+            Swal.fire({
+              title: 'Cerrar!',
+              text: 'El chat ha sido cerrado.',
+              icon: 'success',
+              confirmButtonText: 'Ok',
+              confirmButtonColor: '#6C6DE7',
+            });
+            toast.add({ severity: 'info', summary: 'Éxito', detail: '¡Haz cerrado el chat, intercambio no concretado!', life: 2000 });
+          }
+        });
+      } else if (isSuccess === true) {
+        Swal.fire({
+          title: '¿Estás seguro de cerrar el chat?',
+          text: 'No podrás revertirlo!',
+          icon: 'warning',
+          showCancelButton: true,
+          cancelButtonText: 'Cancelar',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sí, cerrar!',
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            await service.closeChat(isSuccess, idChat);
+            Swal.fire({
+              title: 'Cerrar!',
+              text: 'El chat ha sido cerrado.',
+              icon: 'success',
+              confirmButtonText: 'Ok',
+              confirmButtonColor: '#6C6DE7',
+            });
+            toast.add({ severity: 'success', summary: 'Éxito', detail: '¡Haz cerrado el chat, intercambio concretado!', life: 2000 });
+          }
+        });
+      } else {
+        Swal.fire({
+          title: 'Error!',
+          text: 'No se pudo cerrar el chat.',
+          icon: 'error',
+          confirmButtonText: 'Ok',
+          confirmButtonColor: '#6C6DE7',
+        });
+      }
     } catch (error) {
       logService.create({
         nivel: 'Error',

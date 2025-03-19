@@ -199,11 +199,37 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
 
   async function acceptOrDeclinePropuestaIntercambio(idPropuesta: number, isAccepted: boolean) {
     try {
-      const response = await service.acceptOrDeclinePropuestaIntercambio(idPropuesta, isAccepted).then((response) => {
-        if(response.success){
+        if (isAccepted === false) {
+          Swal.fire({
+            title: '¿Estas seguro de rechazar la propuesta?',
+            text: '¡No podrás revertirlo!',
+            icon: 'warning',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, rechazar',
+            confirmButtonColor: '#3085d6',
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+                const response = await service.acceptOrDeclinePropuestaIntercambio(idPropuesta, isAccepted);
+                Swal.fire({
+                  title: '¡Rechazado!',
+                  text: '¡Se ha rechazado correctamente la propuesta!',
+                  icon: 'success',
+                  confirmButtonText: 'Ok',
+                  confirmButtonColor: '#6C6DE7',
+          })
+          .then(() => {
+            toast.add({severity:'info', summary: 'Éxito', detail: '¡Se ha rechazado correctamente la propuesta!', life: 2000});
+            router.back()
+          })
+        }
+      });
+        }else if(isAccepted === true){
+          const response = await service.acceptOrDeclinePropuestaIntercambio(idPropuesta, isAccepted);
             Swal.fire({
               title: '¡Éxito!',
-              text: response.message,
+              text: '¡Haz aceptado la propuesta!',
               icon: 'success',
               confirmButtonText: 'Ok',
               confirmButtonColor: '#6C6DE7',
@@ -220,9 +246,7 @@ export const usePropuestaIntercambioStore = defineStore('propuesta intercambio',
             confirmButtonColor: '#6C6DE7',
           })
         }
-
-      })
-      return await response
+      // return await response
     } catch (error) {
       logService.create({
         nivel: 'Error',
