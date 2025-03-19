@@ -5,8 +5,9 @@ import type { IUser } from '@/interfaces/account/IAccount'
 import { reactive } from 'vue'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
+import ImageLogin from '@/assets/signin.png'
+
 const accountStore = useAccountStore()
-const ImageLogin = "https://careeristic.in/static/media/signup.212beaad.png"
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
     nombre: yup.string().required('El nombre es obligatorio'),
