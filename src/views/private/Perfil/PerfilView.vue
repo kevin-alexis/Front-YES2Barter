@@ -17,7 +17,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="p-10 lg:p-0">
     <PerfilDetallesItem
     class="mt-16"
     :config="{
