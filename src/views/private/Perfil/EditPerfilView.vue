@@ -6,6 +6,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
+
 const accountStore = useAccountStore()
 const personaStore = usePersonaStore()
 
@@ -13,18 +14,16 @@ const route = useRoute()
 const isEdit = ref(false)
 const id = ref('')
 
-// const MAX_FILE_SIZE = 102400; //100KB
-
-const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] }
+const validFileExtensions = { image: ['jpg', 'png', 'jpeg', 'svg', 'webp'] }
 
 function isValidFileType(fileName: string, fileType: string) {
   return fileName && validFileExtensions[fileType].includes(fileName.split('.').pop()?.toLowerCase() || '')
 }
 
-const { errors, defineField, handleSubmit, setValues } = useForm({
+const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
     nombre: yup.string().required('El nombre es obligatorio'),
-    biografia: yup.string().required('La biografía es obligatoria'),
+    biografia: yup.string(),
     rutaFotoPerfil: yup
       .mixed()
       .test('required-if-not-edit', 'La imagen es obligatoria', function (value) {
@@ -40,7 +39,8 @@ const { errors, defineField, handleSubmit, setValues } = useForm({
         return true
       }),
   }),
-})
+});
+
 
 const [nombre] = defineField('nombre', {
   validateOnModelUpdate: true,
@@ -54,7 +54,6 @@ const [rutaFotoPerfil] = defineField('rutaFotoPerfil', {
   validateOnModelUpdate: true,
 })
 
-
 const contactForm = reactive({
   nombre: nombre,
   biografia: biografia,
@@ -62,27 +61,29 @@ const contactForm = reactive({
 })
 
 const handleSubmitForm = handleSubmit((values: FormValues) => {
-  //validaciones
-  // personaStore.update(id.value, values)
+  personaStore.updatePersona(id.value, values)
 })
 
 onMounted(async () => {
   await accountStore.getUser()
-  await personaStore.getPersonaByIdUsuario(accountStore.user.idUsuario).then(()=>{
+
+  if (accountStore.user) {
+  await personaStore.getPersonaByIdUsuario(accountStore.user.idUsuario).then((response) => {
     Object.assign(contactForm, {
-        ...personaStore.persona,
-      })
-  })
+      ...response,
+    });
+
+    id.value = response.id;
+  });
+}
   isEdit.value = route.fullPath.includes('editar')
 })
-
-onMounted(async () => {})
 </script>
 
 <template>
-  <div class="p-5 w-full">
+  <div class="p-6 sm:p-8 lg:p-12 w-full">
     <BaseForm
-      class="max-w-4xl mx-auto p-5 sm:p-8 md:p-10 lg:p-12"
+      class="max-w-4xl mx-auto p-6 sm:p-8 md:p-10 lg:p-12 "
       v-model:model="contactForm"
       v-model:errors="errors"
       @submit="handleSubmitForm"
@@ -97,9 +98,9 @@ onMounted(async () => {})
           },
           {
             label: 'Biografía',
-            placeholder: 'Biografia',
+            placeholder: 'Biografía',
             type: 'textarea',
-            isRequired: true,
+            isRequired: false,
             model: 'biografia',
           },
           {
@@ -110,12 +111,12 @@ onMounted(async () => {})
             model: 'rutaFotoPerfil',
           },
         ],
-        titleButton: isEdit ? 'Editar' : 'Crear',
+        titleButton: 'Editar',
         isCanceled: true,
       }"
     >
       <template #headerForm>
-        <h1 class="text-[var(--primary)] text-3xl sm:text-4xl md:text-5xl font-bold text-center">
+        <h1 class="text-4xl sm:text-5xl text-center font-bold text-[var(--primary)] mb-8">
           Editar Perfil
         </h1>
       </template>

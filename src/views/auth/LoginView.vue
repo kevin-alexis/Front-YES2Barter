@@ -6,9 +6,8 @@ import { reactive } from 'vue'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
 import type { IUser } from '@/interfaces/account/IAccount'
-
+import ImageLogin from '@/assets/login.webp'
 const accountStore = useAccountStore()
-const ImageLogin = "https://www.finservkart.com/img/login@4x.png"
 // Validaciones con VeeValidate
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({

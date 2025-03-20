@@ -24,7 +24,7 @@ const id = ref('')
 const isIntercambiador = ref(accountStore.user.rol == "Intercambiador")
 // const MAX_FILE_SIZE = 102400; //100KB
 
-const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] }
+const validFileExtensions = { image: ['jpg', 'png', 'jpeg', 'svg', 'webp'] }
 
 function isValidFileType(fileName: string, fileType: string) {
   return fileName && validFileExtensions[fileType].includes(fileName.split('.').pop()?.toLowerCase() || '')
@@ -90,7 +90,6 @@ const [rutaImagen] = defineField('rutaImagen', {
 const [estado] = defineField('estado', { validateOnModelUpdate: true })
 
 const [idUsuario] = defineField('idUsuario', { validateOnModelUpdate: true })
-
 
 const contactForm = reactive({
   nombre: nombre,

@@ -6,3 +6,10 @@ export interface IPersona extends IBaseObject {
   idUsuario: string
   rutaFotoPerfil: string
 }
+
+export interface IUpdatePersona extends IBaseObject {
+  nombre: string
+  biografia?: string
+  rutaFotoPerfil?: string
+}
+

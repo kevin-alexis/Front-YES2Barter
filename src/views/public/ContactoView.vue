@@ -80,8 +80,9 @@ const handleSubmitForm = handleSubmit(async (values: FormValues) => {
 </script>
 
 <template>
-  <div class="px-4 sm:px-80 lg:px-100 py-8">
+  <div class="p-5 w-full">
     <BaseForm
+    class="max-w-4xl mx-auto p-5 sm:p-8 md:p-10 lg:p-12"
       v-model:model="dataForm"
       v-model:errors="errors"
       @submit="handleSubmitForm"

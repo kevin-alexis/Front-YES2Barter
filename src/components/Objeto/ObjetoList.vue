@@ -28,7 +28,7 @@ defineProps<{
     </div>
     <div v-else class="flex justify-center items-center h-64">
       <h1 class="text-2xl sm:text-3xl md:text-4xl font-light text-center">
-        No hay coincidencias...
+        ¡Ups! Aún no tienes objetos. Empieza a crear y administrar tus objetos aquí.
       </h1>
     </div>
   </div>
