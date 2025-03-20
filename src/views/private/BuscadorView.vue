@@ -6,7 +6,7 @@ import { useObjetoStore } from '@/stores/objeto'
 import { computed, ref } from 'vue'
 import * as yup from 'yup'
 import { Form } from 'vee-validate'
-import MultiSelect from 'primevue/multiselect';
+import MultiSelect from 'primevue/multiselect'
 import { useCategoriaStore } from '@/stores/categoria'
 import { EstatusObjeto } from '@/common/enums/enums'
 
@@ -24,34 +24,37 @@ const currentSchema = computed(() => {
 })
 
 const handleSubmit = async () => {
-
-if (search.value == '') {
-  await objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
-} else {
-  await objetoStore.getByName(search.value)
-}
+  if (search.value == '') {
+    await objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
+  } else {
+    await objetoStore.getByName(search.value)
+  }
 }
 
 onMounted(async () => {
-await objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
-await categoriaStore.getAll()
-filterObjetos()
+  await objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
+  await categoriaStore.getAll()
+  filterObjetos()
 })
 
 const filterObjetos = () => {
   if (!objetoStore.list.length) return
 
-  filteredObjetos.value = objetoStore.list.filter(objeto => {
-    const matchesName = search.value ? objeto.nombre.toLowerCase().includes(search.value.toLowerCase()) : true
+  filteredObjetos.value = objetoStore.list.filter((objeto) => {
+    const matchesName = search.value
+      ? objeto.nombre.toLowerCase().includes(search.value.toLowerCase())
+      : true
 
-    const matchesCategory = selectedCategorias.value.length > 0 ? selectedCategorias.value.some(cat => {
-      return cat.id === objeto.idCategoria
-    }) : true
+    const matchesCategory =
+      selectedCategorias.value.length > 0
+        ? selectedCategorias.value.some((cat) => {
+            return cat.id === objeto.idCategoria
+          })
+        : true
 
     return matchesName && matchesCategory
   })
 }
-
 
 watch([search, selectedCategorias], () => {
   filterObjetos()
@@ -108,17 +111,17 @@ watch([search, selectedCategorias], () => {
       </Form>
     </div>
 
+
     <div
-      class="flex flex-col justify-center items-center gap-5 bg-white h-105 m-10 p-8 md:p-10 rounded-2xl"
-    >
-      <div class="w-full max-h-[450px] overflow-y-auto">
-        <ObjetoList
-          v-model:objetos="filteredObjetos"
-          :config="{
-            showButtons: false,
-          }"
-        ></ObjetoList>
-      </div>
-    </div>
+  class="flex flex-col justify-center items-center gap-5 bg-white m-8 p-8 md:p-10 rounded-2xl shadow-lg w"
+>
+  <ObjetoList
+    v-model:objetos="filteredObjetos"
+    :config="{
+      showButtons: false,
+    }"
+  ></ObjetoList>
+</div>
+
   </div>
 </template>
