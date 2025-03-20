@@ -38,7 +38,8 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto p-8 bg-white shadow-xl rounded-xl mt-16">
+  <div class="w-full p-8">
+    <div class="mx-auto p-8 bg-white shadow-xl rounded-xl">
     <h2 class="text-3xl font-semibold text-[var(--primary)] mb-6 text-center">
       Perfil {{ props.config.isEditable ? 'de Usuario' : 'del Intercambiador' }}
     </h2>
@@ -82,7 +83,7 @@ onBeforeMount(async () => {
         </div>
       </div>
 
-      <div class="mt-8 text-center w-full md:w-fit" v-if="props.config.isEditable">
+      <div class="text-center w-full md:w-fit" v-if="props.config.isEditable">
         <router-link :to="{ name: 'perfil editar' }">
           <BaseButton
             styleType="primary"
@@ -93,5 +94,6 @@ onBeforeMount(async () => {
         </router-link>
       </div>
     </div>
+  </div>
   </div>
 </template>

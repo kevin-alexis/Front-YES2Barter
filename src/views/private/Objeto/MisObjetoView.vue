@@ -35,18 +35,21 @@ onBeforeMount(async () => {
     />
     </div>
 
-    <div v-else class="w-full max-h-screen overflow-y-auto p-2">
+    <div v-else class="w-full max-h-screen p-2">
       <div class="flex justify-end my-3">
         <RouterLink :to="{ name: 'crear objeto' }">
           <Button class="p-button-general" label="Agregar" icon="pi pi-plus" />
         </RouterLink>
       </div>
-      <ObjetoList
+      <div class="overflow-y-auto">
+        <ObjetoList
         v-model:objetos="objetoStore.list"
         :config="{
           showButtons: true,
         }"
       ></ObjetoList>
+      </div>
+
     </div>
   </div>
 </template>

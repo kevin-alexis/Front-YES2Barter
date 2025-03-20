@@ -90,21 +90,22 @@ onBeforeMount(async () => {
         <ObjetoItemDetalle class="w-full" />
       </div>
 
-      <div class="w-full md:w-1/2">
-        <div class="px-7 py-4" v-if="noTieneObjetos">
+      <div class="w-full md:w-1/2  md:overflow-y-scroll">
+        <div class="px-7 pt-6" v-if="!noTieneObjetos">
           <Message severity="warn" closable>¡Ups! Aún no tienes objetos. Crea uno para poder hacer ofertas.</Message>
         </div>
 
-        <PerfilDetallesItem
-          :class="[!noTieneObjetos ? 'mt-8' : '']"
+        <div class="w-full">
+          <PerfilDetallesItem
           v-if="!isDueño"
           :config="{
             persona: personaStore.persona,
             isEditable: false,
           }"
         ></PerfilDetallesItem>
+        </div>
 
-        <div class="p-7" v-if="!isDueño && isAvailable">
+        <div class="px-7" v-if="!isDueño && isAvailable">
           <RouterLink
             :to="{ name: 'crear propuesta intercambio intercambiador', params: { id: id } }"
           >
@@ -112,7 +113,7 @@ onBeforeMount(async () => {
           </RouterLink>
         </div>
 
-        <div :class="[!isDueño ? 'h-10/12 overflow-y-scroll' : 'h-1/2 overflow-y-scroll']">
+        <div :class="[!isDueño ? 'h-10/12 ' : 'h-1/2 ']">
           <PropuestaIntercambioList
             :propuestasIntercambios="isDueño ? propuestas : propuestasRealizadas"
             :isInteractive="isDueño"
