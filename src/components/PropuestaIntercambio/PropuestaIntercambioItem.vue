@@ -74,13 +74,13 @@ function cerrarPropuestaIntercambio(id: number, isSuccess: boolean){
 
     <div class="w-full flex gap-4 justify-center sm:justify-start mt-4" v-if="isInteractive">
       <BaseButton styleType="success" class="w-24 py-2"
-      @click="cerrarPropuestaIntercambio(propuestaIntercambio.id, true)"
+      @click="cerrarPropuestaIntercambio(propuestaIntercambio.id, true)" tooltip=""
       >
         <i class="pi pi-check text-white"></i>
         Aceptar
       </BaseButton>
       <BaseButton styleType="danger" class="w-24 py-2"
-      @click="cerrarPropuestaIntercambio(propuestaIntercambio.id, false)"
+      @click="cerrarPropuestaIntercambio(propuestaIntercambio.id, false)" tooltip=""
       >
         <i class="pi pi-times text-white"></i>
         Rechazar

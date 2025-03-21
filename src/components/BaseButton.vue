@@ -2,7 +2,8 @@
 import { computed } from 'vue'
 
 const props = defineProps<{
-  styleType?: 'primary' | 'secondary' | 'warning' | 'danger'  | 'success'
+  styleType?: 'primary' | 'secondary' | 'warning' | 'danger' | 'success'
+  tooltip?: string
 }>()
 
 const buttonClass = computed(() => {
@@ -24,8 +25,10 @@ const buttonClass = computed(() => {
 </script>
 
 <template>
-
-  <button :class="[buttonClass, 'cursor-pointer w-full']">
+  <button
+    :class="[buttonClass, 'cursor-pointer w-full']"
+    v-tooltip.top="tooltip ? { value: tooltip, showDelay: 100, hideDelay: 300 } : undefined"
+  >
     <slot />
   </button>
 </template>

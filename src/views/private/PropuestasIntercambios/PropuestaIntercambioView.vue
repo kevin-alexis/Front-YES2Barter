@@ -136,6 +136,8 @@ const onPage = (event) => {
               outlined
               rounded
               severity="success"
+              v-tooltip.top="{ value: 'Editar', showDelay: 100, hideDelay: 300 }"
+
               v-if="data.id"
               @click="
                 $router.push({ name: 'editar propuesta intercambio', params: { id: data.id } })
@@ -146,6 +148,8 @@ const onPage = (event) => {
               outlined
               rounded
               severity="danger"
+              v-tooltip.top="{ value: 'Eliminar', showDelay: 100, hideDelay: 300 }"
+
               @click="() => propuestaIntercambioStore.deleteItem(data.id)"
             />
           </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Field, ErrorMessage } from 'vee-validate';
+import { Field, ErrorMessage } from 'vee-validate'
 import type { IBaseInput } from '@/interfaces/Base'
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 const errors: any = defineModel('errors')
 const isVisible = ref(false)
@@ -15,7 +15,7 @@ const placeholders = {
   select: 'Selecciona una opción',
 }
 
-function switchVisibility(){
+function switchVisibility() {
   isVisible.value = !isVisible.value
 }
 
@@ -37,16 +37,27 @@ const model = defineModel()
     >
     <textarea
       v-if="config.type == 'textarea'"
-      :class="['bg-white p-1 rounded-md border border-gray-300 disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50']"
+      :class="[
+        'bg-white p-1 rounded-md border border-gray-300 disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50',
+      ]"
       :placeholder="config.placeholder ?? placeholders[config.type]"
       :type="config.type"
       :required="config.isRequired"
       v-model="model"
       :disabled="config.isDisabled"
     />
-    <select v-else-if="config.type == 'select' && config.select && config.select.data.length" v-model="model" class="bg-white p-2 rounded-md border border-gray-300 disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50"
-    :disabled="config.isDisabled" :hidden="config.isHidden">
-      <option v-for="option in config.select.data" :key="option[config.select.valueKey]" :value="option[config.select.valueKey]">
+    <select
+      v-else-if="config.type == 'select' && config.select && config.select.data.length"
+      v-model="model"
+      class="bg-white p-2 rounded-md border border-gray-300 text-sm sm:text-base w-full sm:w-64 disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50"
+      :disabled="config.isDisabled"
+      :hidden="config.isHidden"
+    >
+      <option
+        v-for="option in config.select.data"
+        :key="option[config.select.valueKey]"
+        :value="option[config.select.valueKey]"
+      >
         {{ option[config.select.paramKey] }}
       </option>
     </select>
@@ -63,24 +74,24 @@ const model = defineModel()
 
     <div v-else class="flex w-full relative">
       <Field
-
-      class="w-full bg-white p-2 rounded-md border border-gray-300 disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50 h-[2.85rem]"
-      :placeholder="config.placeholder ?? placeholders[config.type]"
-      :type="isVisible ? 'text' : config.type"
-      :required="config.isRequired"
-      v-model="model"
-      :name="config.model"
-      :disabled="config.isDisabled"
-    />
-    <button @click="switchVisibility" type="button" class="absolute right-2 top-3 cursor-pointer" v-if="config.type === 'password'">
-      <i :class="[
-        'pi text-4xl',
-        isVisible ? 'pi-eye' : 'pi-eye-slash'
-      ]"></i>
-    </button>
+        class="w-full bg-white p-2 rounded-md border border-gray-300 disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50 h-[2.85rem]"
+        :placeholder="config.placeholder ?? placeholders[config.type]"
+        :type="isVisible ? 'text' : config.type"
+        :required="config.isRequired"
+        v-model="model"
+        :name="config.model"
+        :disabled="config.isDisabled"
+      />
+      <button
+        @click="switchVisibility"
+        type="button"
+        class="absolute right-2 top-3 cursor-pointer"
+        v-if="config.type === 'password'"
+      >
+        <i :class="['pi text-4xl', isVisible ? 'pi-eye' : 'pi-eye-slash']"></i>
+      </button>
     </div>
 
     <span v-if="errors" class="text-red-500">{{ errors }}</span>
   </div>
-
 </template>

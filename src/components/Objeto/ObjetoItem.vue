@@ -33,7 +33,10 @@ function eliminar(id: number) {
       <div class="p-4">
         <h2 class="text-xl font-semibold text-gray-800">{{ config.objeto.nombre }}</h2>
         <p class="text-sm text-gray-700 truncate mt-2">{{ config.objeto.descripcion }}</p>
-        <p class="text-xs text-gray-500"><strong>Fecha de publicación: </strong>{{ formatDateToView(config.objeto.fechaPublicacion) }}</p>
+        <p class="text-xs text-gray-500">
+          <strong>Fecha de publicación: </strong
+          >{{ formatDateToView(config.objeto.fechaPublicacion) }}
+        </p>
       </div>
     </RouterLink>
 

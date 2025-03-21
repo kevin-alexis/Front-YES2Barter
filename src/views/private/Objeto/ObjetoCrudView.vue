@@ -42,12 +42,11 @@ const getSeverity = (status: boolean) => {
   return status ? 'danger' : 'success'
 }
 
-const first = ref(0);
+const first = ref(0)
 
 const onPage = (event) => {
-  first.value = event.first;
-};
-
+  first.value = event.first
+}
 </script>
 
 <template>
@@ -142,6 +141,7 @@ const onPage = (event) => {
               outlined
               rounded
               severity="success"
+              v-tooltip.top="{ value: 'Editar', showDelay: 100, hideDelay: 300 }"
               v-if="data.id"
               @click="$router.push({ name: 'editar objeto', params: { id: data.id } })"
             />
@@ -150,6 +150,7 @@ const onPage = (event) => {
               outlined
               rounded
               severity="danger"
+              v-tooltip.top="{ value: 'Eliminar', showDelay: 100, hideDelay: 300 }"
               @click="() => objetoStore.deleteItem(data.id)"
             />
           </div>
