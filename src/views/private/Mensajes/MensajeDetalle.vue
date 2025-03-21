@@ -51,8 +51,7 @@ onMounted(() => {
   nextTick(() => ajustarAltura())
 
   accountStore.getUser()
-  idEmisor.value =
-    accountStore.user.idUsuario
+  idEmisor.value = accountStore.user.idUsuario
   id.value = route.params.id as string
   mensajeStore.getAllByIdChat(parseInt(id.value))
   conectarAlChat(id.value)
@@ -93,7 +92,7 @@ const ajustarAltura = () => {
 }
 
 function cerrarChat(isSuccess: boolean) {
-  chatStore.closeChat(isSuccess, parseInt(id.value));
+  chatStore.closeChat(isSuccess, parseInt(id.value))
 }
 </script>
 
