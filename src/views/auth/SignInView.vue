@@ -102,7 +102,7 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
     </div>
 
     <div
-      class="lg:flex items-center justify-center bg-gradient-to-t from-[var(--primary)] to-[var(--primary-gradient)] min-h-screen w-full rounded-l-xl hidden"
+      class="lg:flex items-center justify-center bg-gradient-to-t from-[var(--primary)] to-[var(--primary-gradient)] min-h-screen w-full  hidden"
     >
       <img :src="ImageLogin" alt="Login Image" class="object-cover" />
     </div>
