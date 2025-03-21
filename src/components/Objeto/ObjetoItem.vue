@@ -32,15 +32,20 @@ function eliminar(id: number) {
       <div class="p-4">
         <h2 class="text-xl font-semibold text-gray-800">{{ config.objeto.nombre }}</h2>
         <p class="text-sm text-gray-700 truncate mt-2">{{ config.objeto.descripcion }}</p>
-        <p class="text-xs text-gray-500"><strong>Fecha de publicación: </strong>{{ formatDateToView(config.objeto.fechaPublicacion) }}</p>
+        <p class="text-xs text-gray-500">
+          <strong>Fecha de publicación: </strong
+          >{{ formatDateToView(config.objeto.fechaPublicacion) }}
+        </p>
       </div>
     </RouterLink>
 
     <div v-if="config.showButtons" class="flex gap-2 mt-4 p-2">
       <RouterLink :to="{ name: 'editar objeto', params: { id: config.objeto.id } }" class="w-full">
-        <BaseButton styleType="warning">Editar</BaseButton>
+        <BaseButton styleType="warning" tooltip="">Editar</BaseButton>
       </RouterLink>
-      <BaseButton styleType="danger" @click="eliminar(config.objeto.id)">Eliminar</BaseButton>
+      <BaseButton styleType="danger" @click="eliminar(config.objeto.id)" tooltip=""
+        >Eliminar</BaseButton
+      >
     </div>
   </div>
 </template>
