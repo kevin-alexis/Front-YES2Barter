@@ -33,7 +33,7 @@ const model = defineModel()
     'flex ',
     config.type === 'checkbox' ? '': 'flex-col'
   ]">
-    <label :class="['m-1']">{{ config.label }}<span v-if="config.isRequired" class="text-red-600">*</span></label
+    <label :class="['']">{{ config.label }}<span v-if="config.isRequired" class="text-red-600">*</span></label
     >
     <textarea
       v-if="config.type == 'textarea'"

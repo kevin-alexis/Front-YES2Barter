@@ -75,9 +75,11 @@ watch([search, selectedCategorias], () => {
         @submit="handleSubmit"
         class="flex flex-row sm:flex-row justify-center items-end gap-3 sm:gap-2"
       >
+      <div class="flex flex-col md:flex-row gap-3 md:gap-2 items-center justify-center">
         <div class="card flex flex-col justify-center">
           <h1>Por categoría</h1>
           <MultiSelect
+          append-to="body"
             v-model="selectedCategorias"
             display="chip"
             :options="categoriaStore.list"
@@ -86,7 +88,7 @@ watch([search, selectedCategorias], () => {
             placeholder="Filtra por categoría"
             :maxSelectedLabels="3"
             selected-items-label="{0} elementos seleccionados"
-            class="w-full md:w-80"
+            class="w-80 md:w-80"
           />
         </div>
         <BaseInput
@@ -101,6 +103,7 @@ watch([search, selectedCategorias], () => {
           }"
           class="w-full sm:w-auto"
         />
+      </div>
         <!-- <div>
           <BaseButton type="submit" styleType="primary" class="w-full sm:w-auto">
             <div class="px-2">
