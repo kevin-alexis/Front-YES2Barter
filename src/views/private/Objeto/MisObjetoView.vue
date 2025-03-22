@@ -14,7 +14,7 @@ const isLoading = ref(true)
 
 onBeforeMount(async () => {
   try {
-    await objetoStore.getAllByIdUsuario(accountStore.user.idUsuario)
+    await objetoStore.getAllByIdUsuario(accountStore?.user?.idUsuario ?? "")
   } catch (error) {
     console.error('Error al cargar los objetos:', error)
   } finally {

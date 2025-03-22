@@ -19,7 +19,6 @@ onBeforeMount(async () => {
 <template>
   <div class="">
     <PerfilDetallesItem
-    class="mt-16"
     :config="{
       persona: personaStore.persona ?? {} as IPersona,
       isEditable: true

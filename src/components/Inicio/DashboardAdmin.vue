@@ -101,17 +101,16 @@ const scrollToTop = () => {
 
 <template>
   <div>
-    <!-- Grid for managing proposals and users -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-5 mx-5 sm:mx-10 mt-10">
       <div
         class="flex flex-col justify-center items-center gap-5 bg-gradient-to-t from-[var(--primary)] to-[var(--primary-gradient)] h-60 p-10 rounded-2xl text-center"
       >
-        <h1 class="text-3xl sm:text-4xl font-bold text-white">Administrar Propuestas de Intercambios</h1>
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-white">Administrar Propuestas de Intercambios</h1>
         <RouterLink :to="{ name: 'administrar propuestas intercambios' }">
           <button
             id="scrollButton2"
             @click="scrollToTop"
-            class="cursor-pointer mt-5 px-8 py-3 bg-white text-[var(--primary)] rounded-full hover:bg-gray-100 transition duration-200"
+            class="text-xs sm:text-md md:text-base cursor-pointer mt-5 px-8 py-3 bg-white text-[var(--primary)] rounded-full hover:bg-gray-100 transition duration-200"
           >
             Gestionar Propuestas de Intercambios
           </button>
@@ -121,12 +120,12 @@ const scrollToTop = () => {
       <div
         class="flex flex-col justify-center items-center gap-5 bg-gradient-to-t from-[var(--primary)] to-[var(--primary-gradient)] h-60 p-10 rounded-2xl text-center"
       >
-        <h1 class="text-3xl sm:text-4xl font-bold text-white">Administrar Usuarios</h1>
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-white">Administrar Usuarios</h1>
         <RouterLink :to="{ name: 'administrar usuarios' }">
           <button
             id="scrollButton3"
             @click="scrollToTop"
-            class="cursor-pointer mt-5 px-8 py-3 bg-white text-[var(--primary)] rounded-full hover:bg-gray-100 transition duration-200"
+            class="text-xs sm:text-md md:text-base cursor-pointer mt-5 px-8 py-3 bg-white text-[var(--primary)] rounded-full hover:bg-gray-100 transition duration-200"
           >
             Gestionar Usuarios
           </button>

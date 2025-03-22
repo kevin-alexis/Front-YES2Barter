@@ -43,7 +43,6 @@ const routes = computed(() => {
     });
 });
 
-
 const authRoutes = [
   { Name: 'Sign In', URL: 'sign in' },
   { Name: 'Login', URL: 'login' },
@@ -51,13 +50,11 @@ const authRoutes = [
 </script>
 
 <template>
-  <header
-    class="flex flex-col md:flex-row justify-between items-center px-6 py-4 bg-white shadow-md relative"
-  >
+  <header class="flex flex-col md:flex-row justify-between items-center px-6 py-4 bg-white shadow-md relative">
     <div class="flex justify-between items-center w-full md:w-auto">
-      <div class="flex items-center gap-2">
-        <img alt="Vue logo" class="logo" src="@/assets/logo.png" width="50" height="50" />
-        <h1 class="font-bold text-2xl">YES2Barter</h1>
+      <div class="flex items-center gap-2 w-max">
+        <img alt="YES2BarterLogo" class="logo" src="@/assets/logo.png" width="50" height="50" />
+        <h1 class="font-bold text-2xl md:text-xl lg:text-2xl">YES2Barter</h1>
       </div>
       <button
         @click="toggleMenu"
@@ -68,31 +65,38 @@ const authRoutes = [
       </button>
     </div>
 
-    <nav
-      :class="[
-        'md:flex md:items-center md:gap-6',
-        isMenuOpen ? 'flex flex-col mt-4 animate-slide-in' : 'hidden md:flex',
-      ]"
-    >
+    <nav class="hidden md:flex md:items-center gap-1 md:gap-2 lg:gap-4 flex-wrap overflow-x-auto px-2 justify-center">
       <RouterLink
         active-class="active"
         v-for="(route, index) in routes"
         :key="index"
         :to="{ name: route.name }"
+        class="text-[#8F939E] font-sans flex items-center gap-2 hover:text-[var(--primary)]
+        transition duration-300 text-xs md:text-sm lg:text-base w-auto">
+        <i :class="['pi', route.meta?.icon]"></i>
+        {{ route.meta?.title }}
+      </RouterLink>
+    </nav>
+
+
+    <nav :class="[isMenuOpen ? 'flex flex-col mt-4 animate-slide-in w-full' : 'hidden']" class="md:hidden">
+      <RouterLink
+        active-class="active-mobil"
+        v-for="(route, index) in routes"
+        :key="index"
+        :to="{ name: route.name }"
         @click="closeMenu"
-        class="text-[#8F939E] font-sans text-md flex items-center gap-2 hover:text-[var(--primary)] transition duration-300"
+        class="text-[#8F939E] font-sans flex items-center gap-2
+        p-2
+        hover:text-[var(--primary)] transition duration-300 text-xs
+        md:text-md lg:text-base"
       >
         <i :class="['pi', route.meta?.icon]"></i>
         {{ route.meta?.title }}
       </RouterLink>
     </nav>
 
-    <div
-      :class="[
-        'md:flex md:items-center',
-        isMenuOpen ? 'flex flex-col mt-4 animate-fade-in' : 'hidden md:flex',
-      ]"
-    >
+    <div :class="[isMenuOpen ? 'flex flex-col mt-4 animate-fade-in' : 'hidden md:flex']">
       <div v-if="!accountStore.isLoggedIn" class="flex flex-col md:flex-row gap-2">
         <RouterLink
           active-class="active-auth"
@@ -107,14 +111,12 @@ const authRoutes = [
       </div>
       <div v-else>
         <BaseButton
-          @click="
-            () => {
-              accountStore.logOut()
-              closeMenu()
-            }
-          "
+          @click="() => { accountStore.logOut(); closeMenu(); }"
           type="button"
-          class="cursor-pointer p-2 px-6 rounded-full font-semibold border-2 border-[var(--primary)] bg-white text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition duration-300"
+          class="
+          text-xs lg:text-sm p-1 px-2 lg:p-2 lg:px-4 cursor-pointer
+          rounded-full font-semibold border-2 border-[var(--primary)]
+          bg-white text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition duration-300"
         >
           Log Out
         </BaseButton>
@@ -124,8 +126,16 @@ const authRoutes = [
 </template>
 
 <style scoped>
-.active {
-  color: var(--primary);
+.active{
+  color: var(--primary)
+}
+
+.active-mobil{
+  color: white;
+}
+
+.active-mobil{
+  background-color: var(--primary);
 }
 
 .active-auth {

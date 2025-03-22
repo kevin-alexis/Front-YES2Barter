@@ -111,8 +111,9 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
 
 onMounted( () => {
   categoriaStore.getAll()
-  personaStore.getAllPersonasIntercambiadores()
-
+  if(!isIntercambiador.value){
+    personaStore.getAllPersonasIntercambiadores()
+  }
   // Verifica el valor de isEdit
   isEdit.value = route.fullPath.includes('editar')
   id.value = route.params.id as string

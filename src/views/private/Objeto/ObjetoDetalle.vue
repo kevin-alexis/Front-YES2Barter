@@ -91,7 +91,7 @@ onBeforeMount(async () => {
       </div>
 
       <div class="w-full md:w-1/2  md:overflow-y-scroll">
-        <div class="px-7 pt-6" v-if="!noTieneObjetos">
+        <div class="px-7 pt-6" v-if="noTieneObjetos">
           <Message severity="warn" closable>¡Ups! Aún no tienes objetos. Crea uno para poder hacer ofertas.</Message>
         </div>
 
