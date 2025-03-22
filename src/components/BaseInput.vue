@@ -62,7 +62,7 @@ const model = defineModel()
       </option>
     </select>
 
-    <div v-else-if="config.type === 'checkbox'" :class="['flex items-center gap-2']">
+    <div v-else-if="config.type === 'checkbox'" :class="['flex items-center gap-2 pl-2']">
       <input
         type="checkbox"
         :checked="model"

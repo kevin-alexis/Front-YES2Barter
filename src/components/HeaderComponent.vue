@@ -97,7 +97,7 @@ const authRoutes = [
     </nav>
 
     <div :class="[isMenuOpen ? 'flex flex-col mt-4 animate-fade-in' : 'hidden md:flex']">
-      <div v-if="!accountStore.isLoggedIn" class="flex flex-col md:flex-row gap-2">
+      <div v-if="!accountStore.isLoggedIn" class="flex flex-row gap-2">
         <RouterLink
           active-class="active-auth"
           v-for="(route, index) in authRoutes"
