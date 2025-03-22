@@ -13,7 +13,7 @@ const buttonClass = computed(() => {
     case 'secondary':
       return 'font-semibold text-white p-2 rounded-md border-3 border-white'
     case 'warning':
-      return 'bg-[var(--warning)] font-semibold text-white p-2 rounded-md'
+      return 'bg-[var(--primary)] font-semibold text-white p-2 rounded-md'
     case 'danger':
       return 'bg-[var(--danger)] font-semibold text-white p-2 rounded-md'
     case 'success':
