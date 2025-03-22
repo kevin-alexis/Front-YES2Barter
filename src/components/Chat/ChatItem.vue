@@ -1,31 +1,83 @@
 <script setup lang="ts">
 import type { IGetChatsVM } from '@/interfaces/chat/IChat'
-import { useAccountStore } from '@/stores/account';
-import { ref } from 'vue';
+import { useAccountStore } from '@/stores/account'
+import { ref, computed } from 'vue'
+const baseUrl = import.meta.env.VITE_APP_URL_API_SOURCE
 
 const accountStore = useAccountStore()
 const prop = defineProps<{
   chat: IGetChatsVM
 }>()
 
-const isOfertante = ref(accountStore.user.idUsuario == prop.chat.propuestaIntercambio.objetoOfertado.idUsuario)
+console.log('------')
+console.log(prop.chat)
 
+const isOfertante = computed(
+  () => accountStore.user.idUsuario === prop.chat.propuestaIntercambio.idUsuarioOfertante,
+)
+
+const getProfileImage = (rutaFotoPerfil: string) => {
+  if (!rutaFotoPerfil) return ''
+  const rutaConvertida = rutaFotoPerfil.replace(/\\/g, '/')
+  return `${baseUrl}${rutaConvertida}`
+}
+
+const getInitials = (name: string | undefined) => {
+  if (!name) return '?'
+  return name
+    .split(' ')
+    .map((word) => word[0]?.toUpperCase())
+    .join('')
+}
 </script>
 
 <template>
-  <RouterLink
-    :to="{ name: 'chat detalles', params: { id: prop.chat.id } }"
-    class="block w-full"
-  >
+  <RouterLink :to="{ name: 'chat detalles', params: { id: prop.chat.id } }" class="block w-full">
     <div
-      class="bg-white text-black rounded-xl mt-5 w-full p-4 flex gap-4 shadow-md hover:shadow-lg transition-all duration-200 border-b border-gray-300"
+      class="bg-white hover:bg-gray-50 cursor-pointer w-full flex items-center border-b border-gray-200 px-4 py-3"
     >
-      <div class="flex flex-col justify-center flex-1">
-        <span class="font-semibold text-black text-base">{{ prop.chat.personaReceptor.nombre }}</span>
-        <p class="text-gray-600 text-sm line-clamp-2">
-          <strong>Producto Ofertado: </strong> {{ isOfertante ? prop.chat.propuestaIntercambio.objetoOfertado.nombre :  prop.chat.propuestaIntercambio.objetoSolicitado.nombre}} </p>
-          <p class="text-gray-600 text-sm line-clamp-2">
-            <strong>Producto Solicitado: </strong> {{ !isOfertante ? prop.chat.propuestaIntercambio.objetoOfertado.nombre :  prop.chat.propuestaIntercambio.objetoSolicitado.nombre}} </p>
+      <!-- Avatar del usuario -->
+      <div
+        class="h-12 w-12 rounded-full bg-gray-300 flex-shrink-0 flex items-center justify-center overflow-hidden mr-3"
+      >
+        <img
+          v-if="prop.chat.personaReceptor.rutaFotoPerfil"
+          :src="getProfileImage(prop.chat.personaReceptor.rutaFotoPerfil)"
+          alt="Avatar"
+          class="h-full w-full object-cover"
+        />
+
+        <span v-else class="text-white font-medium text-lg">
+          {{ getInitials(prop.chat.personaReceptor.nombre) }}
+        </span>
+      </div>
+
+      <div class="flex-1 min-w-0">
+        <div class="flex justify-between items-baseline">
+          <h3 class="font-medium text-black truncate">{{ prop.chat.personaReceptor.nombre }}</h3>
+          <span class="text-xs text-gray-500 ml-2">22/03/2025</span>
+        </div>
+
+        <div class="flex justify-between items-start mt-1">
+          <div class="flex-1">
+            <p class="text-sm text-gray-600 truncate">
+              <span class="font-medium">Producto Ofertado:</span>
+              {{
+                isOfertante
+                  ? prop.chat.propuestaIntercambio.objetoOfertado.nombre
+                  : prop.chat.propuestaIntercambio.objetoSolicitado.nombre
+              }}
+            </p>
+            <p class="text-sm text-gray-600 truncate">
+              <span class="font-medium">Producto Solicitado:</span>
+              {{
+                !isOfertante
+                  ? prop.chat.propuestaIntercambio.objetoOfertado.nombre
+                  : prop.chat.propuestaIntercambio.objetoSolicitado.nombre
+              }}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </RouterLink>
