@@ -8,6 +8,7 @@ defineProps<{
   objetos: IObjeto[]
   config:{
     showButtons: boolean
+    message: string
   }
 }>()
 
@@ -28,7 +29,7 @@ defineProps<{
     </div>
     <div v-else class="flex justify-center items-center h-64">
       <h1 class="text-2xl sm:text-3xl md:text-4xl font-light text-center">
-        ¡Ups! Aún no tienes objetos. Empieza a crear y administrar tus objetos aquí.
+        {{config.message}}
       </h1>
     </div>
   </div>

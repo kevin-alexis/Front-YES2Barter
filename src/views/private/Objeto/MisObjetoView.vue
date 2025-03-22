@@ -46,6 +46,7 @@ onBeforeMount(async () => {
         v-model:objetos="objetoStore.list"
         :config="{
           showButtons: true,
+          message: '¡Ups! Aún no tienes objetos. Empieza a crear y administrar tus objetos aquí.'
         }"
       ></ObjetoList>
       </div>

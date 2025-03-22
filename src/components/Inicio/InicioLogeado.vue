@@ -33,7 +33,9 @@ onMounted(() => {
       </h2>
         <ObjetoList v-model:objetos="objetoStore.list"
         :config="{
-          showButtons: false
+          showButtons: false,
+          message: '¡Ups! Aun no hay objetos.'
+
         }"
         />
       </div>

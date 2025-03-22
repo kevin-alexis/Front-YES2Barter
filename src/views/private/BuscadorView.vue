@@ -122,6 +122,7 @@ watch([search, selectedCategorias], () => {
     v-model:objetos="filteredObjetos"
     :config="{
       showButtons: false,
+      message: '¡Ups! No hay objetos.'
     }"
   ></ObjetoList>
 </div>
