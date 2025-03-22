@@ -2,6 +2,7 @@
 
 @theme {
     --primary: #A8D08D;
+    --primary-dark: #8db374;
     /*propuesta de color primario: */
     /* --primary: #2E7D32; */
     /* --secondary: #8D6E63; */ /*propuesta de color secundario */
@@ -13,6 +14,7 @@
     --primary-gradient: #228B22;
     /* --primary-gradient: #228B22; */
     --background: #E8E8F4;
+    --background-dark: #A8D08D;
 }
 
 .image-object-detail img{

@@ -170,7 +170,7 @@ const router = createRouter({
       },
       children: [
         {
-          path: ':id',
+          path: '/chat/:id',
           name: 'chat detalles',
           component: () => import('../views/private/Mensajes/MensajeDetalle.vue'),
           meta: {
@@ -184,6 +184,19 @@ const router = createRouter({
         },
       ],
     },
+    // {
+    //   path: '/chat/:id',
+    //   name: 'chat detalles',
+    //   component: () => import('../views/private/Mensajes/MensajeDetalle.vue'),
+    //   meta: {
+    //     menu: false,
+    //     title: 'Chat',
+    //     isPrivate: true,
+    //     isShared: false,
+    //     icon: 'pi-comments',
+    //     roles: ['Intercambiador'],
+    //   },
+    // },
     {
       path: '/propuesta-intercambio/',
       name: 'administrar propuestas intercambios',
