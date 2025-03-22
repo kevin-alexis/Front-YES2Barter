@@ -49,7 +49,7 @@ const model = defineModel()
     <select
       v-else-if="config.type == 'select' && config.select && config.select.data.length"
       v-model="model"
-      class="bg-white p-2 rounded-md border border-gray-300 text-sm sm:text-base w-full sm:w-64 disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50"
+      class="bg-white p-2 rounded-md border border-gray-300 disabled:border-gray-400 disabled:bg-gray-300/50 disabled:text-black/50"
       :disabled="config.isDisabled"
       :hidden="config.isHidden"
     >

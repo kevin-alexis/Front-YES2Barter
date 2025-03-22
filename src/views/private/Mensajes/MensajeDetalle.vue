@@ -101,14 +101,14 @@ function cerrarChat(isSuccess: boolean) {
     <div class="flex gap-2">
       <BaseButton
         styleType="primary"
-        class="text-white h-fit rounded-full"
+        class="text-white h-auto rounded-full"
         @click="cerrarChat(true)"
       >
         Intercambio Concretado
       </BaseButton>
       <BaseButton
         styleType="danger"
-        class="text-white h-fit rounded-full"
+        class="text-white h-auto rounded-full"
         @click="cerrarChat(false)"
       >
         Intercambio No Concretado
