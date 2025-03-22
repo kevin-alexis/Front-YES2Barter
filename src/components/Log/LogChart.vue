@@ -2,6 +2,8 @@
 import type { ILog } from '@/interfaces/log/ILog';
 import Chart from 'primevue/chart';
 import { ref, onMounted, watch } from "vue";
+import { useLogStore } from '@/stores/log'
+import ProgressSpinner from 'primevue/progressspinner';
 
 const logs = defineModel<ILog[]>('logs');
 const chartData = ref();
@@ -10,6 +12,7 @@ const meses = ref([
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ]);
+const logsStore = useLogStore()
 
 const splitData = () => {
   const logsContadorPorMes = {
@@ -216,6 +219,10 @@ watch(logs, (newLogs) => {
 
 <template>
   <div class="card">
+    <div class="flex justify-center">
+      <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="8" fill="transparent"
+      animationDuration=".5s" aria-label="Custom ProgressSpinner" v-if="logsStore.loading" />
+    </div>
       <Chart type="line" :data="chartData" :options="chartOptions" class="h-[30rem]" />
   </div>
 </template>

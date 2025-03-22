@@ -62,7 +62,7 @@ const onPage = (event) => {
         </div>
       </template>
       <template #empty>Sin usuarios encontradas</template>
-      <template #loading>Cargando Usuarios</template>
+      <template #loading><i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i></template>
       <Column field="id" header="No." sortable>
         <template #body="{ index }">
           {{ index + 1 + first }}

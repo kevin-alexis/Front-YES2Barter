@@ -8,13 +8,17 @@ import router from '@/router'
 export const useLogStore = defineStore('log', () => {
   const service = new LogService()
   const list: Ref<ILog[]> = ref([])
+  const loading = ref(false)
 
   async function getAll() {
+    loading.value = true
     try {
       const response = await service.getAll()
       list.value = await response
     } catch (error) {
       console.error(error)
+    } finally {
+      loading.value = false
     }
   }
 
@@ -102,5 +106,5 @@ export const useLogStore = defineStore('log', () => {
     }
   }
 
-  return { list, getAll, getById, deleteItem, create, update }
+  return { list, getAll, getById, deleteItem, create, update, loading }
 })
