@@ -42,6 +42,14 @@ const propuestas = computed(() => {
 })
 
 const propuestasRealizadas = ref([])
+const propuestasTotalesDelObjeto = ref([])
+
+const propuestasRealizadasFiltradas = computed(() => {
+  return propuestasTotalesDelObjeto.value.filter(item =>{
+    return (item.idUsuarioOfertante == accountStore.user.idUsuario || item.idUsuarioReceptor == accountStore.user.idUsuario)
+  });
+});
+
 
 onBeforeMount(async () => {
   id.value = route.params.id as string
@@ -61,6 +69,11 @@ onBeforeMount(async () => {
           noTieneObjetos.value = true
         }
       }
+    })
+    await propuestaIntercambioStore
+    .getAllByIdObjeto(id.value)
+    .then(() => {
+      propuestasTotalesDelObjeto.value = propuestaIntercambioStore.list
     })
   Object.assign(objeto, response)
   if (objeto?.idUsuario == accountStore?.user?.idUsuario) {
@@ -115,7 +128,7 @@ onBeforeMount(async () => {
 
         <div :class="[!isDueño ? 'h-10/12 ' : 'h-1/2 ']">
           <PropuestaIntercambioList
-            :propuestasIntercambios="isDueño ? propuestas : propuestasRealizadas"
+            :propuestasIntercambios="isDueño ? propuestas : propuestasRealizadasFiltradas"
             :isInteractive="isDueño"
           ></PropuestaIntercambioList>
         </div>

@@ -17,6 +17,21 @@
     --background-dark: #A8D08D;
 }
 
+.p-checkbox-checked .p-checkbox-box{
+  background: var(--primary) !important;
+}
+
+.p-checkbox-checked,
+.p-checkbox-box,
+.p-multiselect:not(.p-disabled):hover,
+.p-multiselect:not(.p-disabled).p-focus{
+  border-color: var(--primary) !important;
+}
+
+.p-multiselect:not(.p-disabled).p-focus{
+  box-shadow: var(--primary) !important;
+}
+
 .image-object-detail img{
   object-fit: cover;
   width: 100%;
