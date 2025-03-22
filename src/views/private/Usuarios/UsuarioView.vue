@@ -22,11 +22,11 @@ const filters = ref({
   esBorrado: { value: null, matchMode: FilterMatchMode.EQUALS },
 })
 
-const first = ref(0);
+const first = ref(0)
 
 const onPage = (event) => {
-  first.value = event.first;
-};
+  first.value = event.first
+}
 </script>
 
 <template>
@@ -94,6 +94,7 @@ const onPage = (event) => {
               outlined
               rounded
               severity="success"
+              v-tooltip.top="{ value: 'Editar', showDelay: 100, hideDelay: 300 }"
               @click="
                 $router.push({ name: 'editar usuario', params: { idPersona: data.idPersona } })
               "
@@ -103,6 +104,7 @@ const onPage = (event) => {
               outlined
               rounded
               severity="danger"
+              v-tooltip.top="{ value: 'Eliminar', showDelay: 100, hideDelay: 300 }"
               @click="() => accountStore.deleteItem(data.idPersona)"
             />
           </div>

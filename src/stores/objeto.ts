@@ -6,11 +6,14 @@ import Swal from 'sweetalert2'
 import router from '@/router'
 import { LogService } from '@/services/log/LogService'
 import { EstatusObjeto } from '../common/enums/enums';
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
 
 export const useObjetoStore = defineStore('objeto', () => {
   const service = new ObjetoService()
   const logService = new LogService()
   const list: Ref<IObjeto[]> = ref([])
+  const toast = useToast()
 
   async function getAllByIdEstatus(estatus?: EstatusObjeto) {
     try {
@@ -101,6 +104,7 @@ export const useObjetoStore = defineStore('objeto', () => {
           confirmButtonText: 'Ok',
           confirmButtonColor: '#6C6DE7',
         }).then(() => {
+          toast.add({ severity: 'success', summary: 'Éxito', detail: 'El objeto ha sido añadido exitosamente a la lista.', life: 2000 })
           router.back()
         })
       })
@@ -125,6 +129,7 @@ export const useObjetoStore = defineStore('objeto', () => {
           confirmButtonText: 'Ok',
           confirmButtonColor: '#6C6DE7',
         }).then(() => {
+          toast.add({ severity: 'success', summary: 'Éxito', detail: 'El objeto ha sido editado exitosamente.', life: 2000 })
           router.back()
         })
       })
