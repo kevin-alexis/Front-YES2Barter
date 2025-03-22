@@ -70,6 +70,11 @@ const objetoOfertado = computed(() => {
   return objetosFiltradosNoOfertados
 })
 
+const disableObjetoSolicitado = computed(() => {
+  return objetoSolicitado.value.length === 0
+})
+
+
 const route = useRoute()
 const isCreateIntercambiadorRoute = computed(() => {
   return route.name == 'crear propuesta intercambio intercambiador'
@@ -203,7 +208,7 @@ onMounted(async () => {
               valueKey: 'id',
             },
             isRequired: isEdit,
-            isDisabled: isCreateIntercambiadorRoute,
+            isDisabled: isCreateIntercambiadorRoute || disableObjetoSolicitado.valueOf(),
             model: 'idObjetoSolicitado',
           },
           {
@@ -230,5 +235,8 @@ onMounted(async () => {
         </h1>
       </template>
     </BaseForm>
+    <div v-if="disableObjetoSolicitado" class="mt-2 text-red-600 text-sm">
+      No hay objetos disponibles para realizar el intercambio.
+    </div>
   </div>
 </template>
