@@ -82,7 +82,7 @@ const onPage = (event) => {
       </template>
 
       <template #empty>Sin objetos encontrados</template>
-      <template #loading>Cargando objetos</template>
+      <template #loading><i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i></template>
 
       <Column field="id" header="No." sortable>
         <template #body="{ index }">

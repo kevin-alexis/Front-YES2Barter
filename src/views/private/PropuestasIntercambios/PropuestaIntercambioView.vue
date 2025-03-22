@@ -104,7 +104,7 @@ const onPage = (event) => {
       </template>
 
       <template #empty>Sin propuestas encontradas</template>
-      <template #loading>Cargando propuestas</template>
+      <template #loading><i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i></template>
 
       <Column field="id" header="No." sortable>
         <template #body="{ index }">

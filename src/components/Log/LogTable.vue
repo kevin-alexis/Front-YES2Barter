@@ -10,11 +10,13 @@ import DatePicker from 'primevue/datepicker'
 import Tag from 'primevue/tag'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
+import { useLogStore } from '@/stores/log'
 
 const filters = ref()
 const niveles = ref(['Error', 'Warning', 'Info'])
 const logs: any = defineModel('logs')
 const expandedRows = ref([])
+const logsStore = useLogStore()
 
 const initFilters = () => {
   filters.value = {
@@ -86,6 +88,7 @@ const getSeverity = (status) => {
       paginator
       :rows="5"
       dataKey="id"
+      :loading="logsStore.loading"
       filterDisplay="menu"
       v-model:expandedRows="expandedRows"
       :globalFilterFields="['mensaje', 'excepcion', 'fecha', 'nivel', 'fuente']"
@@ -111,6 +114,7 @@ const getSeverity = (status) => {
       </template>
 
       <template #empty> Excepciones no encontradas. </template>
+      <template #loading><i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i></template>
 
       <Column expander style="width: 3rem" />
 
