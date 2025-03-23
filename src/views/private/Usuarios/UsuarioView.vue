@@ -105,7 +105,8 @@ const onPage = (event) => {
               rounded
               severity="danger"
               v-tooltip.top="{ value: 'Eliminar', showDelay: 100, hideDelay: 300 }"
-              @click="() => accountStore.deleteItem(data.idPersona)"
+              @click="() => { console.log('ID enviado:', data.idUsuario); accountStore.deleteItem(data.idUsuario); }"
+
             />
           </div>
         </template>
