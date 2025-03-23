@@ -5,6 +5,8 @@ import Swal from 'sweetalert2'
 import { computed, ref } from 'vue'
 import { LogService } from '@/services/log/LogService'
 import { useToast } from 'primevue/usetoast';
+import { ObjetoService } from '@/services/objeto/ObjetoService'
+
 
 export const useAccountStore = defineStore('account', () => {
   const user = ref<IAccount | null>(null);
@@ -16,11 +18,14 @@ export const useAccountStore = defineStore('account', () => {
   const isLoggedIn = computed(() => {
     return !!user.value
   });
+  const objetoService = new ObjetoService()
 
   async function getAll() {
     try {
       const response = await service.getAll()
-      list.value = await response.data
+      if (response?.data) {
+        list.value = await response.data.filter(userItem => userItem.idPersona !== user.value?.idPersona);
+      }
     } catch (error) {
       logService.create({
         nivel: 'Error',
@@ -95,6 +100,7 @@ export const useAccountStore = defineStore('account', () => {
           }).then(() => {
             if (isLoggedIn.value && user.value && user.value.rol === 'Administrador') {
               import('@/router').then(({ default: router }) => {
+                toast.add({ severity: 'success', summary: 'Éxito', detail: 'El usuario ha sido añadido exitosamente a la lista.', life: 2000 })
                 router.replace({ name: 'administrar usuarios' })
               })
             } else {
@@ -172,47 +178,66 @@ export const useAccountStore = defineStore('account', () => {
 
   // Todo: esto es para el crud de usaurios
 
-  async function deleteItem(id: number) {
+  async function deleteItem(id: string) {
+
     try {
-      Swal.fire({
-        title: '¿Estas seguro?',
-        text: 'No podras revertirlo!',
+      const response = await objetoService.GetAllByIdUsuario(id);
+
+      let lista = [];
+
+      if (!response || !response.success) {
+        console.warn("No se encontraron objetos asociados.");
+      } else {
+        lista = response.data || [];
+
+        if (lista.length > 0) {
+          Swal.fire({
+            title: 'No se puede eliminar',
+            text: 'Este usuario tiene objetos asociados.',
+            icon: 'warning'
+          });
+          return;
+        }
+      }
+
+      const result = await Swal.fire({
+        title: '¿Estás seguro de eliminar este usuario?',
+        text: 'No podrás revertirlo!',
         icon: 'warning',
         showCancelButton: true,
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, eliminar!',
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          await service
-            .delete(id)
-            .then(async () => {
-              Swal.fire({
-                title: 'Eliminar!',
-                text: 'El registro fue eliminado.',
-                icon: 'success',
-              })
-              await getAll()
-            })
-            .catch((error) => {
-              Swal.fire({
-                title: 'No se pudo elimnar!',
-                text: `El registro no fue eliminado ${error}.`,
-                icon: 'error',
-              })
-            })
-        }
-      })
+      });
+
+      if (!result.isConfirmed) return;
+
+      await service.delete(id);
+
+      Swal.fire({
+        title: 'Eliminado!',
+        text: 'El registro fue eliminado.',
+        icon: 'success',
+      });
+
+      await getAll();
     } catch (error) {
       logService.create({
         nivel: 'Error',
         mensaje: `Error en el método deleteItem del store account: ${error.message}`,
         excepcion: error.toString(),
-      })
-      console.error(error)
+      });
+
+      console.error(error);
+      Swal.fire({
+        title: 'No se pudo eliminar!',
+        text: `El registro no fue eliminado ${error}.`,
+        icon: 'error',
+      });
     }
   }
+
 
   async function getById(id: string) {
     try {
@@ -234,6 +259,7 @@ export const useAccountStore = defineStore('account', () => {
           confirmButtonColor: '#6C6DE7',
         }).then(() => {
           import('@/router').then(({ default: router }) => {
+            toast.add({ severity: 'success', summary: 'Éxito', detail: 'La cuenta ha sido editado exitosamente.', life: 2000 })
             router.back()
           })
         })

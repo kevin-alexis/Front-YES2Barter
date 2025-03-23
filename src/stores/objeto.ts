@@ -20,6 +20,7 @@ export const useObjetoStore = defineStore('objeto', () => {
     try {
       const response = await service.getAllByIdEstatus(estatus)
       list.value = await response
+      console.log(list.value)
     } catch (error) {
       logService.create({
         nivel: 'Error',
@@ -215,5 +216,21 @@ export const useObjetoStore = defineStore('objeto', () => {
     }
   }
 
-  return { list, getAll, getAllByIdEstatus, getById, getByName, getAllByIdUsuario, getAllByIdCategoria, deleteItem, create, update }
+  async function hasRelatedObjects(idUsuario: string): Promise<boolean> {
+    try {
+      const response = await service.getRelatedObjects();
+      const lista = response.data; // Asegúrate de que aquí estás accediendo al array correcto
+
+      console.log("Lista de objetos relacionados:", lista);
+
+      // Verifica si el usuario tiene algún objeto relacionado
+      return lista.some(obj => obj.idUsuario === idUsuario);
+    } catch (error) {
+      console.error("Error obteniendo objetos relacionados:", error);
+      return false;
+    }
+  }
+
+
+  return { list, getAll, getAllByIdEstatus, getById, getByName, getAllByIdUsuario, getAllByIdCategoria, deleteItem, create, update, hasRelatedObjects }
 })

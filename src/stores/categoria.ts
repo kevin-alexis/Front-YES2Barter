@@ -5,6 +5,7 @@ import { ref, type Ref } from 'vue'
 import Swal from 'sweetalert2'
 import router from '@/router'
 import { LogService } from '@/services/log/LogService'
+import { useToast } from 'primevue/usetoast'
 
 
 
@@ -12,6 +13,7 @@ export const useCategoriaStore = defineStore('categoria', () => {
   const service = new CategoriaService()
   const logService = new LogService()
   const list: Ref<ICategoria[]> = ref([])
+  const toast = useToast()
 
   async function getAll() {
     try {
@@ -46,6 +48,7 @@ export const useCategoriaStore = defineStore('categoria', () => {
           confirmButtonText: 'Ok',
           confirmButtonColor: '#6C6DE7',
         }).then(() => {
+          toast.add({ severity: 'success', summary: 'Éxito', detail: 'La categoría ha sido añadida exitosamente a la lista.', life: 2000 })
           router.replace({ name: 'administrar categorias' })
         })
       })
@@ -70,6 +73,7 @@ export const useCategoriaStore = defineStore('categoria', () => {
           confirmButtonText: 'Ok',
           confirmButtonColor: '#6C6DE7',
         }).then(() => {
+          toast.add({ severity: 'success', summary: 'Éxito', detail: 'La categoría ha sido editado exitosamente.', life: 2000 })
           router.replace({ name: 'administrar categorias' })
         })
       })
