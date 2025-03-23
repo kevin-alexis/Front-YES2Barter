@@ -12,6 +12,7 @@ import { usePropuestaIntercambioStore } from '../../../stores/propuestaIntercamb
 import type { IObjeto } from '@/interfaces/objeto/IObjeto'
 import ProgressSpinner from 'primevue/progressspinner'
 import Message from 'primevue/message'
+import { EstatusPropuestaIntercambio } from '@/common/enums/enums'
 
 const route = useRoute()
 const objetoStore = useObjetoStore()
@@ -46,7 +47,8 @@ const propuestasTotalesDelObjeto = ref([])
 
 const propuestasRealizadasFiltradas = computed(() => {
   return propuestasTotalesDelObjeto.value.filter(item =>{
-    return (item.idUsuarioOfertante == accountStore.user.idUsuario || item.idUsuarioReceptor == accountStore.user.idUsuario)
+    return (item.idUsuarioOfertante == accountStore.user.idUsuario
+     || item.idUsuarioReceptor == accountStore.user.idUsuario && item.estado == EstatusPropuestaIntercambio.ENVIADA)
   });
 });
 

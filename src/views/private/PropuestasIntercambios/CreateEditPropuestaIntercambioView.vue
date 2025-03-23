@@ -55,7 +55,7 @@ const objetoOfertado = computed(() => {
   const objetosFiltradosPorPropuestasInversasNoOfertados = objetosFiltradosNoOfertados.filter((objeto) => {
     return !allPropuestas.value.some((propuesta) => {
       console.log(propuesta.idObjetoOfertado)
-      return propuesta.idObjetoSolicitado == objeto.id
+      return propuesta.idObjetoSolicitado == objeto.id && propuesta.estado == EstatusPropuestaIntercambio.ENVIADA
     })
   })
 
