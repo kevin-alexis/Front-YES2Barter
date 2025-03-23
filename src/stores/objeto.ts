@@ -8,17 +8,24 @@ import { LogService } from '@/services/log/LogService'
 import { EstatusObjeto } from '../common/enums/enums';
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { AccountService } from '../services/account/AccountService';
 
 export const useObjetoStore = defineStore('objeto', () => {
   const service = new ObjetoService()
   const logService = new LogService()
   const list: Ref<IObjeto[]> = ref([])
   const toast = useToast()
+  const accountService = new AccountService()
 
   async function getAllByIdEstatus(estatus?: EstatusObjeto) {
     try {
+      const currentUser = await accountService.getCurrentUser()
+      if (!currentUser) {
+        console.warn('No se encontró un usuario autenticado.')
+        return
+      }
       const response = await service.getAllByIdEstatus(estatus)
-      list.value = await response
+      list.value = response.filter(obj => obj.idUsuario !== currentUser.idUsuario)
       console.log(list.value)
     } catch (error) {
       logService.create({
@@ -211,21 +218,5 @@ export const useObjetoStore = defineStore('objeto', () => {
     }
   }
 
-  async function hasRelatedObjects(idUsuario: string): Promise<boolean> {
-    try {
-      const response = await service.getRelatedObjects();
-      const lista = response.data; // Asegúrate de que aquí estás accediendo al array correcto
-
-      console.log("Lista de objetos relacionados:", lista);
-
-      // Verifica si el usuario tiene algún objeto relacionado
-      return lista.some(obj => obj.idUsuario === idUsuario);
-    } catch (error) {
-      console.error("Error obteniendo objetos relacionados:", error);
-      return false;
-    }
-  }
-
-
-  return { list, getAll, getAllByIdEstatus, getById, getByName, getAllByIdUsuario, getAllByIdCategoria, deleteItem, create, update, hasRelatedObjects }
+  return { list, getAll, getAllByIdEstatus, getById, getByName, getAllByIdUsuario, getAllByIdCategoria, deleteItem, create, update }
 })
