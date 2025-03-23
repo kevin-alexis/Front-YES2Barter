@@ -50,7 +50,7 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
     <div
       class="lg:flex items-center justify-center bg-gradient-to-t from-[var(--primary)] to-[var(--primary-gradient)] min-h-screen w-full rounded-l-xl hidden"
     >
-      <img :src="ImageLogin" class="w-full"/>
+      <img :src="ImageLogin" class="w-full" />
     </div>
     <div class="min-h-screen w-full">
       <BaseForm
@@ -77,7 +77,7 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
               type: 'checkbox',
               model: 'rememberMe',
               isRequired: false,
-            }
+            },
           ],
           titleButton: 'Iniciar Sesión',
         }"
@@ -90,6 +90,12 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
             ¿Aún no tienes cuenta?
             <RouterLink class="font-semibold text-[var(--primary)] cursor-pointer" to="/sign-in">
               Regístrate gratis
+            </RouterLink>
+          </p>
+          <p>
+            ¿olvidaste tu contraseña?
+            <RouterLink class="font-semibold text-[var(--primary)] cursor-pointer" to="/forgot-password">
+              Recuperar contraseña
             </RouterLink>
           </p>
         </template>
