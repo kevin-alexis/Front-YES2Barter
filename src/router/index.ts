@@ -59,6 +59,12 @@ const router = createRouter({
       meta: { menu: false, title: 'Forgot Password', isPrivate: false, isShared: false },
     },
     {
+      path: '/reset-password',
+      name: 'reset password',
+      component: () => import('../views/auth/ResetPassword.vue'),
+      meta: { menu: false, title: 'Forgot Password', isPrivate: false, isShared: false },
+    },
+    {
       path: '/buscador',
       name: 'buscador',
       component: () => import('../views/private/BuscadorView.vue'),

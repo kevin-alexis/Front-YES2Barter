@@ -94,7 +94,10 @@ const handleSubmitForm = handleSubmit((values: FormValues) => {
           </p>
           <p>
             ¿olvidaste tu contraseña?
-            <RouterLink class="font-semibold text-[var(--primary)] cursor-pointer" to="/forgot-password">
+            <RouterLink
+              class="font-semibold text-[var(--primary)] cursor-pointer"
+              to="/forgot-password"
+            >
               Recuperar contraseña
             </RouterLink>
           </p>

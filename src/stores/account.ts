@@ -288,6 +288,40 @@ export const useAccountStore = defineStore('account', () => {
       console.error(error)
     }
   }
+  async function resetPassword(values: { newPassword: string, confirmNewPassword: string }) {
+    try {
+      // Asegúrate de tener un endpoint que reciba las nuevas contraseñas
+      const response = await service.resetPassword(values.newPassword, values.confirmNewPassword);
+      if (response.success) {
+        Swal.fire({
+          title: 'Contraseña Restablecida',
+          text: 'La contraseña ha sido cambiada con éxito.',
+          icon: 'success',
+          confirmButtonText: 'Ok',
+          confirmButtonColor: '#6C6DE7',
+        }).then(() => {
+          // Lógica para redirigir al usuario a la página de login o donde sea necesario
+          import('@/router').then(({ default: router }) => {
+            router.replace({ name: 'login' });
+          })
+        });
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: response.message,
+          icon: 'error',
+        });
+      }
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método resetPassword del store account: ${error.message}`,
+        excepcion: error.toString(),
+      });
+      console.error('Error al restablecer la contraseña:', error);
+    }
+  }
+
 
   // Todo: Hasta aquí
 
@@ -306,5 +340,6 @@ export const useAccountStore = defineStore('account', () => {
     listRoles,
     update,
     refreshToken,
+    resetPassword
   }
 })
