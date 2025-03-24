@@ -108,7 +108,7 @@ export class AccountService extends BaseService<IAccount> {
     newPassword: string
   }) => {
     try {
-      const response = await genericRequestAuthenticated(`/Account/resetPassword`, 'POST', body)
+      const response = await genericRequest(`/Account/reset-password`, 'POST', body)
       return response
     } catch (error) {
       this.logService.create({

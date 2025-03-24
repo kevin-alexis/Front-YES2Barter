@@ -1,90 +1,115 @@
+<script setup lang="ts">
+import BaseForm from '@/components/BaseForm.vue'
+import { RouterLink, useRoute } from 'vue-router'
+import { reactive } from 'vue'
+import * as yup from 'yup'
+import { useForm } from 'vee-validate'
+import { useAccountStore } from '@/stores/account'
+
+const accountStore = useAccountStore()
+const route = useRoute()
+
+// Validaciones con VeeValidate
+const { errors, defineField, handleSubmit } = useForm({
+  validationSchema: yup.object({
+    newPassword: yup
+      .string()
+      .min(6, 'La contraseña debe tener al menos 6 caracteres')
+      .matches(/[A-Z]/, 'La contraseña debe contener al menos una letra mayúscula')
+      .matches(/[0-9]/, 'La contraseña debe contener al menos un número')
+      .matches(/[\W_]/, 'La contraseña debe contener al menos un carácter especial')
+      .required('La contraseña es requerida'),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref('newPassword')], 'Las contraseñas no coinciden')
+      .required('La confirmación de la contraseña es requerida'),
+  }),
+})
+
+// Definir campos del formulario
+const [newPassword] = defineField('newPassword', {
+  validateOnModelUpdate: true,
+})
+
+const [confirmPassword] = defineField('confirmPassword', {
+  validateOnModelUpdate: true,
+})
+
+const resetData = reactive({
+  newPassword,
+  confirmPassword,
+})
+
+const handleSubmitForm = handleSubmit((values) => {
+  const { email, token } = route.query
+
+  if (typeof email === 'string' && typeof token === 'string') {
+    const decodedEmail = decodeURIComponent(email)
+    const decodedToken = decodeURIComponent(token)
+    console.log(decodedEmail)
+    console.log(decodedToken)
+    console.log(values.newPassword)
+    accountStore.resetPassword({
+      email: decodedEmail,
+      resetToken: decodedToken,
+      newPassword: values.newPassword,
+    })
+  } else {
+    console.error('No se encontraron los parámetros email o token en la URL')
+  }
+})
+console.log('----')
+</script>
+
 <template>
   <div class="min-h-screen bg-green-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 bg-white shadow-lg rounded-xl border border-green-100 p-8">
+    <div
+      class="max-w-md w-full space-y-8 bg-white shadow-lg rounded-xl border border-green-100 p-8"
+    >
       <div class="text-center">
         <h2 class="mt-6 text-3xl font-extrabold text-green-800">Restablecer Contraseña</h2>
         <p class="mt-2 text-sm text-green-600">Ingresa tu nueva contraseña</p>
       </div>
-      <form @submit.prevent="resetPassword" class="mt-8 space-y-6">
-        <div class="rounded-md shadow-sm -space-y-px">
-          <div class="mb-4">
-            <label class="block text-green-700 text-sm font-bold mb-2">Nueva Contraseña:</label>
-            <input
-              type="password"
-              v-model="newPassword"
-              required
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-green-300 placeholder-green-500 text-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              placeholder="Introduce tu nueva contraseña"
-            />
-          </div>
-          <div class="mb-6">
-            <label class="block text-green-700 text-sm font-bold mb-2">Confirmar Contraseña:</label>
-            <input
-              type="password"
-              v-model="confirmPassword"
-              required
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-green-300 placeholder-green-500 text-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              placeholder="Confirma tu nueva contraseña"
-            />
-          </div>
-        </div>
 
-        <div>
-          <button
-            type="submit"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            Restablecer
-          </button>
-        </div>
-      </form>
-
-      <p
-        v-if="message"
-        class="mt-4 text-center text-sm text-green-600 bg-green-50 p-3 rounded-md"
+      <BaseForm
+        v-model:model="resetData"
+        v-model:errors="errors"
+        @submit="handleSubmitForm"
+        :config="{
+          inputs: [
+            {
+              label: 'Nueva Contraseña',
+              type: 'password',
+              isRequired: true,
+              model: 'newPassword',
+            },
+            {
+              label: 'Confirmar Contraseña',
+              type: 'password',
+              isRequired: true,
+              model: 'confirmPassword',
+            },
+          ],
+          titleButton: 'Restablecer',
+        }"
       >
+        <template #headerForm>
+          <h1 class="text-4xl font-bold text-left"></h1>
+        </template>
+
+        <template #linkBottom>
+          <p>
+            ¿Ya tienes cuenta?
+            <RouterLink class="font-semibold text-[var(--primary)] cursor-pointer" to="/login">
+              Iniciar sesión
+            </RouterLink>
+          </p>
+        </template>
+      </BaseForm>
+
+      <!-- <p v-if="message" class="mt-4 text-center text-sm text-green-600 bg-green-50 p-3 rounded-md">
         {{ message }}
-      </p>
+      </p> -->
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-import axios from 'axios'
-import { useRoute } from 'vue-router'
-
-export default defineComponent({
-  data() {
-    return {
-      newPassword: '',
-      confirmPassword: '',
-      message: '',
-    }
-  },
-  setup() {
-    const route = useRoute()
-    return { route }
-  },
-  methods: {
-    async resetPassword() {
-      if (this.newPassword !== this.confirmPassword) {
-        this.message = 'Las contraseñas no coinciden'
-        return
-      }
-
-      try {
-        const response = await axios.post('https://localhost:7257/api/Account/reset-password', {
-          email: this.route.query.email,
-          resetToken: this.route.query.token,
-          newPassword: this.newPassword,
-        })
-
-        this.message = response.data.message
-      } catch (error) {
-        this.message = error.response?.data?.message || 'Error al restablecer la contraseña'
-      }
-    },
-  },
-})
-</script>
