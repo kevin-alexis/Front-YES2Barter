@@ -9,7 +9,6 @@ import { useAccountStore } from '@/stores/account'
 const accountStore = useAccountStore()
 const route = useRoute()
 
-// Validaciones con VeeValidate
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
     newPassword: yup
@@ -26,7 +25,6 @@ const { errors, defineField, handleSubmit } = useForm({
   }),
 })
 
-// Definir campos del formulario
 const [newPassword] = defineField('newPassword', {
   validateOnModelUpdate: true,
 })
@@ -46,9 +44,7 @@ const handleSubmitForm = handleSubmit((values) => {
   if (typeof email === 'string' && typeof token === 'string') {
     const decodedEmail = decodeURIComponent(email)
     const decodedToken = decodeURIComponent(token)
-    console.log(decodedEmail)
-    console.log(decodedToken)
-    console.log(values.newPassword)
+
     accountStore.resetPassword({
       email: decodedEmail,
       resetToken: decodedToken,
@@ -58,7 +54,6 @@ const handleSubmitForm = handleSubmit((values) => {
     console.error('No se encontraron los parámetros email o token en la URL')
   }
 })
-console.log('----')
 </script>
 
 <template>

@@ -1,67 +1,74 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import BaseForm from '@/components/BaseForm.vue'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
+import { useAccountStore } from '@/stores/account'
+import { RouterLink } from 'vue-router'
+import { reactive } from 'vue'
 
-const email = ref('')
-const isLoading = ref(false)
-const error = ref('')
-const success = ref('')
+const accountStore = useAccountStore()
 
-const sendResetLink = async () => {
-  isLoading.value = true
-  error.value = ''
-  success.value = ''
+const { errors, defineField, handleSubmit } = useForm({
+  validationSchema: yup.object({
+    email: yup.string().email('Correo inválido').required('El correo es requerido'),
+  }),
+})
 
+const [email] = defineField('email', {
+  validateOnModelUpdate: true,
+})
+
+const formData = reactive({
+  email,
+})
+
+const handleSubmitForm = handleSubmit((values) => {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    success.value = 'Se ha enviado un enlace de recuperación a tu correo electrónico.'
-    email.value = ''
-  } catch (err) {
-    error.value = 'No se pudo enviar el enlace de recuperación. Por favor, inténtalo de nuevo.'
-    console.error('Error al enviar enlace de recuperación:', err)
-  } finally {
-    isLoading.value = false
+    accountStore.forgotPassword({ email: values.email })
+  } catch (error) {
+    console.error('Error al enviar enlace de recuperación:', error)
+    alert('No se pudo enviar el enlace de recuperación. Por favor, inténtalo de nuevo.')
   }
-}
+})
 </script>
 
 <template>
-  <div class="forgot-password-container">
-    <div class="card">
-      <div class="card-header">
-        <h1>Recuperar contraseña</h1>
-      </div>
-      <div class="card-body">
-        <p class="instructions">
-          Introduce tu correo electrónico y te enviaremos instrucciones para restablecer tu
-          contraseña.
+  <div class="min-h-screen bg-green-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div
+      class="max-w-md w-full space-y-8 bg-white shadow-lg rounded-xl border border-green-100 p-8"
+    >
+      <div class="text-center">
+        <h2 class="mt-6 text-3xl font-extrabold text-green-800">Recuperar Contraseña</h2>
+        <p class="mt-2 text-sm text-green-600">
+          Introduce tu correo y te enviaremos instrucciones para restablecer tu contraseña
         </p>
-        <form @submit.prevent="sendResetLink">
-          <div class="form-group">
-            <label for="email">Correo electrónico</label>
-            <input
-              type="email"
-              id="email"
-              v-model="email"
-              placeholder="Introduce tu correo electrónico"
-              required
-            />
-          </div>
-          <div class="alert alert-error" v-if="error">
-            {{ error }}
-          </div>
-          <div class="alert alert-success" v-if="success">
-            {{ success }}
-          </div>
-          <div class="actions">
-            <button type="submit" class="btn-primary" :disabled="isLoading">
-              <span v-if="isLoading">Enviando...</span>
-              <span v-else>Enviar enlace</span>
-            </button>
-            <router-link to="/login" class="btn-link">Volver al inicio de sesión</router-link>
-          </div>
-        </form>
       </div>
+
+      <BaseForm
+        v-model:model="formData"
+        v-model:errors="errors"
+        @submit="handleSubmitForm"
+        :config="{
+          inputs: [
+            {
+              label: 'Correo Electrónico',
+              type: 'email',
+              isRequired: true,
+              model: 'email',
+            },
+          ],
+          titleButton: 'Enviar Enlace',
+        }"
+      >
+        <template #linkBottom>
+          <p>
+            ¿Ya tienes cuenta?
+            <RouterLink class="font-semibold text-[var(--primary)] cursor-pointer" to="/login">
+              Iniciar sesión
+            </RouterLink>
+          </p>
+        </template>
+      </BaseForm>
     </div>
   </div>
 </template>

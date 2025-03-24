@@ -300,6 +300,38 @@ export const useAccountStore = defineStore('account', () => {
     }
   }
 
+  async function forgotPassword(values: { email: string }) {
+    console.log(values.email)
+    try {
+      const response = await service.forgotPassword({
+        email: values.email,
+      })
+
+      if (response.success) {
+        Swal.fire({
+          title: 'Correo enviado',
+          text: 'Se ha enviado un enlace de recuperación a tu correo electrónico.',
+          icon: 'success',
+          confirmButtonText: 'Ok',
+          confirmButtonColor: '#6C6DE7',
+        })
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: response.message,
+          icon: 'error',
+        })
+      }
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método forgotPassword del store account: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error('Error al enviar el enlace de recuperación:', error)
+    }
+  }
+
   // Todo: Hasta aquí
 
   return {
@@ -318,5 +350,6 @@ export const useAccountStore = defineStore('account', () => {
     update,
     refreshToken,
     resetPassword,
+    forgotPassword,
   }
 })

@@ -120,4 +120,18 @@ export class AccountService extends BaseService<IAccount> {
       throw error
     }
   }
+  public forgotPassword = async (body: { email: string }) => {
+    try {
+      const response = await genericRequest(`/Account/forgot-password`, 'POST', body)
+      return response
+    } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método forgotPassword: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error('Error al solicitar recuperación de contraseña:', error)
+      throw error
+    }
+  }
 }
