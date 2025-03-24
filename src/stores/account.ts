@@ -9,12 +9,12 @@ import { ObjetoService } from '@/services/objeto/ObjetoService'
 
 
 export const useAccountStore = defineStore('account', () => {
-  const user = ref<IAccount | null>(null);
+  const user = ref<IAccount | null>(null)
   const service = new AccountService()
   const logService = new LogService()
   const list = ref([])
   const listRoles = ref([])
-  const toast = useToast();
+  const toast = useToast()
   const isLoggedIn = computed(() => {
     return !!user.value
   });
@@ -38,54 +38,55 @@ export const useAccountStore = defineStore('account', () => {
 
   async function login(userData: IUser, rememberMe: boolean) {
     try {
-      const response = await service.login(userData, rememberMe);
+      const response = await service.login(userData, rememberMe)
       if (response.success) {
-        await getUser();
-        toast.add({ severity: 'success', summary: 'Sesión iniciada', detail: '¡Sesión iniciado con éxito!', life: 2000 });
+        await getUser()
+        toast.add({
+          severity: 'success',
+          summary: 'Sesión iniciada',
+          detail: '¡Sesión iniciado con éxito!',
+          life: 2000,
+        })
         import('@/router').then(({ default: router }) => {
-          router.replace({ name: 'inicio' });
+          router.replace({ name: 'inicio' })
         })
       } else {
         Swal.fire({
           title: 'Error',
           text: response.message,
           icon: 'error',
-        });
+        })
       }
     } catch (error) {
       logService.create({
         nivel: 'Error',
         mensaje: `Error en el método login del store account: ${error?.message || error}`,
         excepcion: error?.toString() || 'Error desconocido',
-      });
+      })
     }
   }
 
-
   async function refreshToken() {
     try {
-      const response = await service.refreshToken();
+      const response = await service.refreshToken()
       if (response.success) {
-
-        getUser();
-        return response.token;
+        getUser()
+        return response.token
       } else {
         // logOut();
-        return false;
+        return false
       }
     } catch (error) {
-      console.error('Error al refrescar token:', error);
+      console.error('Error al refrescar token:', error)
       logService.create({
         nivel: 'Error',
         mensaje: `Error en el método refreshToken del store account: ${error.message}`,
         excepcion: error.toString(),
-      });
+      })
       // logOut();
-      return false;
+      return false
     }
   }
-
-
 
   function signIn(userData: IUser) {
     try {
@@ -137,15 +138,15 @@ export const useAccountStore = defineStore('account', () => {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, cerrar sesión',
         confirmButtonColor: '#3085d6',
-      });
+      })
 
       if (result.isConfirmed) {
         if (isLoggedIn.value) {
-          await service.logout();
+          await service.logout()
         }
-        user.value = null;
+        user.value = null
         import('@/router').then(({ default: router }) => {
-          router.replace({ name: 'login' });
+          router.replace({ name: 'login' })
         })
       }
     } catch (error) {
@@ -153,17 +154,17 @@ export const useAccountStore = defineStore('account', () => {
         nivel: 'Error',
         mensaje: `Error en el método logOut del store account: ${error.message}`,
         excepcion: error.toString(),
-      });
+      })
     }
   }
 
   async function getUser() {
     try {
-      const response = await service.getCurrentUser();
+      const response = await service.getCurrentUser()
       if (response && response.idPersona) {
-        user.value = response;
+        user.value = response
       } else {
-        user.value = null;
+        user.value = null
         // logOut();
       }
     } catch (error) {
@@ -171,7 +172,7 @@ export const useAccountStore = defineStore('account', () => {
         nivel: 'Error',
         mensaje: `Error en el método getUser del store account: ${error.message}`,
         excepcion: error.toString(),
-      });
+      })
       // logOut();
     }
   }
@@ -288,10 +289,14 @@ export const useAccountStore = defineStore('account', () => {
       console.error(error)
     }
   }
-  async function resetPassword(values: { newPassword: string, confirmNewPassword: string }) {
+  async function resetPassword(values: { email: string; resetToken: string; newPassword: string }) {
     try {
-      // Asegúrate de tener un endpoint que reciba las nuevas contraseñas
-      const response = await service.resetPassword(values.newPassword, values.confirmNewPassword);
+      const response = await service.resetPassword({
+        email: values.email,
+        resetToken: values.resetToken,
+        newPassword: values.newPassword,
+      })
+
       if (response.success) {
         Swal.fire({
           title: 'Contraseña Restablecida',
@@ -300,28 +305,58 @@ export const useAccountStore = defineStore('account', () => {
           confirmButtonText: 'Ok',
           confirmButtonColor: '#6C6DE7',
         }).then(() => {
-          // Lógica para redirigir al usuario a la página de login o donde sea necesario
           import('@/router').then(({ default: router }) => {
-            router.replace({ name: 'login' });
+            router.replace({ name: 'login' })
           })
-        });
+        })
       } else {
         Swal.fire({
           title: 'Error',
           text: response.message,
           icon: 'error',
-        });
+        })
       }
     } catch (error) {
       logService.create({
         nivel: 'Error',
         mensaje: `Error en el método resetPassword del store account: ${error.message}`,
         excepcion: error.toString(),
-      });
-      console.error('Error al restablecer la contraseña:', error);
+      })
+      console.error('Error al restablecer la contraseña:', error)
     }
   }
 
+  async function forgotPassword(values: { email: string }) {
+    console.log(values.email)
+    try {
+      const response = await service.forgotPassword({
+        email: values.email,
+      })
+
+      if (response.success) {
+        Swal.fire({
+          title: 'Correo enviado',
+          text: 'Se ha enviado un enlace de recuperación a tu correo electrónico.',
+          icon: 'success',
+          confirmButtonText: 'Ok',
+          confirmButtonColor: '#6C6DE7',
+        })
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: response.message,
+          icon: 'error',
+        })
+      }
+    } catch (error) {
+      logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método forgotPassword del store account: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error('Error al enviar el enlace de recuperación:', error)
+    }
+  }
 
   // Todo: Hasta aquí
 
@@ -340,6 +375,7 @@ export const useAccountStore = defineStore('account', () => {
     listRoles,
     update,
     refreshToken,
-    resetPassword
+    resetPassword,
+    forgotPassword,
   }
 })
