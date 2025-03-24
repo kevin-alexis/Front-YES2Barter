@@ -6,13 +6,14 @@ import router from '@/router'
 import { ChatService } from '@/services/chat/ChatService'
 import { LogService } from '@/services/log/LogService'
 import { useToast } from 'primevue/usetoast'
+import { useAccountStore } from './account'
 
 export const useChatStore = defineStore('chat', () => {
   const service = new ChatService()
   const logService = new LogService()
   const list: Ref<IChat[]> = ref([])
   const toast = useToast()
-
+  const accountStore = useAccountStore()
   async function getAll() {
     try {
       const response = await service.getAll()
@@ -163,6 +164,7 @@ export const useChatStore = defineStore('chat', () => {
               confirmButtonColor: '#6C6DE7',
             });
             toast.add({ severity: 'info', summary: 'Éxito', detail: '¡Haz cerrado el chat, intercambio no concretado!', life: 2000 });
+            getAllByIdUsuario(accountStore?.user?.idUsuario ?? "")
           }
         });
       } else if (isSuccess === true) {
@@ -186,6 +188,7 @@ export const useChatStore = defineStore('chat', () => {
               confirmButtonColor: '#6C6DE7',
             });
             toast.add({ severity: 'success', summary: 'Éxito', detail: '¡Haz cerrado el chat, intercambio concretado!', life: 2000 });
+            getAllByIdUsuario(accountStore?.user?.idUsuario ?? "")
           }
         });
       } else {

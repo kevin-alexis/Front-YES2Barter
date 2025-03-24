@@ -9,12 +9,27 @@
     --secondary: #C2B280;
     --tertiary: #4FC3F7;
     --warning: #e0bc2b;
-    --danger: #E53935;
+    --danger: #ef4444;
     --success: #3ebe3e;
     --primary-gradient: #228B22;
     /* --primary-gradient: #228B22; */
     --background: #E8E8F4;
     --background-dark: #A8D08D;
+}
+
+.p-checkbox-checked .p-checkbox-box{
+  background: var(--primary) !important;
+}
+
+.p-checkbox-checked,
+.p-checkbox-box,
+.p-multiselect:not(.p-disabled):hover,
+.p-multiselect:not(.p-disabled).p-focus{
+  border-color: var(--primary) !important;
+}
+
+.p-multiselect:not(.p-disabled).p-focus{
+  box-shadow: var(--primary) !important;
 }
 
 .image-object-detail img{
@@ -98,4 +113,15 @@ circle{
 .button-delete:hover {
   background: #C62828 !important;
   border-color: #C62828 !important;
+}
+
+.p-button-outlined.p-button-success{
+  color: orange !important;
+  border-color: rgba(255, 166, 0, 0.332) !important;
+}
+
+.p-button-outlined.p-button-success:not(:disabled):hover{
+  color: orange !important;
+  border-color: rgba(255, 166, 0, 0.332) !important;
+  background-color: rgba(255, 166, 0, 0.088) !important;
 }

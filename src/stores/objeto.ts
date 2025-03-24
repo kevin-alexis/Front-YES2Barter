@@ -6,14 +6,15 @@ import Swal from 'sweetalert2'
 import router from '@/router'
 import { LogService } from '@/services/log/LogService'
 import { EstatusObjeto } from '../common/enums/enums';
-import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import { AccountService } from '../services/account/AccountService';
+import { useAccountStore } from './account'
 
 export const useObjetoStore = defineStore('objeto', () => {
   const service = new ObjetoService()
   const logService = new LogService()
   const list: Ref<IObjeto[]> = ref([])
+  const accountStore = useAccountStore()
   const toast = useToast()
   const accountService = new AccountService()
 
@@ -174,8 +175,12 @@ export const useObjetoStore = defineStore('objeto', () => {
               text: response.message || 'El objeto fue eliminado.',
               icon: 'success',
             });
+            if(accountStore.isLoggedIn && accountStore.user && accountStore.user.rol === 'Administrador'){
+              await getAll();
+            }else{
+              await getAllByIdUsuario(accountStore?.user?.idUsuario ?? "")
+            }
 
-            await getAll();
           } else {
             throw new Error(response?.message || 'El objeto tiene propuestas activas y no puede ser eliminado.');
           }

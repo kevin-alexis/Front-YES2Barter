@@ -4,7 +4,6 @@ import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
 import Swal from 'sweetalert2'
 import router from '@/router'
-import { useRoute } from 'vue-router'
 import { LogService } from '@/services/log/LogService'
 import { useToast } from 'primevue/usetoast';
 

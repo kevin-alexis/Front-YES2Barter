@@ -9,6 +9,7 @@ import { useForm } from 'vee-validate'
 import { EstatusObjeto, EstatusPropuestaIntercambio } from '@/common/enums/enums'
 import { enumFormat } from '@/utils/helper'
 import { useAccountStore } from '@/stores/account'
+import Message from 'primevue/message';
 
 const propuestaIntercambioStore = usePropuestaIntercambioStore()
 const objetoStore = useObjetoStore()
@@ -18,27 +19,11 @@ const isEdit = ref(false)
 const id = ref('')
 const tipoEstadoList = Object.values(EstatusPropuestaIntercambio)
 const propuestasRealizadas = ref([])
+const allPropuestas = ref([])
 
 const objetoList = computed(() => {
   return objetoStore.list.filter(
     (item) => item.estado == Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE),
-  )
-})
-const objetoSolicitado = computed(() => {
-  const objetoOfertadoItem = objetoStore.list.find((item) => {
-    return item.id == idObjetoOfertado.value
-  })
-
-  const idUsuarioOfertado = objetoOfertadoItem ? objetoOfertadoItem.idUsuario : null
-
-  if (objetoOfertadoItem && !isEdit) {
-    idObjetoSolicitado.value = null
-  }
-
-  return objetoStore.list.filter(
-    (item) =>
-      item.idUsuario !== idUsuarioOfertado &&
-      item.estado == Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE),
   )
 })
 
@@ -66,14 +51,49 @@ const objetoOfertado = computed(() => {
       return propuesta.idObjetoOfertado == objeto.id
     })
   })
+  console.log(allPropuestas.value)
+  const objetosFiltradosPorPropuestasInversasNoOfertados = objetosFiltradosNoOfertados.filter((objeto) => {
+    return !allPropuestas.value.some((propuesta) => {
+      console.log(propuesta.idObjetoOfertado)
+      return propuesta.idObjetoSolicitado == objeto.id && propuesta.estado == EstatusPropuestaIntercambio.ENVIADA
+    })
+  })
 
-  return objetosFiltradosNoOfertados
+  return objetosFiltradosPorPropuestasInversasNoOfertados;
 })
 
-const route = useRoute()
+const objetoSolicitado = computed(() => {
+  const objetoOfertadoItem = objetoStore.list.find((item) => {
+    return item.id == idObjetoOfertado.value
+  })
+
+  const idUsuarioOfertado = objetoOfertadoItem ? objetoOfertadoItem.idUsuario : null
+
+  if (objetoOfertadoItem && !isEdit) {
+    idObjetoSolicitado.value = null
+  }
+
+  return objetoStore.list.filter(
+    (item) =>
+      item.idUsuario !== idUsuarioOfertado &&
+      item.estado == Object.values(EstatusObjeto).indexOf(EstatusObjeto.DISPONIBLE),
+  )
+})
+
 const isCreateIntercambiadorRoute = computed(() => {
   return route.name == 'crear propuesta intercambio intercambiador'
 })
+
+const disableObjetoSolicitado = computed(() => {
+  if(isCreateIntercambiadorRoute.value){
+    return objetoOfertado.value.length === 0
+  }else{
+    return objetoSolicitado.value.length === 0
+  }
+})
+
+const route = useRoute()
+
 
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
@@ -115,6 +135,11 @@ onMounted(async () => {
   await objetoStore.getAll()
   isEdit.value = route.fullPath.includes('editar')
   id.value = route.params.id as string
+  await propuestaIntercambioStore
+          .getAllByIdObjeto(parseInt(id.value))
+          .then(() => {
+            allPropuestas.value = propuestaIntercambioStore.list
+          })
   if (isEdit.value) {
     await propuestaIntercambioStore.getById(id.value).then((response) => {
       Object.assign(dataForm, {
@@ -174,6 +199,10 @@ onMounted(async () => {
 
 <template>
   <div class="p-5 w-full">
+    <div v-if="disableObjetoSolicitado">
+      <Message severity="warn" closable>No hay objetos disponibles para realizar una propuesta de intercambio.</Message>
+    </div>
+
     <BaseForm
       class="max-w-4xl mx-auto p-5 sm:p-8 md:p-10 lg:p-12"
       v-model:model="dataForm"
@@ -191,6 +220,7 @@ onMounted(async () => {
               valueKey: 'id',
             },
             isRequired: isEdit,
+            isDisabled: isCreateIntercambiadorRoute && disableObjetoSolicitado.valueOf(),
             model: 'idObjetoOfertado',
           },
           {
@@ -203,7 +233,7 @@ onMounted(async () => {
               valueKey: 'id',
             },
             isRequired: isEdit,
-            isDisabled: isCreateIntercambiadorRoute,
+            isDisabled: isCreateIntercambiadorRoute || disableObjetoSolicitado.valueOf(),
             model: 'idObjetoSolicitado',
           },
           {
