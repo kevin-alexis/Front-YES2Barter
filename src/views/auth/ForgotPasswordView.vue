@@ -35,10 +35,10 @@ const handleSubmitForm = handleSubmit((values) => {
 <template>
   <div class="min-h-screen bg-green-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div
-      class="max-w-md w-full space-y-8 bg-white shadow-lg rounded-xl border border-green-100 p-8"
+      class="max-w-md w-full space-y-8 bg-white shadow-lg rounded-xl border border-green-100 p-8 mt-[-125px]"
     >
       <div class="text-center">
-        <h2 class="text-4xl font-bold text-left">Recuperar Contraseña</h2>
+        <h2 class="text-3xl font-bold text-center mb-5">Recuperar Contraseña</h2>
         <p>Introduce tu correo y te enviaremos instrucciones para restablecer tu contraseña</p>
       </div>
 

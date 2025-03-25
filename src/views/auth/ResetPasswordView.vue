@@ -62,7 +62,7 @@ const handleSubmitForm = handleSubmit((values) => {
       class="max-w-md w-full space-y-8 bg-white shadow-lg rounded-xl border border-green-100 p-8 mt-[-125px]"
     >
       <div class="text-center">
-        <h2 class="text-3xl font-bold text-center">Restablecer Contraseña</h2>
+        <h2 class="text-3xl font-bold text-center mb-5">Restablecer Contraseña</h2>
         <p>Ingresa tu nueva contraseña</p>
       </div>
 
