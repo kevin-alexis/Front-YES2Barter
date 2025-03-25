@@ -59,11 +59,11 @@ const handleSubmitForm = handleSubmit((values) => {
 <template>
   <div class="min-h-screen bg-green-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div
-      class="max-w-md w-full space-y-8 bg-white shadow-lg rounded-xl border border-green-100 p-8"
+      class="max-w-md w-full space-y-8 bg-white shadow-lg rounded-xl border border-green-100 p-8 mt-[-125px]"
     >
       <div class="text-center">
-        <h2 class="mt-6 text-3xl font-extrabold text-green-800">Restablecer Contraseña</h2>
-        <p class="mt-2 text-sm text-green-600">Ingresa tu nueva contraseña</p>
+        <h2 class="text-3xl font-bold text-center">Restablecer Contraseña</h2>
+        <p>Ingresa tu nueva contraseña</p>
       </div>
 
       <BaseForm
@@ -107,4 +107,5 @@ const handleSubmitForm = handleSubmit((values) => {
       </p> -->
     </div>
   </div>
+
 </template>
