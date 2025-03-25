@@ -116,7 +116,7 @@ watch([search, selectedCategorias], () => {
 
 
     <div
-  class="flex flex-col justify-center items-center gap-5 bg-white m-8 p-8 md:p-10 rounded-2xl shadow-lg w"
+  class="flex flex-col justify-center items-center gap-5 bg-white m-8 p-8 md:p-10 rounded-2xl shadow-lg h-[535px] md:h-[600px] overflow-auto"
 >
   <ObjetoList
     v-model:objetos="filteredObjetos"

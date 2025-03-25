@@ -6,8 +6,11 @@ import { EstatusObjeto } from '@/common/enums/enums'
 
 const objetoStore = useObjetoStore()
 
-onMounted(() => {
-  objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
+onMounted(async () => {
+  await objetoStore.getAllByIdEstatus(EstatusObjeto.DISPONIBLE)
+  objetoStore.list = objetoStore.list
+    .sort((a, b) => new Date(b.fechaPublicacion).getTime() - new Date(a.fechaPublicacion).getTime())
+    .slice(0, 6)
 })
 </script>
 
