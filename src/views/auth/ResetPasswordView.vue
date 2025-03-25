@@ -92,14 +92,14 @@ const handleSubmitForm = handleSubmit((values) => {
           <h1 class="text-4xl font-bold text-left"></h1>
         </template>
 
-        <template #linkBottom>
+        <!-- <template #linkBottom>
           <p>
             ¿Ya tienes cuenta?
             <RouterLink class="font-semibold text-[var(--primary)] cursor-pointer" to="/login">
               Iniciar sesión
             </RouterLink>
           </p>
-        </template>
+        </template> -->
       </BaseForm>
 
       <!-- <p v-if="message" class="mt-4 text-center text-sm text-green-600 bg-green-50 p-3 rounded-md">
@@ -107,5 +107,4 @@ const handleSubmitForm = handleSubmit((values) => {
       </p> -->
     </div>
   </div>
-
 </template>
