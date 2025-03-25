@@ -263,10 +263,10 @@ export const useAccountStore = defineStore('account', () => {
       console.error(error)
     }
   }
-  async function resetPassword(values: { email: string; resetToken: string; newPassword: string }) {
+  async function resetPassword(values: { resetToken: string; newPassword: string }) {
     try {
       const response = await service.resetPassword({
-        email: values.email,
+        //email: values.email,
         resetToken: values.resetToken,
         newPassword: values.newPassword,
       })

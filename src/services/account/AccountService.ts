@@ -103,7 +103,7 @@ export class AccountService extends BaseService<IAccount> {
     }
   }
   public resetPassword = async (body: {
-    email: string
+    //email: string
     resetToken: string
     newPassword: string
   }) => {

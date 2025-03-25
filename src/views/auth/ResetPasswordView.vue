@@ -39,14 +39,14 @@ const resetData = reactive({
 })
 
 const handleSubmitForm = handleSubmit((values) => {
-  const { email, token } = route.query
+  const { token } = route.query
 
-  if (typeof email === 'string' && typeof token === 'string') {
-    const decodedEmail = decodeURIComponent(email)
+  if (typeof token === 'string') {
+    //const decodedEmail = decodeURIComponent(email)
     const decodedToken = decodeURIComponent(token)
 
     accountStore.resetPassword({
-      email: decodedEmail,
+      //email: decodedEmail,
       resetToken: decodedToken,
       newPassword: values.newPassword,
     })
