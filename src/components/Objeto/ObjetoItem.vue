@@ -43,7 +43,7 @@ function eliminar(id: number) {
     <div v-if="config.showButtons" class="flex gap-2 mt-4 p-2 justify-center">
       <div class="flex gap-4">
         <RouterLink :to="{ name: 'editar objeto', params: { id: config.objeto.id } }" class="w-full">
-          <Button icon="pi pi-pencil" severity="success" rounded v-tooltip.top="{value: 'Editar', showDelay: 100, hideDelay: 300}" variant="outlined" aria-label="Edit" />
+          <Button icon="pi pi-pen-to-square" severity="success" rounded v-tooltip.top="{value: 'Editar', showDelay: 100, hideDelay: 300}" variant="outlined" aria-label="Edit" />
         </RouterLink>
         <div class="w-full flex justify-end">
           <Button icon="pi pi-trash" severity="danger" rounded v-tooltip.top="{value: 'Eliminar', showDelay: 100, hideDelay: 300}" variant="outlined" aria-label="Delete" @click="eliminar(config.objeto.id)" class="text-lg p-4 h-12" />

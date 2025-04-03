@@ -53,6 +53,18 @@ const router = createRouter({
       meta: { menu: false, title: 'Sign In', isPrivate: false, isShared: false },
     },
     {
+      path: '/forgot-password',
+      name: 'forgot password',
+      component: () => import('../views/auth/ForgotPasswordView.vue'),
+      meta: { menu: false, title: 'Forgot Password', isPrivate: false, isShared: false },
+    },
+    {
+      path: '/reset-password',
+      name: 'reset password',
+      component: () => import('../views/auth/ResetPasswordView.vue'),
+      meta: { menu: false, title: 'Forgot Password', isPrivate: false, isShared: false },
+    },
+    {
       path: '/buscador',
       name: 'buscador',
       component: () => import('../views/private/BuscadorView.vue'),
@@ -106,7 +118,7 @@ const router = createRouter({
     },
     {
       path: '/objeto/',
-      name:'mis objetos',
+      name: 'mis objetos',
       component: () => import('../views/private/Objeto/ObjetoView.vue'),
       meta: {
         menu: true,
@@ -224,12 +236,14 @@ const router = createRouter({
         icon: 'pi-book',
         roles: ['Administrador'],
       },
-      children:[
+      children: [
         {
           path: '/propuesta-intercambio/crear/:id',
           name: 'crear propuesta intercambio intercambiador',
           component: () =>
-            import('../views/private/PropuestasIntercambios/CreateEditPropuestaIntercambioView.vue'),
+            import(
+              '../views/private/PropuestasIntercambios/CreateEditPropuestaIntercambioView.vue'
+            ),
           meta: {
             menu: false,
             title: 'Crear Capítulo',
@@ -239,7 +253,7 @@ const router = createRouter({
             roles: ['Administrador', 'Intercambiador'],
           },
         },
-      ]
+      ],
     },
     {
       path: '/propuesta-intercambio/editar/:id',
@@ -279,7 +293,7 @@ const router = createRouter({
         isShared: false,
         icon: 'pi-book',
         roles: ['Administrador'],
-      }
+      },
     },
     {
       path: '/usuarios/editar/:idPersona',
@@ -318,7 +332,7 @@ const router = createRouter({
         isShared: false,
         icon: 'pi-user',
         roles: ['Intercambiador'],
-      }
+      },
     },
     {
       path: '/perfil/editar/',
@@ -331,7 +345,7 @@ const router = createRouter({
         isShared: false,
         icon: 'pi-user',
         roles: ['Intercambiador'],
-      }
+      },
     },
     {
       path: '/contacto',
@@ -355,42 +369,39 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const accountStore = useAccountStore();
+  const accountStore = useAccountStore()
 
   if (to.name === '404' || to.name === 'inicio') {
-    next();
-    return;
+    next()
+    return
   }
 
-
   if (to.meta.isPrivate && !accountStore.isLoggedIn) {
-
     if (!accountStore.isLoggedIn) {
-      if (to.name !== 'login') next({ name: 'login' });
-      return;
+      if (to.name !== 'login') next({ name: 'login' })
+      return
     }
   }
 
   if (!accountStore.isLoggedIn && !to.meta.isPrivate) {
-    next();
-    return;
+    next()
+    return
   }
 
-  const userRole = accountStore.user?.rol?.toLowerCase() ?? '';
-  const roles = (to.meta?.roles ?? []).map((r) => r.toLowerCase());
+  const userRole = accountStore.user?.rol?.toLowerCase() ?? ''
+  const roles = (to.meta?.roles ?? []).map((r) => r.toLowerCase())
 
   if (!to.meta.isPrivate && accountStore.isLoggedIn && !to.meta.isShared) {
-    if (to.name !== 'inicio') next({ name: 'inicio' });
-    return;
+    if (to.name !== 'inicio') next({ name: 'inicio' })
+    return
   }
 
   if (to.meta.isPrivate && !roles.includes(userRole) && !to.meta.isShared) {
-    if (to.name !== 'inicio') next({ name: 'inicio' });
-    return;
+    if (to.name !== 'inicio') next({ name: 'inicio' })
+    return
   }
 
-  next();
-});
-
+  next()
+})
 
 export default router

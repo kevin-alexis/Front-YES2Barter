@@ -4,6 +4,7 @@ import BaseButton from './BaseButton.vue'
 import BaseInput from './BaseInput.vue'
 import { Form } from 'vee-validate'
 import { useRouter } from 'vue-router'
+import ProgressSpinner from 'primevue/progressspinner';
 
 const router = useRouter()
 
@@ -23,6 +24,7 @@ const props = defineProps<{
     inputs: IBaseInput[]
     titleButton: string
     isCanceled?: boolean
+    isLoading?: boolean
   }
 }>()
 
@@ -42,7 +44,7 @@ const props = defineProps<{
     </BaseInput>
     <slot name="linkTop"></slot>
     <div class="flex gap-2">
-      <BaseButton @click="$emit('submit')" type="button" style-type="primary">
+      <BaseButton @click="$emit('submit')" type="button" style-type="primary" :isDisabled="props.config.isLoading">
         {{ props.config.titleButton }}
       </BaseButton>
       <BaseButton v-if="props.config.isCanceled" @click="goBack" type="button" style-type="danger">

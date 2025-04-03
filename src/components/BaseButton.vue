@@ -4,6 +4,7 @@ import { computed } from 'vue'
 const props = defineProps<{
   styleType?: 'primary' | 'secondary' | 'warning' | 'danger' | 'success'
   tooltip?: string
+  isDisabled?:boolean
 }>()
 
 const buttonClass = computed(() => {
@@ -26,9 +27,15 @@ const buttonClass = computed(() => {
 
 <template>
   <button
-    :class="[buttonClass, 'cursor-pointer w-full']"
+    :disabled="isDisabled"
+    :class="[buttonClass, 'cursor-pointer w-full', isDisabled ? 'opacity-80' :'']"
     v-tooltip.top="tooltip ? { value: tooltip, showDelay: 100, hideDelay: 300 } : undefined"
   >
+  <template v-if="isDisabled">
+    Enviando...
+  </template>
+  <template v-else>
     <slot />
+  </template>
   </button>
 </template>

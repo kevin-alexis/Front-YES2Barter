@@ -13,7 +13,10 @@ export class BaseService<T> {
 
   public getAll = async () => {
     try {
-      const response = await genericRequestAuthenticated(`${this.baseUrl}/${this.nameController}/`, 'GET')
+      const response = await genericRequestAuthenticated(
+        `${this.baseUrl}/${this.nameController}/`,
+        'GET',
+      )
       return response
     } catch (error) {
       this.logService.create({
@@ -27,7 +30,10 @@ export class BaseService<T> {
 
   public getById = async (id: string) => {
     try {
-      const response = await genericRequestAuthenticated(`${this.baseUrl}/${this.nameController}/${id}`, 'GET')
+      const response = await genericRequestAuthenticated(
+        `${this.baseUrl}/${this.nameController}/${id}`,
+        'GET',
+      )
       return response
     } catch (error) {
       this.logService.create({
@@ -41,7 +47,11 @@ export class BaseService<T> {
 
   public create = async (body: T) => {
     try {
-      const response = await genericRequestAuthenticated(`${this.baseUrl}/${this.nameController}`, 'POST', body)
+      const response = await genericRequestAuthenticated(
+        `${this.baseUrl}/${this.nameController}`,
+        'POST',
+        body,
+      )
       return response
     } catch (error) {
       this.logService.create({
@@ -55,7 +65,11 @@ export class BaseService<T> {
 
   public update = async (id: string, body: T) => {
     try {
-      const response = await genericRequestAuthenticated(`${this.baseUrl}/${this.nameController}/${id}`, 'PUT', body)
+      const response = await genericRequestAuthenticated(
+        `${this.baseUrl}/${this.nameController}/${id}`,
+        'PUT',
+        body,
+      )
       return response
     } catch (error) {
       this.logService.create({
@@ -69,7 +83,10 @@ export class BaseService<T> {
 
   public delete = async (id: string) => {
     try {
-      const response = await genericRequestAuthenticated(`${this.baseUrl}/${this.nameController}/${id}`, 'DELETE')
+      const response = await genericRequestAuthenticated(
+        `${this.baseUrl}/${this.nameController}/${id}`,
+        'DELETE',
+      )
       return response
     } catch (error) {
       this.logService.create({
@@ -80,4 +97,6 @@ export class BaseService<T> {
       console.error(error)
     }
   }
+
+  
 }

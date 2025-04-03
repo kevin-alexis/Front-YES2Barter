@@ -27,19 +27,18 @@ export class AccountService extends BaseService<IAccount> {
 
   public async refreshToken() {
     try {
-      const response = await genericRequestAuthenticated('/Account/refreshToken', 'POST', {});
-      return response;
+      const response = await genericRequestAuthenticated('/Account/refreshToken', 'POST', {})
+      return response
     } catch (error) {
       this.logService.create({
         nivel: 'Error',
         mensaje: `Error en el método refreshToken: ${error.message}`,
         excepcion: error.toString(),
       })
-      console.error(`Error en refreshToken: ${error.message}`);
-      return false;
+      console.error(`Error en refreshToken: ${error.message}`)
+      return false
     }
   }
-
 
   public getAll = async () => {
     try {
@@ -73,37 +72,66 @@ export class AccountService extends BaseService<IAccount> {
 
   public async getCurrentUser() {
     try {
-      const response = await genericRequestAuthenticated('/Account/currentUser', 'GET');
+      const response = await genericRequestAuthenticated('/Account/currentUser', 'GET')
 
       if (response?.success && response.data) {
-        return response.data;
+        return response.data
       }
-      return null;
-
+      return null
     } catch (error: any) {
       this.logService.create({
         nivel: 'Error',
         mensaje: `Error en el método getCurrentUser: ${error.message}`,
         excepcion: error.toString(),
       })
-      console.error('Error obteniendo usuario:', error?.message ?? error);
-      return null;
+      console.error('Error obteniendo usuario:', error?.message ?? error)
+      return null
     }
   }
 
-
   public async logout() {
     try {
-      return await genericRequest('/Account/logout', 'POST');
+      return await genericRequest('/Account/logout', 'POST')
     } catch (error) {
       this.logService.create({
         nivel: 'Error',
         mensaje: `Error en el método logout: ${error.message}`,
         excepcion: error.toString(),
       })
-      console.error('Error en logout:', error.message);
-      throw error;
+      console.error('Error en logout:', error.message)
+      throw error
     }
   }
-
+  public resetPassword = async (body: {
+    email: string
+    resetToken: string
+    newPassword: string
+  }) => {
+    try {
+      const response = await genericRequest(`/Account/reset-password`, 'POST', body)
+      return response
+    } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método resetPassword: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error('Error al restablecer la contraseña:', error)
+      throw error
+    }
+  }
+  public forgotPassword = async (body: { email: string }) => {
+    try {
+      const response = await genericRequest(`/Account/forgot-password`, 'POST', body)
+      return response
+    } catch (error) {
+      this.logService.create({
+        nivel: 'Error',
+        mensaje: `Error en el método forgotPassword: ${error.message}`,
+        excepcion: error.toString(),
+      })
+      console.error('Error al solicitar recuperación de contraseña:', error)
+      throw error
+    }
+  }
 }
