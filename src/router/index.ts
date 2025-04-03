@@ -17,12 +17,6 @@ const router = createRouter({
       // icon: aparezca un icono
     },
     {
-      path: '/canchesky',
-      name: 'canchesky',
-      component: () => import('../components/Objeto/ObjetDetails.vue'),
-      meta: { menu: false, title: 'Canchesky', isPrivate: false, isShared: true },
-    },
-    {
       path: '/nosotros',
       name: 'nosotros',
       component: () => import('../views/public/NosotrosView.vue'),
