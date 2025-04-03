@@ -17,6 +17,14 @@
     --background-dark: #A8D08D;
 }
 
+.swal2-confirm{
+  background-color: var(--primary) !important;
+}
+
+.swal2-cancel{
+  background-color: var(--danger) !important;
+}
+
 .p-checkbox-checked .p-checkbox-box{
   background: var(--primary) !important;
 }

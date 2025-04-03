@@ -2,10 +2,11 @@
 import BaseForm from '@/components/BaseForm.vue'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import emailjs from 'emailjs-com'
 import Swal from 'sweetalert2'
 
+const isLoading = ref(false);
 const PUBLIC_KEY = import.meta.env.VITE_APP_MAILJS_PUBLIC_KEY
 const SERVICE_ID = import.meta.env.VITE_APP_MAILJS_SERVICE_ID
 const TEMPLATE_ID = import.meta.env.VITE_APP_MAILJS_TEMPLATE_ID
@@ -56,6 +57,8 @@ const handleSubmitForm = handleSubmit(async (values: FormValues) => {
       message: values.message,
     }
 
+    isLoading.value = true;
+
     const result = await emailjs.send(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY)
 
     Swal.fire({
@@ -75,8 +78,11 @@ const handleSubmitForm = handleSubmit(async (values: FormValues) => {
       icon: 'error',
       confirmButtonText: 'Aceptar'
     })
+  } finally {
+    isLoading.value = false;
   }
 })
+
 </script>
 
 <template>
@@ -117,6 +123,7 @@ const handleSubmitForm = handleSubmit(async (values: FormValues) => {
           },
         ],
         titleButton: 'Enviar',
+        isLoading: isLoading,
       }"
     >
       <template #headerForm>

@@ -54,7 +54,12 @@ const getInitials = (name: string | undefined) => {
       >
         <img
           v-if="prop.chat.personaReceptor.rutaFotoPerfil"
-          :src="getProfileImage(prop.chat.personaReceptor.rutaFotoPerfil)"
+          :src="getProfileImage(
+              isOfertante
+                  ? prop.chat.personaReceptor.rutaFotoPerfil
+                  : prop.chat.personaEmisor.rutaFotoPerfil
+
+            )"
           alt="Avatar"
           class="h-full w-full object-cover"
         />
@@ -66,7 +71,13 @@ const getInitials = (name: string | undefined) => {
 
       <div class="flex-1 min-w-0">
         <div class="flex justify-between items-baseline">
-          <h3 :class="['font-medium truncate', isSeleccionado ? 'text-[#3b5e24]' : 'text-black']">{{ prop.chat.personaReceptor.nombre }}</h3>
+          <h3 :class="['font-medium truncate', isSeleccionado ? 'text-[#3b5e24]' : 'text-black']">
+            {{
+              isOfertante
+                  ? prop.chat.personaReceptor.nombre
+                  : prop.chat.personaEmisor.nombre
+               }}
+          </h3>
           <span :class="['text-xs ml-2', isSeleccionado ? 'text-white' : 'text-gray-500']">22/03/2025</span>
         </div>
 
